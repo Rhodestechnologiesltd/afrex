@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="report_purchasequotation_document_inherit" inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//h2" position="replace">
+            <h3>Quote Request #<span t-field="o.name"/></h3>
+            <div id="general" class="row mb32">
+                <div t-if="o.create_date" class="col-3 bm-2">
+                    <h5 class="row">
+                        <strong>Date: </strong><span t-esc="o.create_date.strftime('%d-%B-%Y')" class="m-0"/>
+                    </h5>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//table" position="replace">
+            <div class="row">
+                <table style="font-size:14px;" class="table">
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Product</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.product_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Specifications</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.product_description"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Packaging</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.packaging_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Incoterms (<span t-field="o.incoterm_implementation_year"/>)</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.incoterm_id.code"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">POD</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.discharge_port_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Shipment Window</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.shipment_window_start"/> <span>  - </span><span t-field="o.shipment_window_end"/></td>
+                    </tr>
+                    <t t-if="o.breakbulk_container == 'container'">
+                        <tr>
+                            <th style="width:30%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Container Size</span>
+                            </th>
+                            <td style="width:70%"><span style="float: left;" t-field="o.container_type_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Container Count</span>
+                            </th>
+                            <td t-if="o.container_count != 0" style="width:70%"><span style="float: left;" t-field="o.container_count"/></td>
+                            <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Container Stuffing</span>
+                            </th>
+                            <td style="width:70%"><span style="float: left;" t-field="o.container_stuffing"/> <span>  x </span><span t-field="o.packaging_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <th style="width:30%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Palletised or Loose</span>
+                            </th>
+                            <td style="width:70%"><span style="float: left;" t-field="o.is_palletised"/></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Total Quantity</span>
+                        </th>
+                        <td t-if="o.container_count != 0" style="width:70%"><span style="float: left;" t-field="o.qty_total" t-options='{"widget": "float", "precision": 2}'/><span>  MT</span></td>
+                        <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Origin</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.origin_country_id.name"/></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">FOB/MT</span>
+                        </th>
+                        <td t-if="o.fob_amount != 0" style="width:70%"><span style="float: left;" t-field="o.fob_amount" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Freight/MT</span>
+                        </th>
+                        <td t-if="o.freight_amount != 0" style="width:70%"><span style="float: left;" t-field="o.freight_amount" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Insurance</span>
+                        </th>
+                        <td t-if="o.insurance_amount != 0" style="width:70%"><span style="float: left;" t-field="o.insurance_amount" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">CIF/MT</span>
+                        </th>
+                        <td t-if="o.cost_amount != 0" style="width:70%"><span style="float: left;" t-field="o.cost_amount" t-options='{"widget": "float", "precision": 2}'/></td>
+                        <td t-else="" style="width:70%"><span style="float: left;"> </span></td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Payment Terms</span>
+                        </th>
+                        <td style="width:70%"><span style="float: left;" t-field="o.payment_term_id.name"/></td>
+                    </tr>
+                    <tr t-if="validity">
+                        <th style="width:30%; text-align:left; padding-left: 5px;">
+                            <span style="float:left;">Validity</span>
+                        </th>
+                        <td t-if="o.validity" style="width:70%"><span style="float: left;" t-esc="o.validity.strftime('%d-%B-%Y')"/></td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+    </template>
+    
+    <!-- <template id="report_purchaseorder_document_inherit" inherit_id="purchase.report_purchaseorder_document">        
+    </template> -->
+        
+</odoo>

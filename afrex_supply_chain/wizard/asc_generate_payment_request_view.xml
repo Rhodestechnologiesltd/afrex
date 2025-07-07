@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_generate_payment_request_form" model="ir.ui.view">
+        <field name="name">asc.generate.payment.request.form</field>
+        <field name="model">asc.generate.payment.request</field>
+        <field name="arch" type="xml">
+          <form string="Generate Payment Request">
+            <group>
+                <field name="purchase_order_id" invisible="True"/>
+                <field name="lead_id" invisible="True"/>
+                <field name="partner_id" string="Beneficiary"/>
+                <field name="bank_account_id" string="Bank Account" domain="[('partner_id', '=', partner_id)]"/>
+            </group>
+            <footer>
+                <button name="generate_payment_request" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_generate_payment_request" model="ir.actions.act_window">
+        <field name="name">Generate Payment Request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.generate.payment.request</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

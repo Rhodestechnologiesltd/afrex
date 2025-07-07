@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+  <record id="asc_shipping_line_1" model="asc.shipping.line">
+    <field name="name">Best Honor</field>
+  </record>
+  <record id="asc_shipping_line_2" model="asc.shipping.line">
+    <field name="name">Bulk Carrier</field>
+  </record>
+  <record id="asc_shipping_line_3" model="asc.shipping.line">
+    <field name="name">CMA CGM</field>
+  </record>
+  <record id="asc_shipping_line_4" model="asc.shipping.line">
+    <field name="name">Cosco</field>
+  </record>
+  <record id="asc_shipping_line_5" model="asc.shipping.line">
+    <field name="name">Emirates</field>
+  </record>
+  <record id="asc_shipping_line_6" model="asc.shipping.line">
+    <field name="name">Evergreen</field>
+  </record>
+  <record id="asc_shipping_line_7" model="asc.shipping.line">
+    <field name="name">Gold Star Line</field>
+  </record>
+  <record id="asc_shipping_line_8" model="asc.shipping.line">
+    <field name="name">Hamburg-Sud</field>
+  </record>
+  <record id="asc_shipping_line_9" model="asc.shipping.line">
+    <field name="name">Hapag-Lloyd</field>
+  </record>
+  <record id="asc_shipping_line_10" model="asc.shipping.line">
+    <field name="name">MACS</field>
+  </record>
+  <record id="asc_shipping_line_11" model="asc.shipping.line">
+    <field name="name">Maersk</field>
+  </record>
+  <record id="asc_shipping_line_12" model="asc.shipping.line">
+    <field name="name">Messina Lines</field>
+  </record>
+  <record id="asc_shipping_line_13" model="asc.shipping.line">
+    <field name="name">MRC Lines</field>
+  </record>
+  <record id="asc_shipping_line_14" model="asc.shipping.line">
+    <field name="name">HMM</field>
+  </record>
+  <record id="asc_shipping_line_15" model="asc.shipping.line">
+    <field name="name">MSC</field>
+  </record>
+  <record id="asc_shipping_line_16" model="asc.shipping.line">
+    <field name="name">NVOCC</field>
+  </record>
+  <record id="asc_shipping_line_17" model="asc.shipping.line">
+    <field name="name">ONE</field>
+  </record>
+  <record id="asc_shipping_line_18" model="asc.shipping.line">
+    <field name="name">OOCL</field>
+  </record>
+  <record id="asc_shipping_line_19" model="asc.shipping.line">
+    <field name="name">Other</field>
+  </record>
+  <record id="asc_shipping_line_20" model="asc.shipping.line">
+    <field name="name">PIL</field>
+  </record>
+  <record id="asc_shipping_line_21" model="asc.shipping.line">
+    <field name="name">Safmarine</field>
+  </record>
+  <record id="asc_shipping_line_22" model="asc.shipping.line">
+    <field name="name">To Be Confirmed</field>
+  </record>
+  <record id="asc_shipping_line_23" model="asc.shipping.line">
+    <field name="name">ZIM</field>
+  </record>
+</data>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="asc_document_type_tree_view" model="ir.ui.view">
+        <field name="name">asc.document.type.tree</field>
+        <field name="model">asc.document.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_asc_document_type" model="ir.actions.act_window">
+        <field name="name">Shipping Documents</field>
+        <field name="res_model">asc.document.type</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Document Types
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_asc_document_type"
+              name="Documents Types"
+              action="action_asc_document_type"
+              parent="crm.crm_menu_config"
+              sequence="100"/>
+</odoo>

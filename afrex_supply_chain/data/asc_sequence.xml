@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data noupdate="0">
+
+        <record id="seq_lead" model="ir.sequence">
+            <field name="name">Lead Sequence</field>
+            <field name="code">asc.lead.seq</field>
+            <field name="prefix">L</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="purchase.seq_purchase_order" model="ir.sequence">
+            <field name="name">Quote Request</field>
+            <field name="code">purchase.order</field>
+            <field name="prefix">AFQR</field>
+        </record>
+
+        <record id="sale.seq_sale_order" model="ir.sequence">
+            <field name="name">Quotations</field>
+            <field name="code">sale.order</field>
+            <field name="prefix">AFQ</field>
+        </record>
+
+        <record id="seq_purchase_order_confirm" model="ir.sequence">
+            <field name="name">Purchase Order</field>
+            <field name="prefix">AFPO</field>
+            <field name="code">purchase.order.confirm</field>
+            <field name="padding">5</field>
+        </record>
+
+        <record id="asc_invoice_seq" model="ir.sequence">
+            <field name="name">ASC Invoice Sequence</field>
+            <field name="code">asc.invoice.seq</field>
+            <field name="prefix">AF</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="asc_seq_payment_request" model="ir.sequence">
+            <field name="name">Payment Request Sequence</field>
+            <field name="code">asc.payment.request.seq</field>
+            <field name="prefix">AFPR</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

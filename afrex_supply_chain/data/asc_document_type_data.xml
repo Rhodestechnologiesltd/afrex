@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+  <record id="asc_document_type_1" model="asc.document.type">
+    <field name="name">Advance Payment Request</field>
+  </record>
+  <record id="asc_document_type_2" model="asc.document.type">
+    <field name="name">Bank Details</field>
+  </record>
+  <record id="asc_document_type_3" model="asc.document.type">
+    <field name="name">Bill of Lading (B/L)</field>
+  </record>
+  <record id="asc_document_type_4" model="asc.document.type">
+    <field name="name">Buyer Registration Form</field>
+  </record>
+  <record id="asc_document_type_5" model="asc.document.type">
+    <field name="name">Cargo Manifest</field>
+  </record>
+  <record id="asc_document_type_6" model="asc.document.type">
+    <field name="name">Certificate of Analysis (COA)</field>
+  </record>
+  <record id="asc_document_type_7" model="asc.document.type">
+    <field name="name">Certificate of Incorporation</field>
+  </record>
+  <record id="asc_document_type_8" model="asc.document.type">
+    <field name="name">Certificate of Origin (COO)</field>
+  </record>
+  <record id="asc_document_type_9" model="asc.document.type">
+    <field name="name">Commercial Invoice</field>
+  </record>
+  <record id="asc_document_type_10" model="asc.document.type">
+    <field name="name">Customs Declaration</field>
+  </record>
+  <record id="asc_document_type_11" model="asc.document.type">
+    <field name="name">Dangerous Goods Declaration</field>
+  </record>
+  <record id="asc_document_type_12" model="asc.document.type">
+    <field name="name">Deal Approval</field>
+  </record>
+  <record id="asc_document_type_13" model="asc.document.type">
+    <field name="name">Delivery Note</field>
+  </record>
+  <record id="asc_document_type_14" model="asc.document.type">
+    <field name="name">Delivery Note</field>
+  </record>
+  <record id="asc_document_type_15" model="asc.document.type">
+    <field name="name">Export Licenses</field>
+  </record>
+  <record id="asc_document_type_16" model="asc.document.type">
+    <field name="name">Final Payment Request</field>
+  </record>
+  <record id="asc_document_type_17" model="asc.document.type">
+    <field name="name">Fixture Note</field>
+  </record>
+  <record id="asc_document_type_18" model="asc.document.type">
+    <field name="name">Freight Invoice</field>
+  </record>
+  <record id="asc_document_type_19" model="asc.document.type">
+    <field name="name">Gate Pass</field>
+  </record>
+  <record id="asc_document_type_20" model="asc.document.type">
+    <field name="name">Halal Certificate</field>
+  </record>
+  <record id="asc_document_type_21" model="asc.document.type">
+    <field name="name">Health Certificate</field>
+  </record>
+  <record id="asc_document_type_22" model="asc.document.type">
+    <field name="name">Inspection Certificate</field>
+  </record>
+  <record id="asc_document_type_23" model="asc.document.type">
+    <field name="name">Insurance Certificate</field>
+  </record>
+  <record id="asc_document_type_24" model="asc.document.type">
+    <field name="name">ISO Certificate</field>
+  </record>
+  <record id="asc_document_type_25" model="asc.document.type">
+    <field name="name">Kosher Certificate</field>
+  </record>
+  <record id="asc_document_type_26" model="asc.document.type">
+    <field name="name">KYC (Other)</field>
+  </record>
+  <record id="asc_document_type_27" model="asc.document.type">
+    <field name="name">KYC Documents</field>
+  </record>
+  <record id="asc_document_type_28" model="asc.document.type">
+    <field name="name">Letter of Credit (L/C)</field>
+  </record>
+  <record id="asc_document_type_29" model="asc.document.type">
+    <field name="name">Manufacturer Certificate of Analysis (COA)</field>
+  </record>
+  <record id="asc_document_type_30" model="asc.document.type">
+    <field name="name">Material Safety Data Sheet (MSDS)</field>
+  </record>
+  <record id="asc_document_type_31" model="asc.document.type">
+    <field name="name">Multimodal Transport Document</field>
+  </record>
+  <record id="asc_document_type_32" model="asc.document.type">
+    <field name="name">Packing List</field>
+  </record>
+  <record id="asc_document_type_33" model="asc.document.type">
+    <field name="name">Product Specifications</field>
+  </record>
+  <record id="asc_document_type_34" model="asc.document.type">
+    <field name="name">Profit Estimate</field>
+  </record>
+  <record id="asc_document_type_35" model="asc.document.type">
+    <field name="name">Proforma Invoice</field>
+  </record>
+  <record id="asc_document_type_36" model="asc.document.type">
+    <field name="name">Purchase Order</field>
+  </record>
+  <record id="asc_document_type_37" model="asc.document.type">
+    <field name="name">Quotation / Offer</field>
+  </record>
+  <record id="asc_document_type_38" model="asc.document.type">
+    <field name="name">Request for Quote (RFQ)</field>
+  </record>
+  <record id="asc_document_type_39" model="asc.document.type">
+    <field name="name">Road Consignment Note (CMR)</field>
+  </record>
+  <record id="asc_document_type_40" model="asc.document.type">
+    <field name="name">Road manifest</field>
+  </record>
+  <record id="asc_document_type_41" model="asc.document.type">
+    <field name="name">SAD 500</field>
+  </record>
+  <record id="asc_document_type_42" model="asc.document.type">
+    <field name="name">Sales Contract / Sales Order</field>
+  </record>
+  <record id="asc_document_type_43" model="asc.document.type">
+    <field name="name">Sanitary / Phytosanitary Certificates</field>
+  </record>
+  <record id="asc_document_type_44" model="asc.document.type">
+    <field name="name">Sea Waybill (SWB)</field>
+  </record>
+  <record id="asc_document_type_45" model="asc.document.type">
+    <field name="name">Shipping Instructions</field>
+  </record>
+  <record id="asc_document_type_46" model="asc.document.type">
+    <field name="name">Stuffing Pictures</field>
+  </record>
+  <record id="asc_document_type_47" model="asc.document.type">
+    <field name="name">Supplier Registration Form</field>
+  </record>
+  <record id="asc_document_type_48" model="asc.document.type">
+    <field name="name">Survey / Stuffing Report</field>
+  </record>
+  <record id="asc_document_type_49" model="asc.document.type">
+    <field name="name">SWIFT / Proof of Payment</field>
+  </record>
+  <record id="asc_document_type_50" model="asc.document.type">
+    <field name="name">Technical Data Sheet (TDS)</field>
+  </record>
+  <record id="asc_document_type_51" model="asc.document.type">
+    <field name="name">Veterinay Certificate</field>
+  </record>
+  <record id="asc_document_type_52" model="asc.document.type">
+    <field name="name">VGM Certificate</field>
+  </record>
+  <record id="asc_document_type_53" model="asc.document.type">
+    <field name="name">Weighbridge Certificate</field>
+  </record>
+  <record id="asc_document_type_54" model="asc.document.type">
+    <field name="name">Weight Certificate</field>
+  </record>
+</data>

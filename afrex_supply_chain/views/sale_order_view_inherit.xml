@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_sale_order_form_view" model="ir.ui.view">
+        <field name="name">asc.sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_invoice']" position="replace">
+                <div class="dropdown" id="action_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_action_dropdown" style="color:white; background:#B04949;" type="button" id="button_action_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i> Actions
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_dropdown" style="min-width: max-content;">
+                        <li><button name="action_is_sent" icon="fa-check-square-o" string="Mark as Sent" type="object" class="btn-mute" invisible="state not in ['draft']"/></li>
+                        <li><button name="generate_proforma_wizard" icon="fa-envelope-open" string="Generate PFI" type="object" class="btn-mute" invisible="state not in ['draft','sent','sale'] or invoice_count != 0"/></li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="print_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_print_dropdown" style="color:white; background:#B04949;" type="button" id="button_print_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
+                        <li><button name="print_quotation" icon="fa-dollar" string="Quote / Offer" type="object" class="btn-mute"/></li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="goto_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_goto_dropdown" style="color:white; background:#B04949;" type="button" id="button_goto_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-sign-in"></i> Go to
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_goto_dropdown" style="min-width: max-content;">
+                        <li><button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object" class="btn-mute" invisible="not lead_id"/></li>
+                        <li><button name="action_open_profit_estimate" string="Profit Estimate" icon="fa-line-chart" type="object" class="btn-mute border-bottom" invisible="not lead_id"/></li>
+                        <li><button name="action_open_purchase_order" string="Afrex QR / PO" icon="fa-shopping-cart" type="object" class="btn-mute" invisible="not purchase_order_id"/></li>
+                        <li><button name="action_view_invoice" string="Afrex PFI / CI" icon="fa-dollar" type="object" class="btn-mute" invisible="invoice_count == 0 or state != 'sale'"/></li>
+                    </ul>
+                </div>
+                <!-- <div class="oe_button_box" name="button_box"> -->
+                <!-- </div> -->
+            </xpath>
+            <xpath expr="//group[@name='sale_header']" position="after">
+                <field name="invoice_count" invisible="True"/>
+                <field name="purchase_order_count" invisible="True"/>
+                <field name="lead_id" invisible="True"/>
+                <field name="purchase_order_id" invisible="True"/>
+                <group invisible="supplier_delivery_method != 'sea'">
+                    <group string="Shipment">
+                        <field name="breakbulk_container" widget="selection_badge"/>
+                        <!-- <field name="packaging_id"/> -->
+                        <field name="is_palletised" widget="selection_badge" invisible="breakbulk_container != 'container'"/>
+                        <label for="container_count" string="Container" invisible="breakbulk_container != 'container'"/>
+                        <div name="container_count" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_count" placeholder="Count..."/>
+                            x <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}" required="container_count"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing" invisible="breakbulk_container != 'container'"/>
+                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_stuffing"/>
+                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                        <field name="qty_total"/>
+                    </group>
+                    <group string="Costing">
+                        <field name="incoterm_selection" invisible="True"/>
+                        <field name="incoterm_id"/>
+                        <label for="fob_amount" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount"/>
+                            FOB/MT: <field name="fob_unit" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT: <field name="freight_unit" readonly="True"/>
+                        </div>
+                        <field name="interest_amount" invisible="not is_internal"/>
+                        <field name="procurement_documentation_amount" invisible="not is_internal"/>
+                        <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount"/>
+                            CIF/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount"/>
+                            CFR/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount"/>
+                            FOB/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <field name="is_internal" invisible="True"/>
+                        <div class="o_row" colspan="2">
+                            <button name="update_proforma" type="object" string=" Update Proforma Invoice" invisible="invoice_count == 0" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer."/>
+                        </div>
+                    </group>
+                </group>
+                <group invisible="supplier_delivery_method != 'road'">
+                    <group string="Delivery by Road">
+                        <label for="container_count" string="Transportation"/>
+                        <div name="container_count" class="o_row">
+                            <field name="container_count" placeholder="Truck/Container Count... (if applicable)"/>
+                            x <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}" required="container_count"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing"/>
+                        <div name="container_stuffing" class="o_row">
+                            <field name="container_stuffing" placeholder="Stuffing... (if applicable)"/>
+                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                        <field name="qty_total"/>
+                    </group>
+                    <group string="Costing">
+                        <field name="incoterm_selection" invisible="True"/>
+                        <field name="incoterm_id"/>
+                        <label for="fca_amount" string="FCA"/>
+                        <div class="o_row">
+                            <field name="fca_amount"/>
+                            FCA/MT: <field name="fca_unit" readonly="True"/>
+                        </div>
+                        <label for="road_transportation_amount" string="Road Transportation"/>
+                        <div class="o_row">
+                            <field name="road_transportation_amount" readonly="incoterm_selection != 'dap'"/>
+                            Transportation/MT: <field name="road_transportation_unit" readonly="True"/>
+                        </div>
+                        <field name="show_transportation" widget="boolean_toggle" string="Display Transportation"/>
+                        <label for="logistics_service_amount" string="Logistics Service" invisible="not is_internal"/>
+                        <div class="o_row" invisible="not is_internal">
+                            <field name="logistics_service_amount"/>
+                            Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
+                        </div>
+                        <field name="interest_amount" invisible="not is_internal"/>
+                        <field name="procurement_documentation_amount" invisible="not is_internal"/>
+                        <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'fca'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'fca'">
+                            <field name="cost_amount"/>
+                            FCA/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="cost_amount"/>
+                            DAP/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
+                        <field name="is_internal" invisible="True"/>
+                        <div class="o_row" colspan="2">
+                            <button name="update_proforma" type="object" string=" Update Proforma Invoice" invisible="invoice_count == 0" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer."/>
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//group[@name='partner_details']" position="inside">
+                <field name="discharge_port_id" string="Port of Discharge" invisible="supplier_delivery_method != 'sea'"/>
+                <field name="discharge_port_id" string="Place of Delivery" invisible="supplier_delivery_method != 'road'"/>
+                <field name="consignee_id"/>
+                <field name="supplier_id" string="Supplier"/>
+                <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
+                <field name="loading_port_id" string="Place of Loading" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" invisible="supplier_delivery_method != 'road'"/>
+                <field name="origin_country_id"/>
+                <field name="supplier_delivery_method"/>
+                <field name="shipment_window_start" string="Shipment Window" widget="daterange" options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}" required="shipment_window_start or shipment_window_end"/>
+                <field name="shipment_window_end" invisible="1" required="shipment_window_start"/>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="is_currency_zar" invisible="True"/>
+                <field name="indicative_exchange_rate" invisible="not is_currency_zar"/>
+                <field name="exchange_rate" invisible="not is_currency_zar"/>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="readonly">False</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="before">
+                <field name="is_indicative" widget="boolean_toggle"/>
+                <field name="is_sent" widget="boolean_toggle" invisible="True"/>
+                <field name="client_order_ref" string="Buyer PO Reference"/>
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="attributes">
+                <attribute name="string">Validity</attribute>
+            </xpath>
+            <xpath expr="//page[@name='other_information']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='customer_signature']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='tax_id']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='price_subtotal']" position="attributes">
+                <attribute name="string">Total</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='product_template_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='name']" position="after">
+                <field name="packaging_id" readonly="True"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//field[@name='order_line']" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="asc_sale_order_optional_form_view" model="ir.ui.view">
+        <field name="name">asc.sale.order.optional.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_management.sale_order_form_quote"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='optional_products']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+        </field>
+    </record>
+    
+
+</odoo>

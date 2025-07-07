@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_generate_purchase_order_form" model="ir.ui.view">
+        <field name="name">asc.generate.purchase.order.form</field>
+        <field name="model">asc.generate.purchase.order</field>
+        <field name="arch" type="xml">
+          <form string="Select Product">
+            <field name="lead_id" readonly="True" invisible="True"/>
+            <group>
+                <group>
+                    <field name="supplier_delivery_method" widget="selection_badge" required="True"/>
+                </group>
+                <group>
+                    <field name="currency_id" widget="selection_badge" required="True"/>
+                </group>
+                <group invisible="supplier_delivery_method != 'sea'">
+                    <field name="breakbulk_container" widget="selection_badge"/>
+                    <field name="is_palletised" widget="selection_badge" invisible="breakbulk_container != 'container'"/>
+                    <field name="trans_shipment" widget="selection_badge"/>
+                    <field name="partial_shipment" widget="selection_badge"/>
+                    <label for="container_count" string="Container" invisible="breakbulk_container != 'container'"/>
+                    <div name="container_count" class="o_row" invisible="breakbulk_container != 'container'">
+                        <field name="container_count" placeholder="Count... (Select container size first)" readonly="not container_type_id"/>
+                        x <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}" required="container_count"/>
+                    </div>
+                    <label for="container_stuffing" string="Stuffing" invisible="breakbulk_container != 'container'"/>
+                    <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'container'">
+                        <field name="container_stuffing"/>
+                        x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                    </div>
+                </group>
+                <group invisible="supplier_delivery_method != 'road'">
+                    <field name="transporter_id"/>
+                    <label for="container_count" string="Transportation"/>
+                    <div name="container_count" class="o_row">
+                        <field name="container_count" placeholder="Truck/Container Count... (if applicable)"/>
+                        x <field name="container_type_id" options="{'no_open':True}" required="container_count"/>
+                    </div>
+                    <label for="container_stuffing" string="Stuffing"/>
+                    <div name="container_stuffing" class="o_row">
+                        <field name="container_stuffing" placeholder="Stuffing... (if applicable)"/>
+                        x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                    </div>
+                </group>
+                <group>
+                    <field name="incoterm_id" required="True"/>
+                    <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
+                    <field name="discharge_port_id" string="Place of Delivery" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" invisible="supplier_delivery_method != 'road'"/>
+                    <field name="is_switch"/>
+                    <field name="shipment_window_start" required="True" string="Shipment Window" widget="daterange" options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}"/>
+                    <field name="shipment_window_end" required="True" invisible="1"/>
+                    <field name="product_qty"/>
+                </group>
+            </group>
+            <footer>
+                <button name="generate_purchase_order" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_generate_purchase_order" model="ir.actions.act_window">
+        <field name="name">Generate RFQs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.generate.purchase.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

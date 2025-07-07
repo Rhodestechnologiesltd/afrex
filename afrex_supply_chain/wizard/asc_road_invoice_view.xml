@@ -1,0 +1,28 @@
+<odoo>
+
+    <record id="view_road_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">asc.road.invoice.form</field>
+        <field name="model">asc.road.invoice</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="purchase_order_id" invisible="True"/>
+                    <!-- <field name="can_confirm" invisible="True"/> -->
+                    <field name="date" string="Invoice Date"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asc_road_invoice" model="ir.actions.act_window">
+        <field name="name">Supplier Commercial Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.road.invoice</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+</odoo>

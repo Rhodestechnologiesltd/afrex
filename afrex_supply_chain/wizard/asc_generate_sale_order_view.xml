@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_generate_sale_order_form" model="ir.ui.view">
+        <field name="name">asc.generate.sale.order.form</field>
+        <field name="model">asc.generate.sale.order</field>
+        <field name="arch" type="xml">
+          <form string="Select Product">
+            <field name="purchase_order_id" invisible="True"/>
+            <field name="lead_id" invisible="True"/>
+            <field name="is_internal" invisible="True"/>
+            <field name="incoterm_selection" invisible="True"/>
+            <group>
+                <group>
+                    <field name="currency_id" widget="selection_badge" required="True"/>
+                    <field name="incoterm_id" required="True"/>
+                    <field name="is_currency_zar" invisible="True"/>
+                    <field name="exchange_rate" invisible="not is_currency_zar"/>
+                    <field name="payment_term_id" required="True"/>
+                    <field name="validity_date" required="True"/>
+                </group>
+                <group>
+                    <field name="is_indicative" widget="boolean_toggle"/>
+                    <field name="supplier_delivery_method" widget="selection_badge"/>
+                    <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'" invisible="supplier_delivery_method != 'sea'"/>
+                    <field name="loading_port_id" string="Place of Loading" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" required="supplier_delivery_method == 'road'" invisible="supplier_delivery_method != 'road'"/>
+                    <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'" invisible="supplier_delivery_method != 'sea'"/>
+                    <field name="discharge_port_id" string="Place of Delivery" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" required="supplier_delivery_method == 'road'" invisible="supplier_delivery_method != 'road'"/>
+                    <field name="qty_total"/>
+                    <field name="net_weight"/>
+                </group>
+            </group>
+            <group string="USD" invisible="not incoterm_id or supplier_delivery_method != 'sea'">
+                <group>
+                    <label for="fob_amount" string="FOB"/>
+                    <div class="o_row">
+                        <field name="fob_amount"/>
+                        FOB/MT: <field name="fob_unit" readonly="True"/>
+                    </div>
+                    <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+                    <label for="freight_amount" string="Freight"/>
+                    <div class="o_row">
+                        <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+                        Freight/MT: <field name="freight_unit" readonly="True"/>
+                    </div>
+                    <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                    <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                    <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'cif'">
+                        <field name="cost_amount"/>
+                        CIF/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                        <field name="cost_amount"/>
+                        CFR/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'fob'">
+                        <field name="cost_amount"/>
+                        FOB/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                </group>
+                <group invisible="not is_internal">
+                    <field name="interest_amount"/>
+                    <field name="procurement_documentation_amount"/>
+                </group>
+            </group>
+            <group string="ZAR" invisible="not incoterm_id or not is_currency_zar or supplier_delivery_method != 'sea'">
+                <group>
+                    <label for="fob_amount_zar" string="FOB"/>
+                    <div class="o_row">
+                        <field name="fob_amount_zar"/>
+                        FOB/MT: <field name="fob_unit_zar" readonly="True"/>
+                    </div>
+                    <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
+                    <label for="freight_amount_zar" string="Freight"/>
+                    <div class="o_row">
+                        <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
+                        Freight/MT: <field name="freight_unit_zar" readonly="True"/>
+                    </div>
+                    <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                    <label for="cost_amount_zar" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                    <label for="cost_amount_zar" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'cif'">
+                        <field name="cost_amount_zar"/>
+                        CIF/MT: <field name="cost_unit_zar" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                        <field name="cost_amount_zar"/>
+                        CFR/MT: <field name="cost_unit_zar" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'fob'">
+                        <field name="cost_amount_zar"/>
+                        CFR/MT: <field name="cost_unit_zar" readonly="True"/>
+                    </div>
+                </group>
+                <group invisible="not is_internal">
+                    <field name="interest_amount_zar"/>
+                    <field name="procurement_documentation_amount_zar"/>
+                </group>
+            </group>
+            <group string="USD" invisible="not incoterm_id or supplier_delivery_method != 'road'">
+                <group>
+                    <label for="fca_amount" string="FCA"/>
+                    <div class="o_row">
+                        <field name="fca_amount"/>
+                        FCA/MT: <field name="fca_unit" readonly="True"/>
+                    </div>
+                    <label for="road_transportation_amount" string="Road Transportation"/>
+                    <div class="o_row">
+                        <field name="road_transportation_amount" readonly="incoterm_selection != 'dap'"/>
+                        Transportation/MT: <field name="road_transportation_unit" readonly="True"/>
+                    </div>
+                    <label for="cost_amount" string="FCA" invisible="incoterm_selection != 'fca'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'fca'">
+                        <field name="cost_amount"/>
+                        FCA/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                    <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'dap'">
+                        <field name="cost_amount"/>
+                        DAP/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                </group>
+                <group>
+                    <label for="logistics_service_amount" string="Logistics Service"/>
+                    <div class="o_row">
+                        <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
+                        Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
+                    </div>
+                    <field name="interest_amount_zar" invisible="not is_internal"/>
+                    <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
+                </group>
+            </group>
+            <group string="ZAR" invisible="not is_currency_zar or not incoterm_id or supplier_delivery_method != 'road'">
+                <group>
+                    <label for="fca_amount_zar" string="FCA" invisible="incoterm_selection != 'dap'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'dap'">
+                        <field name="fca_amount_zar"/>
+                        FCA/MT: <field name="fca_unit_zar" readonly="True"/>
+                    </div>
+                    <label for="road_transportation_amount_zar" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'dap'">
+                        <field name="road_transportation_amount_zar"/>
+                        Transportation/MT: <field name="road_transportation_unit_zar" readonly="True"/>
+                    </div>
+                    <label for="cost_amount_zar" string="FCA" invisible="incoterm_selection != 'fca'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'fca'">
+                        <field name="cost_amount_zar"/>
+                        FCA/MT: <field name="cost_unit_zar" readonly="True"/>
+                    </div>
+                    <label for="cost_amount_zar" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'dap'">
+                        <field name="cost_amount_zar"/>
+                        DAP/MT: <field name="cost_unit_zar" readonly="True"/>
+                    </div>
+                </group>
+                <group>
+                    <label for="logistics_service_amount" string="Logistics Service"/>
+                    <div class="o_row">
+                        <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
+                        Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
+                    </div>
+                    <field name="interest_amount_zar" invisible="not is_internal"/>
+                    <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
+                </group>
+            </group>
+            <div class="alert alert-warning text-center mt-2 mb-2" role="alert">
+                <div>
+                    <h6>
+                        If you confirm, any other offer/quote previously generated for this deal will be cancelled.
+                    </h6>
+                </div>
+            </div>
+            <footer>
+                <button name="generate_sale_order" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_generate_sale_order" model="ir.actions.act_window">
+        <field name="name">Generate RFQs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.generate.sale.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

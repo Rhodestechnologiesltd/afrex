@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_update_sale_order_form" model="ir.ui.view">
+        <field name="name">asc.update.sale.order.form</field>
+        <field name="model">asc.update.sale.order</field>
+        <field name="arch" type="xml">
+            <form string="Update Offer/Quote">
+                <field name="purchase_order_id" invisible="True"/>
+                <field name="sale_order_id" invisible="True"/>
+                <field name="lead_id" invisible="True"/>
+                <field name="is_internal" invisible="True"/>
+                <field name="is_currency_zar" invisible="True"/>
+                <field name="incoterm_selection" invisible="True"/>
+                <group>
+                    <group>
+                        <field name="sale_order_id" readonly="True"/>
+                        <field name="incoterm_id" readonly="True"/>
+                    </group>
+                    <group>
+                        <field name="currency_id" widget="selection_badge" readonly="True"/>
+                        <field name="exchange_rate" invisible="not is_currency_zar"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Current Offer Costing">
+                        <label for="initial_fob_amount" string="FOB"/>
+                        <div class="o_row">
+                            <field name="initial_fob_amount" readonly="True"/>
+                            FOB/MT: <field name="initial_fob_unit" readonly="True"/>
+                        </div>
+                        <field name="initial_insurance_amount" readonly="True"/>
+                        <label for="initial_freight_amount" string="Freight"/>
+                        <div class="o_row">
+                            <field name="initial_freight_amount" readonly="True"/>
+                            Freight/MT: <field name="initial_freight_unit" readonly="True"/>
+                        </div>
+                        <field name="initial_interest_amount" readonly="True" invisible="not is_internal"/>
+                        <field name="initial_procurement_documentation_amount" readonly="True" invisible="not is_internal"/>
+                        <label for="initial_cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="initial_cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="initial_cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="initial_cost_amount" readonly="True"/>
+                            CIF/MT: <field name="initial_cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="initial_cost_amount" readonly="True"/>
+                            CFR/MT: <field name="initial_cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="initial_cost_amount" readonly="True"/>
+                            FOB/MT: <field name="initial_cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                    <group string="New Offer Costing" invisible="is_currency_zar">
+                        <label for="fob_amount" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount"/>
+                            FOB/MT: <field name="fob_unit" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT: <field name="freight_unit" readonly="True"/>
+                        </div>
+                        <field name="interest_amount" invisible="not is_internal"/>
+                        <field name="procurement_documentation_amount" invisible="not is_internal"/>
+                        <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount"/>
+                            CIF/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount"/>
+                            CFR/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount"/>
+                            FOB/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                </group>
+                <group string="New Offer Costing" invisible="not is_currency_zar">
+                    <group>
+                        <label for="fob_amount_zar" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount_zar"/>
+                            FOB/MT: <field name="fob_unit_zar" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount_zar" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT: <field name="freight_unit_zar" readonly="True"/>
+                        </div>
+                        <field name="interest_amount_zar" invisible="not is_internal"/>
+                        <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
+                        <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount_zar" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount_zar" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount_zar"/>
+                            CIF/MT: <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                </group>
+                <div class="alert alert-warning text-center mt-2 mb-2" role="alert">
+                    <div>
+                        <h6>
+                            If you confirm, the current offer/quote will updated with the New Offer Costing.
+                        </h6>
+                    </div>
+                </div>
+                <footer>
+                    <button name="update_sale_order" string="Confirm" confirm="This will update the costing on the current offer." type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asc_update_sale_order" model="ir.actions.act_window">
+        <field name="name">update RFQs</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.update.sale.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

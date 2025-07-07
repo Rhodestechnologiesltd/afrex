@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="0">
+    <record id="asc_port_1" model="asc.port">
+      <field name="name">Durban, South Africa</field>
+      <field name="type">sea</field>
+      <field name="city">Durban</field>
+      <field name="country_id">South Africa</field>
+    </record>
+    <record id="asc_port_2" model="asc.port">
+      <field name="name">Hazira Port/Surat, India</field>
+      <field name="type">sea</field>
+      <field name="city">Surat</field>
+      <field name="country_id">India</field>
+    </record>
+    <record id="asc_port_3" model="asc.port">
+      <field name="name">Agadir, Morocco</field>
+      <field name="type">sea</field>
+      <field name="city">Agadir</field>
+      <field name="country_id">Morocco</field>
+    </record>
+    <record id="asc_port_4" model="asc.port">
+      <field name="name">Al Qusayr, Syria</field>
+      <field name="type">sea</field>
+      <field name="city">Al Qusayr</field>
+      <field name="country_id">Syria</field>
+    </record>
+    <record id="asc_port_5" model="asc.port">
+      <field name="name">Alexandria, Egypt</field>
+      <field name="type">sea</field>
+      <field name="city">Alexandria</field>
+      <field name="country_id">Egypt</field>
+    </record>
+    <record id="asc_port_6" model="asc.port">
+      <field name="name">Algiers, Algeria</field>
+      <field name="type">sea</field>
+      <field name="city">Algiers</field>
+      <field name="country_id">Algeria</field>
+    </record>
+    <record id="asc_port_7" model="asc.port">
+      <field name="name">Aliaga, Turkey</field>
+      <field name="type">sea</field>
+      <field name="city">Aliaga</field>
+      <field name="country_id">Turkey</field>
+    </record>
+    <record id="asc_port_8" model="asc.port">
+      <field name="name">Altamira, Mexico</field>
+      <field name="type">sea</field>
+      <field name="city">Altamira</field>
+      <field name="country_id">Mexico</field>
+    </record>
+    <record id="asc_port_9" model="asc.port">
+      <field name="name">Ambarli, Turkey</field>
+      <field name="type">sea</field>
+      <field name="city">Ambarli</field>
+      <field name="country_id">Turkey</field>
+    </record>
+    <record id="asc_port_10" model="asc.port">
+      <field name="name">Antwerp, Belgium</field>
+      <field name="type">sea</field>
+      <field name="city">Antwerp</field>
+      <field name="country_id">Belgium</field>
+    </record>
+    <record id="asc_port_11" model="asc.port">
+      <field name="name">Any Port In China</field>
+      <field name="type">sea</field>
+      <field name="city">nan</field>
+      <field name="country_id">China</field>
+    </record>
+    <record id="asc_port_12" model="asc.port">
+      <field name="name">Any Port In India</field>
+      <field name="type">sea</field>
+      <field name="city">nan</field>
+      <field name="country_id">India</field>
+    </record>
+    <record id="asc_port_13" model="asc.port">
+      <field name="name">Any Port In Taiwan</field>
+      <field name="type">sea</field>
+      <field name="city">nan</field>
+      <field name="country_id">Taiwan</field>
+    </record>
+    <record id="asc_port_14" model="asc.port">
+      <field name="name">Any Port In Turkey</field>
+      <field name="type">sea</field>
+      <field name="city">nan</field>
+      <field name="country_id">Turkey</field>
+    </record>
+    <record id="asc_port_15" model="asc.port">
+      <field name="name">Aqaba, Jordan</field>
+      <field name="type">sea</field>
+      <field name="city">Aqaba</field>
+      <field name="country_id">Jordan</field>
+    </record>
+    <record id="asc_port_16" model="asc.port">
+      <field name="name">Bahia Blanca, Argentina</field>
+      <field name="type">sea</field>
+      <field name="city">Bahia Blanca</field>
+      <field name="country_id">Argentina</field>
+    </record>
+    <record id="asc_port_17" model="asc.port">
+      <field name="name">Balboa, Panama</field>
+      <field name="type">sea</field>
+      <field name="city">Balboa</field>
+      <field name="country_id">Panama</field>
+    </record>
+    <record id="asc_port_18" model="asc.port">
+      <field name="name">Balikpapan, Indonesia</field>
+      <field name="type">sea</field>
+      <field name="city">Balikpapan</field>
+      <field name="country_id">Indonesia</field>
+    </record>
+    <record id="asc_port_19" model="asc.port">
+      <field name="name">Banjarmasin, Indonesia</field>
+      <field name="type">sea</field>
+      <field name="city">Banjarmasin</field>
+      <field name="country_id">Indonesia</field>
+    </record>
+    <record id="asc_port_20" model="asc.port">
+      <field name="name">Barranquilla, Colombia</field>
+      <field name="type">sea</field>
+      <field name="city">Barranquilla</field>
+      <field name="country_id">Colombia</field>
+    </record>
+    <record id="asc_port_21" model="asc.port">
+      <field name="name">Batumi, Georgia</field>
+      <field name="type">sea</field>
+      <field name="city">Batumi</field>
+      <field name="country_id">Georgia</field>
+    </record>
+    <record id="asc_port_22" model="asc.port">
+      <field name="name">Beira, Mozambique</field>
+      <field name="type">sea</field>
+      <field name="city">Beira</field>
+      <field name="country_id">Mozambique</field>
+    </record>
+    <record id="asc_port_23" model="asc.port">
+      <field name="name">Beirut, Lebanon</field>
+      <field name="type">sea</field>
+      <field name="city">Beirut</field>
+      <field name="country_id">Lebanon</field>
+    </record>
+    <record id="asc_port_24" model="asc.port">
+      <field name="name">Belawan, Indonesia</field>
+      <field name="type">sea</field>
+      <field name="city">Belawan</field>
+      <field name="country_id">Indonesia</field>
+    </record>
+    <record id="asc_port_25" model="asc.port">
+      <field name="name">Bengaluru, India</field>
+      <field name="type">sea</field>
+      <field name="city">Bengaluru</field>
+      <field name="country_id">India</field>
+    </record>
+    <record id="asc_port_26" model="asc.port">
+      <field name="name">Benghazi, Libya</field>
+      <field name="type">sea</field>
+      <field name="city">Benghazi</field>
+      <field name="country_id">Libya</field>
+    </record>
+    <record id="asc_port_27" model="asc.port">
+      <field name="name">Berbera, Somalia</field>
+      <field name="type">sea</field>
+      <field name="city">Berbera</field>
+      <field name="country_id">Somalia</field>
+    </record>
+    <record id="asc_port_28" model="asc.port">
+      <field name="name">Bin Minh, Vietnam</field>
+      <field name="type">sea</field>
+      <field name="city">Bin Minh</field>
+      <field name="country_id">Vietnam</field>
+    </record>
+    <record id="asc_port_29" model="asc.port">
+      <field name="name">Buchanan, Liberia</field>
+      <field name="type">sea</field>
+      <field name="city">Buchanan</field>
+      <field name="country_id">Liberia</field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="asc_payment_request_form_view" model="ir.ui.view">
+        <field name="name">payment_request_form</field>
+        <field name="model">asc.payment.request</field>
+        <field name="arch" type="xml">
+            <form string="Payment Request">
+                <header>
+                    <button name="confirm_wizard" string="Confirm" invisible="state != 'draft'" type="object" class="btn-info"/>
+                    <button name="action_approve" string="Approve" invisible="state != 'confirm'" type="object" class="btn-success"/>
+                    <button name="action_cancel" string="Reject/Cancel" invisible="state != 'confirm'" type="object" class="btn-danger"/>
+                    <button name="action_reset" string="Reset to Draft" invisible="state != 'confirm'" type="object" class="btn-muted"/>
+                    <button name="print_payment_request" type="object" class="btn-info" style="color:white; background:#B04949;" invisible="state != 'confirm'">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="type" widget="selection_badge" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="partner_id" readonly="True"/>
+                            <field name="partner_address"/>
+                        </group>
+                        <group>
+                            <field name="lead_id" string="Trade Folder" readonly="True"/>
+                            <field name="purchase_order_id" string="Afrex PO" readonly="True"/>
+                            <field name="sale_invoice_id" string="Afrex PFI/CI" readonly="True"/>
+                            <field name="supplier_proforma_num" readonly="True"/>
+                            <field name="supplier_invoice_ref" readonly="True"/>
+                            <field name="payment_term_id" string="Payment Terms" readonly="True"/>
+                        </group>
+                    </group>
+                    <hr/>
+                    <group>
+                        <group>
+                            <field name="bank_account_id" domain="[('partner_id', '=', partner_id)]" string="Beneficiary Bank Account" readonly="state != 'draft'"/>
+                            <field name="bank_id" string="Bank Name"/>
+                            <field name="bank_branch" string="Branch"/>
+                            <field name="bank_address" string="Address"/>
+                            <field name="bank_swift" string="Swift Code"/>
+                            <field name="bank_ifsc" string="IFSC Code"/>
+                            <field name="correspondent_bank_id" string="Correspondence Bank"/>
+                            <field name="correspondent_bank_acc_num" string="Account Number"/>
+                            <field name="correspondent_bank_swift" string="Swift Code"/>
+                            <field name="correspondent_bank_fedwire" string="Fedwire ABA No."/>
+                            <field name="correspondent_bank_chips_aba" string="CHIPS ABA No."/>
+                            <field name="correspondent_bank_chips_uid" string="CHIPS UID No."/>
+                            <field name="bank_iban" string="IBAN"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" widget="selection_badge" readonly="state != 'draft'"/>
+                            <field name="amount" widget="monetary" readonly="state != 'draft'"/>
+                            <field name="note" readonly="state != 'draft'"/>
+                            <field name="instructions" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <hr/>
+                    <field name="approval_ids" invisible="True">
+                        <tree>
+                            <field name="user_id"/>
+                            <field name="approve_date"/>
+                            <field name="is_approved"/>
+                            <button name="action_approve" invisible="is_approved" class="btn-success" type="object" string="Approve" help="Approve"/>
+                            <button name="action_reset" invisible="not is_approved" class="btn-warning" type="object" string="Reset" help="Reset"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_payment_request_submit_form_view" model="ir.ui.view">
+        <field name="name">payment_request_form_submit</field>
+        <field name="model">asc.payment.request</field>
+        <field name="arch" type="xml">
+            <form string="Payment Request Confirmation">
+                <group>
+                    <field name="state" invisible="True"/>
+                    <group>
+                        <field name="note" readonly="state != 'draft'"/>
+                    </group>
+                    <group>
+                        <field name="instructions" readonly="state != 'draft'"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_payment_request_tree_view" model="ir.ui.view">
+        <field name="name">asc.payment.request.tree</field>
+        <field name="model">asc.payment.request</field>
+        <field name="arch" type="xml">
+            <tree string="Payment Request">
+                <field name="name" optional="show"/>
+                <field name="partner_id" string="Beneficiary"/>
+                <field name="purchase_order_id" string="Afrex PO"/>
+                <field name="lead_id" string="Trade Folder"/>
+                <field name="sale_invoice_id" optional="show"/>
+                <field name="supplier_proforma_num" optional="show"/>
+                <field name="supplier_invoice_ref" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="amount"/>
+                <field name="state" widget="badge"
+                    decoration-info="state == 'confirm'"
+                    decoration-success="state == 'approve'"
+                    decoration-danger="state == 'cancel'"/>
+                <button name="confirm_wizard" invisible="state != 'draft'" class="btn-success" type="object" string="Confirm" help="Submit"/>
+                <button name="action_cancel" invisible="state != 'draft'" class="btn-danger" type="object" string="Cancel" help="Cancel"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_asc_payment_request" model="ir.actions.act_window">
+        <field name="name">Payment Requests</field>
+        <field name="res_model">asc.payment.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Payment Request yet
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_asc_payment_request"
+        name="Payment Requests"
+        action="action_asc_payment_request"
+        parent="purchase.menu_purchase_root"
+        sequence="2"/>
+
+</odoo>

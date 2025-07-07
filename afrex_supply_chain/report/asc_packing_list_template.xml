@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="asc_packing_list_template">
+        <t t-call="web.basic_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <style>
+                table, th, td {
+                border:0px solid white;
+                }
+            </style>
+            <div style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+                <div class="row mb8">
+                    <div class="col-5" style="margin-right: 5px;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                        <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                            <style>
+                                tr, th, td {
+                                border: 0px solid white;
+                                }
+                                td {
+                                padding-left: 5px;
+                                }
+                            </style>
+                            <tr>
+                                <td>
+                                <b><span style="display: inline-block; border-bottom: 1pt solid black;">Sold to: </span></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                <span t-field="o.partner_id.address_text"/>
+                                </td>
+                            </tr>
+                            <t t-if="o.company_id.display_partner_child and o.partner_id.child_ids">
+                                <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-foreach="partner_children" t-as="partner_child">
+                                    <tr t-if="partner_child.name">
+                                        <td>
+                                            Contact Person: <span t-field="partner_child.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="partner_child.email">
+                                        <td>
+                                            Email: <span t-field="partner_child.email"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="partner_child.phone">
+                                        <td>
+                                            Phone: <span t-field="partner_child.phone"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </table>
+                        <table t-if="o.consignee_id" style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                            <style>
+                                tr, th, td {
+                                border: 0px solid white;
+                                }
+                                td {
+                                padding-left: 5px;
+                                }
+                            </style>
+                            <tr>
+                                <td>
+                                <b><span style="display: inline-block; border-bottom: 1pt solid black;">Consignee: </span></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong><span t-field="o.consignee_id.name"/></strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                <span t-field="o.consignee_id.address_text"/>
+                                </td>
+                            </tr>
+                            <t t-if="o.company_id.display_partner_child and o.consignee_id.child_ids">
+                                <t t-set="partner_children" t-value="o.consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-foreach="partner_children" t-as="partner_child">
+                                    <tr t-if="partner_child.name">
+                                        <td>
+                                            Contact Person: <span t-field="partner_child.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="partner_child.email">
+                                        <td>
+                                            Email: <span t-field="partner_child.email"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="partner_child.phone">
+                                        <td>
+                                            Phone: <span t-field="partner_child.phone"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </table>
+                    </div>
+                    <div class="col-7 text-end mb-2">
+                        <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
+                            <tr>
+                                <th valign="middle" class="h5" style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                                    PACKING LIST
+                                </th>
+                            </tr>
+                        </table>
+                        <table class="table table-sm table-borderless" style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                            <tr>
+                                <th style="text-align: start; padding: 0;">
+                                    <span t-field="o.company_id.name"/>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Suite 420, 4th Floor, Barkly Wharf Building</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Caudan Waterfront, Port Louis</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Mauritius</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Email: DL-AfrexSupplier@supergrp.com</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Tel: +230 271 1176</span><span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: start; padding: 0;">
+                                    <span>Website: www.supergrp.com</span>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table table-borderless mb-2 mx-0" style="font-size: 12px; width: 100%; border: 0px solid white;">
+                            <tr t-if="o.packing_list_date">
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
+                                <th style="width:35%; text-align: left;"><span t-esc="o.packing_list_date.strftime('%d-%B-%Y')"/></th>
+                            </tr>
+                            <tr t-if="not o.packing_list_date">
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
+                                <th style="width:35%; text-align: left;">To be confirmed</th>
+                            </tr>
+                            <tr t-if="o.name">
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference Number:</th>
+                                <th style="width:35%; text-align: left;"><span t-field="o.name"/></th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6" style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+                <table style="font-size: 12px; width:100%; margin-bottom:15px; margin-top:20px; border: 1px solid;">
+                    <style>
+                        tr, th, td {
+                        border: 0px solid white;
+                        }
+                        td {
+                        padding-left: 5px;
+                        }
+                    </style>
+                    <tr>
+                        <th class="text-start" style="padding-top: 5px; padding-bottom: 5px;">
+                            <span style="padding-left: 10px;" t-field="o.partner_id.name"/> Purchase Order No: 
+                            <span t-if="o.ref" t-field="o.ref"/>
+                            <span t-else="">To be confirmed</span>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+            <table class="table table-lg" style="width:80%; margin-left: 5%; margin-right: 15%; border: 1px solid; font-size: 12px;">
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Description</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.product_combination_id.name">
+                            <span t-field="o.product_combination_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Packaging</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.packaging_id.name">
+                            <span t-field="o.packaging_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Quantity (Metric Tons)</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.qty_total">
+                            <span t-field="o.qty_total"/><span> MT</span>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Vessel and Voyage</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.vessel and o.voyage">
+                            <span t-field="o.vessel"/> <span t-field="o.voyage"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Port of Loading</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <span t-field="o.loading_port_id.name"/>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Port of Discharge</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <span t-field="o.discharge_port_id.name"/>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Shipped on Board Date</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.sob_date">
+                            <span t-esc="o.sob_date.strftime('%d-%B-%Y')"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Estimated Arrival Date</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.expected_arrival_date">
+                            <span t-esc="o.expected_arrival_date.strftime('%d-%B-%Y')"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr t-if="o.container_stuffing > 0" style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Number of Packages</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <span t-field="o.container_stuffing"/><span> x </span><span t-field="o.packaging_id.name"/>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Gross Weight</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.gross_weight > 0">
+                            <span t-field="o.gross_weight" t-options="{'widget': 'float', 'precision': 2}"/> Kg
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Net Weight</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.net_weight > 0">
+                            <span t-field="o.net_weight" t-options="{'widget': 'float', 'precision': 2}"/> Kg
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <t t-if="o.breakbulk_container == 'container'" style="border: 1px solid;">
+                    <tr>
+                        <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                            <span style="padding-right:5px; padding-left; 5px;">Number of Containers</span>
+                            <span style="padding-right:5px;">:</span>
+                        </th>
+                        <td class="text-start" style="border: 1px solid;">
+                            <t t-if="o.container_count > 0">
+                                <span t-field="o.container_count"/><span> x </span><span t-field="o.container_type_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span>To be confirmed</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr style="border: 1px solid;">
+                        <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                            <span style="padding-right:5px; padding-left; 5px;">Container No</span>
+                            <span style="padding-right:5px;">:</span>
+                        </th>
+                        <td class="text-start" style="border: 1px solid;">
+                            <t t-if="o.container_list">
+                                <span t-field="o.container_list"/>
+                            </t>
+                            <t t-else="">
+                                <span>To be confirmed</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr style="border: 1px solid;">
+                        <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                            <span style="padding-right:5px; padding-left; 5px;">Seal No</span>
+                            <span style="padding-right:5px;">:</span>
+                        </th>
+                        <td class="text-start" style="border: 1px solid;">
+                            <t t-if="o.seal_list">
+                                <span t-field="o.seal_list"/>
+                            </t>
+                            <t t-else="">
+                                <span>To be confirmed</span>
+                            </t>
+                        </td>
+                    </tr>
+                </t>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Country of Origin</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.origin_country_id">
+                            <span t-field="o.origin_country_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+            </table>
+            <div class="mt-4" style="width:40%; margin-left: 55%; margin-right: 5%; font-size: 12px;">
+                <div>
+                    <br/>
+                    <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)" style="max-height:130px;" alt="Seal"/>
+                    <br/>
+                    <span t-if="o.packing_list_date" style="padding-left: 180px;">Date: </span><span t-if="o.packing_list_date" t-esc="o.packing_list_date.strftime('%d-%B-%Y')"/>
+                    <span t-else="" style="padding-left: 180px;">To be confirmed</span>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_asc_packing_list">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="afrex_supply_chain.asc_packing_list_template" t-lang="o.partner_id.lang" />
+            </t>
+        </t>
+    </template>
+
+</odoo>

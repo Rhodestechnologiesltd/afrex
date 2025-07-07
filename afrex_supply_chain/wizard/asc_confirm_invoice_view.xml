@@ -1,0 +1,130 @@
+<odoo>
+
+    <record id="view_confirm_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">asc.confirm.invoice.form</field>
+        <field name="model">asc.confirm.invoice</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="is_internal" invisible="True"/>
+                <field name="incoterm_selection" invisible="True"/>
+                <field name="is_currency_zar" invisible="True"/>
+                <field name="can_confirm" invisible="True"/>
+                <group>
+                    <field name="sale_invoice_id" invisible="True"/>
+                    <field name="date" string="Invoice Date"/>
+                    <field name="exchange_rate" invisible="not is_currency_zar"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="invoice_ref"/>
+                        <field name="tariff_code"/>
+                    </group>
+                    <group>
+                        <field name="invoice_payment_term_id"/>
+                        <field name="payment_due_date"/>
+                    </group>
+                </group>
+                <group string="Shipment">
+                    <group>
+                        <field name="vessel" string="Vessel Name" required="True"/>
+                        <field name="voyage" required="True"/>
+                    </group>
+                    <group>
+                        <field name="expected_arrival_date" required="True"/>
+                        <field name="sob_date" required="True"/>
+                    </group>
+                </group>
+                <hr/>
+                <div class="alert alert-info text-center" role="alert">
+                    <div>
+                        <h6>
+                            The following costing has been calculated based on the updated Supplier Costing and Profit Estimate values.
+                        </h6>
+                    </div>
+                </div>
+                <group string="USD">
+                    <group>
+                        <label for="fob_amount" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount"/>
+                            FOB/MT: <field name="fob_unit" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT: <field name="freight_unit" readonly="True"/>
+                        </div>
+                        <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount"/>
+                            CIF/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount"/>
+                            CFR/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount"/>
+                            FOB/MT: <field name="cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="not is_internal">
+                        <field name="interest_amount"/>
+                        <field name="procurement_documentation_amount"/>
+                    </group>
+                </group>
+                <group string="ZAR" invisible="not is_currency_zar">
+                    <group>
+                        <label for="fob_amount_zar" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount_zar"/>
+                            FOB/MT: <field name="fob_unit_zar" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount_zar" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT: <field name="freight_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount_zar" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount_zar" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount_zar"/>
+                            CIF/MT: <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT: <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT: <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="not is_internal">
+                        <field name="interest_amount_zar"/>
+                        <field name="procurement_documentation_amount_zar"/>
+                    </group>
+                </group>
+                <footer>
+                    <button id="cannot_confirm" name="action_confirm" string="Confirm" type="object" class="btn-primary disabled" invisible="can_confirm"/>
+                    <button id="can_confirm" name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="not can_confirm" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asc_confirm_invoice" model="ir.actions.act_window">
+        <field name="name">Confirm to Commercial Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.confirm.invoice</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+</odoo>

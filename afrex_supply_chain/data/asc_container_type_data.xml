@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+  <record id="asc_container_type1" model="asc.container.type">
+    <field name="name">20' FCL</field>
+  </record>
+  <record id="asc_container_type2" model="asc.container.type">
+    <field name="name">20' Loose Stuff</field>
+  </record>
+  <record id="asc_container_type3" model="asc.container.type">
+    <field name="name">40' FCL</field>
+  </record>
+  <record id="asc_container_type4" model="asc.container.type">
+    <field name="name">40' HC FCL</field>
+  </record>
+  <record id="asc_container_type5" model="asc.container.type">
+    <field name="name">40' Loose Stuff</field>
+  </record>
+  <record id="asc_container_type6" model="asc.container.type">
+    <field name="name">Breakbulk</field>
+  </record>
+  <record id="asc_container_type7" model="asc.container.type">
+    <field name="name">By Road on Truck</field>
+  </record>
+  <record id="asc_container_type8" model="asc.container.type">
+    <field name="name">To Be Confirmed</field>
+  </record>
+</data>

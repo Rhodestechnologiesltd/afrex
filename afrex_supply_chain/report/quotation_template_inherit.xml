@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div class="row mt-4 mb-2" id="general">
+                <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
+                    <strong>Your Reference:</strong><br/>
+                    <span class="m-0" t-field="doc.client_order_ref">SO0000</span>
+                </div>
+                <div t-if="doc.date_order" class="col-auto col-3 mw-100 mb-2" name="informations_date">
+                    <strong t-if="doc.state in ['draft', 'sent']">Date:</strong>
+                    <strong t-else="">Order Date:</strong><br/>
+                    <span class="m-0" t-esc="doc.date_order.strftime('%d-%B-%Y')">2023-12-31</span>
+                </div>
+                <div t-if="doc.validity_date and doc.state in ['draft', 'sent']" class="col-auto col-3 mw-100 mb-2" name="expiration_date">
+                    <strong>Validity:</strong><br/>
+                    <span class="m-0" t-esc="doc.validity_date.strftime('%d-%B-%Y')">2023-12-31</span>
+                </div>
+                <div t-if="doc.is_indicative" class="col-auto col-3 mw-100 mb-2">
+                    <strong>Status:</strong><br/>
+                    <span class="m-0">Indicative, subject to reconfirmation</span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//th[@name='th_taxes']" position="replace"></xpath>
+        <xpath expr="//td[@name='td_taxes']" position="replace"></xpath>
+        <xpath expr="//th[@name='th_priceunit']" position="replace">
+            <th name="th_priceunit" class="text-end">Unit Price/MT</th>
+        </xpath>
+        <xpath expr="//td[@name='td_priceunit']" position="replace">
+            <td name="asc_td_priceunit" class="text-end">
+                <span t-field="line.price_unit" t-options="{'widget': 'float', 'precision': 2}">3</span>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_quantity']" position="replace">
+            <td name="asc_td_quantity" class="text-end">
+                <span t-field="line.product_uom_qty" t-options="{'widget': 'float', 'precision': 2}">3</span>
+                <span t-field="line.product_uom">units</span>
+                <span t-if="line.product_packaging_id">
+                    (<span t-field="line.product_packaging_qty" t-options="{&quot;widget&quot;: &quot;integer&quot;}"/> <span t-field="line.product_packaging_id"/>)
+                </span>
+            </td>
+        </xpath>
+        <xpath expr="(//div)[last()]" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <div t-if="doc.is_internal" class="mt-0 mb-4">
+                <strong>Based on an indicative rate of USDZAR <span t-field="doc.indicative_exchange_rate" t-options="{'widget': 'float', 'precision': 4}"/></strong>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <table style="font-size:14px;" class="table">
+                        <tr>
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Payment Terms</span>
+                            </th>
+                            <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.payment_term_id.name"/></td>
+                        </tr>
+                        <tr t-if="doc.packaging_id">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Packaging</span>
+                            </th>
+                            <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.packaging_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="text-align:left;">Incoterms (<span t-field="doc.incoterm_implementation_year"/>)</span>
+                            </th>
+                            <td style="width:60%; text-align:left; background-color: white !important;">
+                                <span t-field="doc.incoterm_id.code"/> <span t-field="doc.discharge_port_id.name"/>
+                            </td>
+                        </tr>
+                        <tr t-if="doc.discharge_port_id">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">POD</span>
+                            </th>
+                            <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.discharge_port_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Shipment Window</span>
+                            </th>
+                            <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.shipment_window_start"/> <span>  - </span><span t-field="doc.shipment_window_end"/></td>
+                        </tr>
+                        <t t-if="doc.breakbulk_container == 'container'">
+                            <tr>
+                                <th style="width:40%; text-align:left; padding-left: 5px;">
+                                    <span style="float:left;">Container Size</span>
+                                </th>
+                                <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.container_type_id.name"/></td>
+                            </tr>
+                            <tr t-if="doc.container_count > 0">
+                                <th style="width:40%; text-align:left; padding-left: 5px;">
+                                    <span style="float:left;">Container Count</span>
+                                </th>
+                                <td t-if="doc.container_count != 0" style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.container_count"/></td>
+                                <td t-else="" style="width:60%; background-color: white !important;"><span style="float: left;"> </span></td>
+                            </tr>
+                            <tr t-if="doc.packaging_id and doc.container_stuffing > 0">
+                                <th style="width:40%; text-align:left; padding-left: 5px;">
+                                    <span style="float:left;">Container Stuffing</span>
+                                </th>
+                                <td style="background-color: white !important;"><span t-field="doc.container_stuffing"/> <span>  x </span><span t-field="doc.packaging_id.name"/></td>
+                            </tr>
+                            <tr t-if="doc.is_palletised">
+                                <th style="width:40%; text-align:left; padding-left: 5px;">
+                                    <span style="float:left;">Palletised or Loose</span>
+                                </th>
+                                <td style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.is_palletised"/></td>
+                            </tr>
+                        </t>
+                        <tr t-if="doc.qty_total > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Total Quantity</span>
+                            </th>
+                            <td  style="width:60%; background-color: white !important;"><span style="float: left;" t-field="doc.qty_total" t-options='{"widget": "float", "precision": 2}'/><span>  MT</span></td>
+                        </tr>
+                        <tr t-if="doc.origin_country_id">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Origin</span>
+                            </th>
+                            <td style="width:60%; color: black; background-color: white !important;"><span t-field="doc.origin_country_id.name"/></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-1"/>
+                <div class="col-5">
+                    <table style="font-size:14px;background-color: white !important;" class="table">
+                        <tr t-if="doc.fob_amount > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">FOB</span>
+                            </th>
+                            <td style="width:60%; text-align: right; color: black; background-color: white !important;"><span style="text-align: right;" t-field="doc.fob_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                        </tr>
+                        <tr t-if="doc.freight_amount > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Freight</span>
+                            </th>
+                            <td style="width:60%; text-align: right; color:black; background-color:white !important;"><span style="text-align: right;" t-field="doc.freight_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                        </tr>
+                        <tr t-if="doc.insurance_amount > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Insurance</span>
+                            </th>
+                            <td style="width:60%; text-align: right; color: black; background-color: white !important;"><span style="text-align: right;" t-field="doc.insurance_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                        </tr>
+                        <tr t-if="doc.is_internal and doc.interest_amount > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Interest</span>
+                            </th>
+                            <td style="width:60%; text-align: right; color: black; background-color: white !important;"><span style="text-align: right;" t-field="doc.interest_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                        </tr>
+                        <tr t-if="doc.is_internal and doc.procurement_documentation_amount > 0">
+                            <th style="width:40%; text-align:left; padding-left: 5px;">
+                                <span style="float:left;">Procurement and Documentation</span>
+                            </th>
+                            <td valign="middle" style="width:60%; text-align: right; color: black; background-color: white !important;"><span style="text-align: right;" t-field="doc.procurement_documentation_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+    </template>
+        
+</odoo>

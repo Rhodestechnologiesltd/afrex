@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_stock_picking_form_view" model="ir.ui.view">
+        <field name="name">asc.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_properties']" position="before">
+                <group string="Shipment Details">
+                    <field name="supplier_delivery_method" widget="selection_badge" readonly="state in ['done', 'cancel']"/>
+                </group>
+                <group invisible="supplier_delivery_method != 'sea'">
+                    <group>
+                        <field name="carrier_id" readonly="state in ['done', 'cancel']"/>
+                        <field name="forwarder_id" readonly="state in ['done', 'cancel']"/>
+                        <field name="vessel" readonly="state in ['done', 'cancel']"/>
+                        <field name="route" readonly="state in ['done', 'cancel']"/>
+                        <field name="voyage" readonly="state in ['done', 'cancel']"/>
+                        <field name="sob_date" readonly="state in ['done', 'cancel']"/>
+                        <field name="expected_arrival_date" readonly="state in ['done', 'cancel']"/>
+                    </group>
+                    <group>
+                        <field name="booking_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="container_type_id"/>
+                        <field name="container_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="seal_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="marks_numbers" readonly="state in ['done', 'cancel']"/>
+                    </group>
+                </group>
+                <group invisible="supplier_delivery_method != 'road'">
+                    <group>
+                        <field name="transporter_id" readonly="state in ['done', 'cancel']"/>
+                        <field name="clearing_agent_id" readonly="state in ['done', 'cancel']"/>
+                        <field name="driver_name" readonly="state in ['done', 'cancel']"/>
+                        <field name="driver_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="horse_reg_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="first_trailer_reg_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="second_trailer_reg_num" readonly="state in ['done', 'cancel']"/>
+                    </group>
+                    <group>
+                        <field name="manifest_num" readonly="state in ['done', 'cancel']"/>
+                        <field name="loading_date" readonly="state in ['done', 'cancel']"/>
+                        <field name="dispatch_date" readonly="state in ['done', 'cancel']"/>
+                        <field name="offloading_date" readonly="state in ['done', 'cancel']"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="lead_id" string="Trade Folder"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>        

@@ -1,0 +1,41 @@
+/* Accordion Button Styling */
+.accordion-button {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(90deg, #B04949 0%, #d07c7c 100%) !important;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.accordion-button.collapsed {
+    background: linear-gradient(90deg, #B04949 0%, #d07c7c 100%) !important;
+    color: white;
+}
+
+/* Hover & Focus Feedback */
+.accordion-button:hover,
+.accordion-button:focus {
+    background-color: #821319 !important;
+    background: #821319 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+/* Optional border on hover */
+.accordion-button:hover {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Accordion animation */
+.accordion-collapse {
+    transition: height 0.5s ease, opacity 0.5s ease;
+    opacity: 1;
+}
+
+.accordion-collapse.collapsing {
+    opacity: 0;
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_set_document_form" model="ir.ui.view">
+        <field name="name">asc.set.document.form</field>
+        <field name="model">asc.set.document</field>
+        <field name="arch" type="xml">
+          <form >
+            <group invisible="True">
+                <field name="purchase_order_id"/>
+                <field name="sale_invoice_id"/>
+                <field name="lead_id"/>
+                <field name="type"/>
+                <field name="existing_doc_type_ids"/>
+            </group>
+            <field name="doc_type_ids" widget="many2many_checkboxes"/>
+<!--            <field name="ex_doc_type_ids" widget="many2many_checkboxes" readonly="1"/>-->
+            <footer>
+                <button name="set_document" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_set_document" model="ir.actions.act_window">
+        <field name="name">Set list of documents</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.set.document</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

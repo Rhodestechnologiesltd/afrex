@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_purchase_order_form_view" model="ir.ui.view">
+        <field name="name">asc.purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_invoice']" position="replace">
+                <div class="dropdown" id="action_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_action_dropdown" style="color:white; background:#B04949;" type="button" id="button_action_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i> Actions
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_action_dropdown" style="min-width: max-content;">
+                        <li><button name="action_select" icon="fa-flag" string="Select" type="object" class="btn-mute" invisible="is_selected"/></li>
+                        <li><button name="generate_sale_order_wizard" icon="fa-file-text-o" string="Make an Offer" type="object" class="btn-mute" invisible="not is_selected or sale_order_id"/></li>
+                        <li><button name="generate_sale_order_wizard" icon="fa-file-text-o" string="Make new Offer" type="object" class="btn-mute" invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/></li>
+                        <li><button name="update_sales_order_wizard" icon="fa-refresh" string="Update Offer" type="object" class="btn-mute" invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/></li>
+                        <li class="border-top"><button name="button_confirm" icon="fa-check-square-o" string="Confirm Afrex PO" type="object" class="btn-mute" invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/></li>
+                        <li><button name="generate_payment_request_wizard" icon="fa-usd" string="Generate Payment Request(s)" type="object" class="btn-mute" invisible="is_payment_request_generated or state not in ['done', 'purchase']"/></li>
+                        <li><button name="action_view_picking" icon="fa-ship" string="Receive Products" type="object" class="btn-mute" invisible="is_invoiced or state not in ['done', 'purchase']"/></li>
+                        <li class="border-top"><button name="supplier_invoice_wizard" icon="fa-file-text" string="Supplier Commercial Invoice" type="object" class="btn-mute" invisible="is_invoiced or state not in ['done', 'purchase']"/></li>
+                        <!-- <button name="" string="Receive Products" class="oe_highlight" type="object" invisible="is_shipped or state not in ('purchase', 'done') or incoming_picking_count == 0" data-hotkey="y"/> -->
+                        <li><button name="action_mark_invoiced" icon="fa-check" string="Set Invoicing as Done" type="object" class="btn-mute" invisible="is_invoiced or state not in ['done', 'purchase']"/></li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="print_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_print_dropdown" style="color:white; background:#B04949;" type="button" id="button_print_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
+                        <li><button name="print_quote_request" icon="fa-file-text-o" string="Quote Request" type="object" class="btn-mute" invisible="state in ['cancel', 'done', 'purchase']"/></li>
+                        <li><button name="print_purchase_order" icon="fa-file-text" string="Purchase Order" type="object" class="btn-mute" invisible="state not in ['done', 'purchase']"/></li>
+                        <li><button name="print_shipping_instructions" icon="fa-list" string="Shipping Instructions" type="object" class="btn-mute" invisible="state not in ['done', 'purchase']"/></li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="goto_dropdown" style="margin-right: 5px;">
+                    <button class="btn dropdown-toggle" name="button_goto_dropdown" style="color:white; background:#B04949;" type="button" id="button_goto_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-sign-in"></i> Go to
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_goto_dropdown" style="min-width: max-content;">
+                        <li><button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object" class="btn-mute" invisible="not lead_id"/></li>
+                        <li><button name="action_open_profit_estimate" string="Profit Estimate" icon="fa-line-chart" type="object" class="btn-mute" invisible="not lead_id"/></li>
+                        <li class="border-top"><button name="action_open_sale_order" string="Afrex Offer" icon="fa-quote-right" type="object" class="btn-mute" invisible="not sale_order_id"/></li>
+                        <li><button name="action_open_sale_invoice" string="Afrex Invoice" icon="fa-dollar" type="object" class="btn-mute" invisible="not sale_invoice_id"/></li>
+                        <li class="border-top"><button name="action_view_invoice" string="Supplier Commercial Invoice" icon="fa-dollar" type="object" class="btn-mute" invisible="invoice_count == 0 or state in ('draft', 'sent', 'to approve')"/></li>
+                    </ul>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="after">
+                <widget name="web_ribbon" title="Selected" bg_color="text-bg-info" invisible="not is_selected or state in ['cancel', 'done', 'purchase']"/>
+                <!-- <widget name="web_ribbon" title="Purchase Order" bg_color="text-bg-success" invisible="state != 'purchase'"/> -->
+            </xpath>
+            <xpath expr="//button[@name='print_quotation']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//button[@name='confirm_reminder_mail']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='currency_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <label for="lead_id" string="Trade Folder"/>
+                <div class="o_row">
+                    <field name="lead_id" string="Trade Folder" readonly="True"/>
+                    <field name="currency_id" widget="selection_badge" force_save="1" readonly="state != 'draft'"/>
+                </div>
+                <field name="sale_order_id" string="Afrex Offer" invisible="True"/>
+                <field name="sale_invoice_id" string="Afrex Invoice" invisible="True"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_ref']" position="before">
+                <field name="origin_country_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_ref']" position="replace">
+                <label for="partner_ref" string="Vendor PFI"/>
+                <div class="o_row">
+                    <field name="partner_ref" placeholder="Reference..." readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <strong>Date: </strong><field name="supplier_reference_doc_date"  readonly="state in ['cancel', 'done', 'purchase']"/>
+                </div>
+                <label for="supplier_contract_num" string="Vendor Sales Contract"/>
+                <div class="o_row">
+                    <field name="supplier_contract_num" placeholder="Reference..." readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <strong>Date: </strong><field name="supplier_contract_date" required="supplier_contract_num" readonly="state in ['cancel', 'done', 'purchase']"/>
+                </div>
+                <field name="product_combination_id" string="Product" readonly="True" widget="selection"/>
+                <field name="packaging_id" string="Packaging" readonly="True" widget="selection"/>
+                <button string="Update Packaging" name="update_packaging_wizard" type="object" class="btn-info" invisible="state in ['purchase', 'done']" colspan="2"/>
+            </xpath>
+            <xpath expr="//group[2]" position="replace">
+                <group>
+                    <field name="is_sent" invisible="True"/>
+                    <field name="is_selected" invisible="True"/>
+                    <field name="is_payment_request_generated" invisible="True"/>
+                    <field name="is_invoiced" invisible="True"/>
+                    <field name="date_planned" invisible="True"/>
+                    <field name="effective_date" invisible="True"/>
+                    <field name="mail_reminder_confirmed" invisible="True"/>
+                    <field name="invoice_count" invisible="True"/>
+                    <field name="incoterm_implementation_year" invisible="True"/>
+                    <field name="incoterm_selection" invisible="True"/>
+                    <field name="supplier_delivery_method" widget="selection_badge" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="incoterm_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="loading_port_id" string="Port of Loading" invisible="supplier_delivery_method != 'sea'" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="loading_port_id" string="Place of Loading" invisible="supplier_delivery_method != 'road'" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="discharge_port_id" string="Port of Discharge" invisible="supplier_delivery_method != 'sea'"/>
+                    <field name="discharge_port_id" string="Place of Delivery" invisible="supplier_delivery_method != 'road'"/>
+                    <field name="shipment_window_start" string="Shipment Window" widget="daterange" options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}" required="shipment_window_start or shipment_window_end"/>
+                    <field name="shipment_window_end" invisible="1" required="shipment_window_start"/>
+                    <field name="first_consignee_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="second_consignee_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    <field name="payment_term_id" readonly="state not in ['draft', 'sent']"/>
+                    <field name="validity" string="Validity" readonly="state not in ['draft', 'sent']"/>
+                    <field name="is_switch" readonly="state not in ['draft', 'sent']"/>
+                </group>
+            </xpath>
+            <xpath expr="//notebook" position="before">
+                <group string="Shipment" invisible="supplier_delivery_method != 'sea'">
+                    <group>
+                        <field name="breakbulk_container" widget="selection_badge" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="is_palletised" widget="selection_badge" invisible="breakbulk_container != 'container'" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="trans_shipment" widget="selection_badge" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="partial_shipment" widget="selection_badge" readonly="state in ['cancel', 'done', 'purchase']"/>
+                    </group>
+                    <group>
+                        <field name="qty_total" string="MT Ordered" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="qty_delivered" string="MT Received"/>
+                        <label for="container_count" string="Container" invisible="breakbulk_container != 'container'"/>
+                        <div name="container_count" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_count" placeholder="Count..." readonly="state in ['cancel', 'done', 'purchase']"/>
+                            x <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}" required="container_count" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing" invisible="breakbulk_container != 'container'"/>
+                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_stuffing" readonly="state in ['cancel', 'done', 'purchase']"/>
+                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                        <field name="expected_sob_date" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="sob_date" readonly="True"/>
+                    </group>
+                </group>
+                <group string="Delivery by Road" invisible="supplier_delivery_method != 'road'">
+                    <group>
+                        <field name="transporter_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="clearing_agent_id" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <label for="container_count" string="Transportation"/>
+                        <div name="container_count" class="o_row">
+                            <field name="container_count" placeholder="Truck/Container Count... (if applicable)" readonly="state in ['cancel', 'done', 'purchase']"/>
+                            x <field name="container_type_id" options="{'no_open':True}" required="container_count" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing"/>
+                        <div name="container_stuffing" class="o_row">
+                            <field name="container_stuffing" placeholder="Stuffing... (if applicable)" readonly="state in ['cancel', 'done', 'purchase']"/>
+                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="incoterm_selection != 'fca'">
+                        <label for="road_transportation_unit" string="Road Transportation and Clearance/MT"/>
+                        <div class="o_row">
+                            <field name="road_transportation_unit" readonly="state in ['cancel', 'done', 'purchase']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="road_transportation_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="logistics_service_unit" string="Logistics Service/MT"/>
+                        <div class="o_row">
+                            <field name="logistics_service_unit" readonly="state in ['cancel', 'done', 'purchase']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="logistics_service_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="qty_total" string="MT Ordered" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="qty_delivered" string="MT Received"/>
+                    </group>
+                    <group invisible="incoterm_selection != 'dap'">
+                        <label for="logistics_service_unit" string="Logistics Service/MT"/>
+                        <div class="o_row">
+                            <field name="logistics_service_unit" readonly="state in ['cancel', 'done', 'purchase']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="logistics_service_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="qty_total" string="MT Ordered" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="qty_delivered" string="MT Received"/>
+                    </group>
+                </group>    
+                <group invisible="state != 'purchase' or supplier_delivery_method != 'sea'">
+                    <group string="Initial Supplier Costing">
+                        <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <label for="initial_fob_unit" string="FOB/MT"/>
+                        <div class="o_row">
+                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="initial_insurance_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        <label for="initial_freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                            <field name="initial_freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="initial_freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'container'">
+                            <field id="initial_freight_amount" name="initial_freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row">
+                            <field name="initial_cost_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                    <group string="Confirmed Supplier Costing">
+                        <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
+                        <label for="fob_unit" string="FOB/MT"/>
+                        <div class="o_row">
+                            <field name="fob_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                        <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                            <field name="freight_unit" readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'container'">
+                            <field id="freight_amount" name="freight_amount" readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Freight/MT: <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row">
+                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                </group>   
+                <group invisible="state != 'purchase' or supplier_delivery_method != 'road'">
+                    <group string="Initial Supplier Costing">
+                        <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <label for="fca_unit" string="FCA/MT"/>
+                        <div class="o_row">
+                            <field name="initial_fca_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_fca_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="road_transportation_unit" string="Road Transportation/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="initial_road_transportation_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_road_transportation_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="DAP/MT" invisible="incoterm_selection != 'dap'"/>
+                        
+                        <div class="o_row">
+                            <field name="initial_cost_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                    <group string="Confirmed Supplier Costing">
+                        <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
+                        <label for="fca_unit" string="FCA/MT"/>
+                        <div class="o_row">
+                            <field name="fca_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="fca_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="road_transportation_unit" string="Road Transportation/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="road_transportation_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="road_transportation_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="DAP/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                </group>
+                <group invisible="state == 'purchase' or supplier_delivery_method != 'sea'">
+                    <group string="Initial Supplier Costing">
+                        <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}"/>
+                        <label for="fob_unit" string="FOB/MT"/>
+                        <div class="o_row">
+                            <field name="fob_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                        <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                            <field name="freight_unit" readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'container'">
+                            <field id="freight_amount" name="freight_amount" readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Freight/MT: <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row">
+                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <div class="o_row" colspan="2">
+                            <button name="update_sales_order_wizard" type="object" string=" Update Offer" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer." invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
+                        </div>
+                    </group>
+                    <group string="Confirmed Supplier Costing">
+                        <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
+                        <label for="initial_fob_unit" string="FOB/MT"/>
+                        <div class="o_row">
+                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <field name="initial_insurance_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        <label for="initial_freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                            <field name="initial_freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="initial_freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
+                        <div class="o_row" invisible="breakbulk_container != 'container'">
+                            <field id="initial_freight_amount" name="initial_freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row">
+                            <field name="initial_cost_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                </group>
+                <group invisible="state == 'purchase' or supplier_delivery_method != 'road'">
+                    <group string="Initial Supplier Costing">
+                        <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}"/>
+                        <label for="fca_unit" string="FCA/MT"/>
+                        <div class="o_row">
+                            <field name="fca_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="fca_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="road_transportation_unit" string="Road Transportation/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="road_transportation_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="road_transportation_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="DAP/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <div class="o_row" colspan="2">
+                            <button name="update_sales_order_wizard" type="object" string=" Update Offer" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer." invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
+                        </div>
+                    </group>
+                    <group string="Confirmed Supplier Costing">
+                        <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
+                        <label for="fca_unit" string="FCA/MT"/>
+                        <div class="o_row">
+                            <field name="initial_fca_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_fca_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="road_transportation_unit" string="Road Transportation/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="initial_road_transportation_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_road_transportation_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                        <label for="cost_unit" string="DAP/MT" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="initial_cost_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            Total: <field name="initial_cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='products']//field[@name='order_line']" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']//tree//field[@name='taxes_id']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='price_subtotal']" position="attributes">
+                <attribute name="string">Total</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']//field[@name='product_id']" position="after">
+                <field name="product_combination_id" string="Product Description" optional="hide" readonly="True"/>
+            </xpath>
+            <xpath expr="//page[@name='products']//field[@name='product_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']//tree//field[@name='name']" position="after">
+                <field name="packaging_id" readonly="True"/>
+            </xpath>
+            <xpath expr="//page[@name='purchase_delivery_invoice']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']" position="after">
+                <page name="payment_request" string="Payment Requests">
+                    <field name="payment_request_ids" context="{'default_partner_id': partner_id}">
+                        <tree>
+                            <field name="type"/>
+                            <field name="date"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="state" widget="badge"
+                                decoration-info="state == 'confirm'"
+                                decoration-success="state == 'approve'"
+                                decoration-danger="state == 'cancel'"/>
+                            <button name="confirm_wizard" invisible="state != 'draft'" class="btn-success" type="object" string="Confirm" help="Submit"/>
+                            <button name="action_cancel" invisible="state != 'draft'" class="btn-danger" type="object" string="Cancel" help="Cancel"/>
+                        </tree>
+                        <form>
+                            <field name="state" invisible="True"/>
+                            <group>
+                                <field name="partner_id" string="Beneficiary" readonly="True"/>
+                                <group>
+                                    <field name="type" widget="selection_badge" readonly="state != 'draft'"/>
+                                    <field name="bank_account_id" string="Bank Account" domain="[('partner_id', '=', partner_id)]"/>
+                                    <field name="amount" readonly="state != 'draft'"/>
+                                </group>
+                                <group>
+                                    <field name="note" readonly="state != 'draft'"/>
+                                    <field name="instructions" readonly="state != 'draft'"/>
+                                </group>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+                <page name="Supplier Documents">
+                    <button name="set_incoming_document_wizard" icon="fa-file-text-o" string="Set Documents to be provided" type="object" class="btn-primary"/>
+                    <separator/>
+                    <field name="incoming_doc_ids" context="{'default_type': 'incoming'}">
+                        <tree editable="bottom" default_order="name asc" decoration-success="is_provided" decoration-danger="not is_provided">
+                            <field name="purchase_order_id" column_invisible="True"/>
+                            <field name="type" column_invisible="True"/>
+                            <field name="type_id" readonly="is_provided or (id and type_id)" string="Document"/>
+                            <field name="name" readonly="is_provided" string="Title/Description"/>
+                            <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
+                            <field name="is_provided" readonly="True" optional="hide"/>
+                            <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/>
+                            <button name="set_to_provide" class="float-end btn-warning" type="object" icon="fa-unlock-alt" help="Reopen" invisible="not is_provided"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="Afrex Documents">
+                    <button name="set_outgoing_document_wizard" icon="fa-file-text-o" string="Set Documents for Afrex to submit" type="object" class="btn-primary"/>
+                    <separator/>
+                    <field name="outgoing_doc_ids" context="{'default_type': 'outgoing'}">
+                        <tree editable="bottom" default_order="name asc" decoration-success="is_provided" decoration-danger="not is_provided">
+                            <field name="purchase_order_id" column_invisible="True"/>
+                            <field name="type" column_invisible="True"/>
+                            <field name="type_id" readonly="is_provided" string="Document"/>
+                            <field name="name" readonly="is_provided" string="Title/Description"/>
+                            <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
+                            <field name="is_provided" readonly="True" optional="hide"/>
+                            <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/>
+                            <button name="set_to_provide" class="float-end btn-warning" type="object" icon="fa-unlock-alt" help="Reopen" invisible="not is_provided"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

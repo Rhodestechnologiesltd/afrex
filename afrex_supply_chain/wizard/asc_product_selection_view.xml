@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_product_selection_form" model="ir.ui.view">
+        <field name="name">asc.product.selection.form</field>
+        <field name="model">asc.product.selection</field>
+        <field name="arch" type="xml">
+          <form string="Select Product">
+            <field name="lead_id" readonly="True" invisible="True"/>
+            <field name="can_confirm" invisible="True"/>
+            <group>
+                <field name="product_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                <field name="product_variant_id" readonly="True" invisible="True"/>
+            </group>
+            <group>
+                <field name="product_qty"/>
+            </group>
+            <group col="3">
+                <group>
+                    <field name="first_spec_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                </group>
+                <group>
+                    <field name="second_spec_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                </group>
+                <group>
+                    <field name="third_spec_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+                </group>
+            </group>
+            <group>
+                <field name="packaging_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+            </group>
+            <hr/>
+            <group>
+                <field name="product_combination_id" widget="radio" domain="[('id', 'in', product_combination_ids)]" invisible="not product_id or not packaging_id"/>
+                <br/>
+                <button name="action_clear" string="Clear" type="object" class="oe_highlight" colspan="2" invisible="not product_combination_id"/>
+            </group>
+            <notebook>
+                <page string="Available Products">
+                    <field name="product_combination_ids" readonly="True" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}">
+                        <tree create="false" delete="false">
+                            <field name="product_id"/>
+                            <field name="first_spec_id"/>
+                            <field name="second_spec_id"/>
+                            <field name="third_spec_id"/>
+                            <field name="packaging_id"/>
+                            <field name="supplier_ids" widget="many2many_tags" optional="show"/>
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+            <footer>
+                <button id="cannot_confirm" name="return_product_combination" string="Confirm" type="object" class="btn-primary disabled" invisible="can_confirm"/>
+                <button id="can_confirm" name="return_product_combination" string="Confirm" type="object" class="btn-primary" invisible="not can_confirm" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_product_selection" model="ir.actions.act_window">
+        <field name="name">Select Product</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.product.selection</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

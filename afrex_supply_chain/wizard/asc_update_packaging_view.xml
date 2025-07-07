@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_asc_update_packaging_form" model="ir.ui.view">
+        <field name="name">asc.update.packaging.form</field>
+        <field name="model">asc.update.packaging</field>
+        <field name="arch" type="xml">
+          <form string="Update Packaging">
+            <field name="lead_id" readonly="True" invisible="True"/>
+            <field name="purchase_order_id" readonly="True" invisible="True"/>
+            <field name="can_confirm" readonly="True" invisible="True"/>
+            <group>
+                <field name="product_id" readonly="True"/>
+                <field name="product_variant_id" readonly="True" invisible="True"/>
+            </group>
+            <group col="3">
+                <group>
+                    <field name="first_spec_id" readonly="True"/>
+                </group>
+                <group>
+                    <field name="second_spec_id" readonly="True"/>
+                </group>
+                <group>
+                    <field name="third_spec_id" readonly="True"/>
+                </group>
+            </group>
+            <group>
+                <field name="packaging_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+            </group>
+            <footer>
+                <button id="cannot_confirm" name="action_confirm" string="Confirm" type="object" class="btn-primary disabled" invisible="can_confirm"/>
+                <button id="can_confirm" name="action_confirm" string="Confirm" confirm="If this combination does not exist, it will be added to the system." type="object" class="btn-primary" invisible="not can_confirm" data-hotkey="q"/>
+                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            </footer>
+          </form>
+        </field>
+    </record>
+
+    <record id="action_asc_update_packaging" model="ir.actions.act_window">
+        <field name="name">Update Packaging</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">asc.update.packaging</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,2078 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_crm_lead_kanban_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="quick_create">false</attribute>
+                <attribute name="on_create">afrex_supply_chain.asc_open_create_lead</attribute>
+                <attribute name="quick_create_view">afrex_supply_chain.asc_quick_create_lead_form</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="asc_quick_create_lead_form" model="ir.ui.view">
+        <field name="name">asc.crm.form.quick_create</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form class="o_form_project_project">
+                <group>
+                    <group string="Lead/Buyer">
+                        <field name="partner_id" domain="[('is_company','=',True)]" string="Customer" required="True"/>
+                        <field name="supplier_delivery_method" widget="radio" required="True"/>
+                        <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}"
+                               domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'"
+                               invisible="supplier_delivery_method != 'sea'"/>
+                        <field name="discharge_port_id" string="Place of Delivery" context="{'default_type': 'road'}"
+                               domain="[('type', '=', 'road')]" required="supplier_delivery_method == 'road'"
+                               invisible="supplier_delivery_method != 'road'"/>
+                        <!-- <field name="sale_country_id"/> -->
+                        <field name="consignee_id"/>
+                        <field name="shipment_window_start" string="Shipment Window" widget="daterange"
+                               options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}"
+                               required="shipment_window_start or shipment_window_end"/>
+                        <field name="shipment_window_end" invisible="1" required="shipment_window_start"/>
+                    </group>
+                    <group string="Product">
+                        <field name="is_product_locked" invisible="True"/>
+                        <button name="product_selection_wizard" string="Select Product" type="object"
+                                class="oe_highlight" colspan="2" invisible="is_product_locked"/>
+                        <field name="product_combination_id" readonly="True" widget="selection"/>
+                        <field name="packaging_id" readonly="True"/>
+                        <field name="packaging_weight"/>
+                        <field name="product_qty"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Create" name="action_open_lead_form" type="object" class="btn-primary o_open_tasks"
+                            data-hotkey="q"/>
+                    <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_open_create_lead" model="ir.actions.act_window">
+        <field name="name">Start a Lead/Trade Folder</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="asc_quick_create_lead_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="asc_crm_lead_form_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]/h2" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//form//group[1]" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//form//notebook" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_schedule_meeting']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <!-- <xpath expr="//header" position="inside">
+                <div class="dropdown" id="print_dropdown">
+                    <button class="btn dropdown-toggle" name="button_print_dropdown" style="color:white; background:#B04949;" type="button" id="button_print_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
+                        <li><button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate" type="object" class="btn-mute"/></li>
+                    </ul>
+                </div>
+            </xpath> -->
+            <xpath expr="//button[@name='action_show_potential_duplicates']" position="replace">
+                <div class="dropdown" id="action_dropdown" style="margin-left: 10px;">
+                    <button class="btn dropdown-toggle" name="button_action_dropdown"
+                            style="color:white; background:#B04949;" type="button" id="button_action_dropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i>
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_action_dropdown" style="min-width: max-content;">
+                        <li>
+                            <button name="product_selection_wizard" icon="fa-hand-o-up" string="Select Product"
+                                    type="object" class="btn-mute" invisible="is_product_selected"/>
+                        </li>
+                        <li>
+                            <button name="product_selection_wizard" icon="fa-refresh" string="Change Product"
+                                    type="object" class="btn-mute"
+                                    invisible="is_product_locked or not is_product_selected"/>
+                        </li>
+                        <li>
+                            <button name="lock_product_selection" icon="fa-lock" string="Lock Product" type="object"
+                                    class="btn-mute" invisible="is_product_locked or not product_combination_id"/>
+                        </li>
+                        <li>
+                            <button name="unlock_product_selection" icon="fa-unlock" string="Unlock Product Selection"
+                                    type="object" class="btn-mute"
+                                    invisible="not is_product_locked or is_rfq_generated"/>
+                        </li>
+                        <li>
+                            <button name="generate_purchase_order_wizard" icon="fa-external-link" string="Generate QRs"
+                                    type="object" class="btn-mute"
+                                    invisible="not active or is_rfq_generated or not is_product_locked or not product_combination_id"/>
+                        </li>
+                        <li>
+                            <button name="generate_payment_request_wizard" icon="fa-usd"
+                                    string="Generate Payment Request(s)" type="object" class="btn-mute"
+                                    invisible="is_payment_request_generated"/>
+                        </li>
+                        <li>
+                            <button name="generate_offer" icon="fa-file-text-o" string="Make an Offer" type="object"
+                                    class="btn-mute" invisible="not purchase_order_id or sale_order_id"/>
+                        </li>
+                        <li>
+                            <button name="generate_offer" icon="fa-file-text-o" string="Make new Offer" type="object"
+                                    class="btn-mute"
+                                    invisible="not purchase_order_id or not sale_order_id or sale_order_state in ['sale']"/>
+                        </li>
+                        <li>
+                            <button name="receive_products" icon="fa-ship" string="Receive Products" type="object"
+                                    class="btn-mute"
+                                    invisible="is_purchase_order_invoiced or purchase_order_state not in ['done', 'purchase']"/>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="print_dropdown" style="margin-left: 10px;">
+                    <button class="btn dropdown-toggle" name="button_print_dropdown"
+                            style="color:white; background:#B04949;" type="button" id="button_print_dropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
+                        <li>
+                            <button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate"
+                                    type="object" class="btn-mute"/>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="goto_dropdown" style="margin-left: 10px;">
+                    <button class="btn dropdown-toggle" name="button_goto_dropdown"
+                            style="color:white; background:#B04949;" type="button" id="button_goto_dropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-sign-in"></i>
+                        Go to
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="button_goto_dropdown" style="min-width: max-content;">
+                        <li>
+                            <button name="action_get_purchase_orders" type="object" class="btn-mute">
+                                <i class="fa fa-cart-plus"/>
+                                Quote Requests [<field name="purchase_order_count"/>]
+                            </button>
+                        </li>
+                        <li>
+                            <button name="action_open_purchase_order" string="Purchase Order" icon="fa-shopping-cart"
+                                    type="object" class="btn-mute"/>
+                        </li>
+                        <li>
+                            <button name="action_open_sale_order" string="Offer" icon="fa-quote-right" type="object"
+                                    class="btn-mute"/>
+                        </li>
+                        <li>
+                            <button name="action_open_invoice" string="Afrex Invoice" icon="fa-dollar" type="object"
+                                    class="btn-mute"/>
+                        </li>
+                    </ul>
+                </div>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <field name="description" placeholder="Notes and Remarks..." options="{'collaborative': true}"/>
+                <group colspan="4">
+                    <field name="tag_ids" string=" " placeholder="Tags to help with reporting..."
+                           widget="many2many_tags"/>
+                </group>
+                <group col="3">
+                    <group string="Procurement">
+                        <field name="is_product_selected" string="Product is selected" readonly="True"/>
+                        <field name="is_product_locked" string="Product is locked" readonly="True"/>
+                        <field name="is_rfq_generated" readonly="True"/>
+                        <field name="is_purchase_order_confirmed" readonly="True"/>
+                        <field name="is_payment_request_generated" readonly="True"/>
+                        <field name="is_purchase_order_invoiced" readonly="True"/>
+                    </group>
+                    <group string="Sales">
+                        <field name="is_profit_estimate_approved" widget="boolean_toggle"/>
+                        <field name="is_sale_order_generated" readonly="True"/>
+                        <field name="is_afrex_proforma_raised" readonly="True"/>
+                        <field name="is_afrex_commercial_raised" readonly="True"/>
+                    </group>
+                    <group string="Logistics and Accounting">
+                        <field name="deal_status_logistics" widget="selection_badge"/>
+                        <field name="deal_status_accounting" widget="selection_badge"/>
+                        <field name="is_eazzy_filed"/>
+                        <field name="logistics_state" string="Logistics Status"/>
+                        <field name="is_bl_released" readonly="True"/>
+                    </group>
+                </group>
+                <div style="display: flex;">
+                    <div id="section_origin"
+                         style="font-size:18px; font-weight: bold; text-align: center; color:white; background:#821319; flex: 1; margin-right: 5px; margin-bottom: 5px;">
+                        Supplier
+                    </div>
+                    <i class="fa fa-long-arrow-right"
+                       style="font-size:22px; font-weight: bold; text-align: center; flex: 0.1; color:#821319; margin-right: 5px; margin-bottom: 5px;"
+                       aria-hidden="true"/>
+                    <div id="section_destination"
+                         style="font-size:18px; font-weight: bold; text-align: center; color:white; background:#821319; flex: 1; margin-bottom: 5px;">
+                        Buyer
+                    </div>
+                </div>
+                <group>
+                    <group>
+                        <field name="supplier_id"/>
+                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"
+                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
+                        <field name="loading_port_id" string="Place of Loading" context="{'default_type': 'road'}"
+                               domain="[('type', '=', 'road')]" invisible="supplier_delivery_method != 'road'"/>
+                        <field name="origin_country_id"/>
+                    </group>
+                    <group>
+                        <field name="partner_id" domain="[('is_company','=',True)]" required="True"/>
+                        <field name="supplier_delivery_method" widget="selection_badge" required="True"/>
+                        <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}"
+                               domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'"
+                               invisible="supplier_delivery_method != 'sea'"/>
+                        <field name="discharge_port_id" string="Place of Delivery" context="{'default_type': 'road'}"
+                               domain="[('type', '=', 'road')]" required="supplier_delivery_method == 'road'"
+                               invisible="supplier_delivery_method != 'road'"/>
+                        <field name="sale_country_id"/>
+                        <field name="consignee_id"/>
+                        <field name="shipment_window_start" string="Shipment Window" widget="daterange"
+                               options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}"
+                               required="shipment_window_start or shipment_window_end"/>
+                        <field name="shipment_window_end" invisible="1" required="shipment_window_start"/>
+                        <field name="is_internal" readonly="True"/>
+                    </group>
+                </group>
+                <div style="display: flex;">
+                    <div id="section_product"
+                         style="font-size:18px; font-weight: bold; text-align: center; color:white; background:#821319; flex: 1; margin-bottom: 5px;">
+                        Product
+                    </div>
+                </div>
+                <group>
+                    <group>
+                        <!-- <field name="product_id"/> -->
+                        <field name="is_product_locked" invisible="True"/>
+                        <!-- <button name="product_selection_wizard" string="Select Product" type="object" class="oe_highlight" colspan="2" invisible="is_product_locked"/> -->
+                        <button name="lock_product_selection" string="Lock" type="object" class="oe_highlight"
+                                colspan="2" invisible="is_product_locked"/>
+                        <!-- <br/> -->
+                        <field name="product_combination_id" readonly="1" widget="selection"/>
+                        <field name="packaging_id" readonly="True"/>
+                        <field name="packaging_weight"/>
+                    </group>
+                    <group>
+                        <field name="product_qty" readonly="purchase_order_id"/>
+                        <field name="purchase_order_qty_delivered"/>
+                        <field name="product_supplier_ids" widget="many2many_tags"/>
+                    </group>
+                </group>
+                <div class="accordion accordion-sm accordion-flush mb-4 mt-4" id="quote_accordion">
+                    <div class="accordion-item">
+                        <span id="quote_heading" style="text-align: center;">
+                            <button name="quote_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#quote_collapse" aria-expanded="true"
+                                    aria-controls="quote_collapse">
+                                <strong>Quote Requests and Offer</strong>
+                            </button>
+                        </span>
+                        <div id="quote_collapse" class="accordion-collapse collapse" aria-labelledby="quote_heading"
+                             data-bs-parent="#quote_accordion">
+                            <div class="accordion-body">
+                                <group>
+                                    <group string="Quote Requests">
+                                        <field name="is_rfq_generated" invisible="True"/>
+                                        <button string="Generate QRs" name="generate_purchase_order_wizard"
+                                                type="object" class="oe_highlight"
+                                                invisible="is_rfq_generated or not active" colspan="2"/>
+                                        <field name="product_supplier_ids" widget="many2many_tags"/>
+                                        <field name="purchase_order_ids" string=" " readonly="True">
+                                            <tree>
+                                                <field name="incoterm_selection" column_invisible="True"/>
+                                                <field name="name"/>
+                                                <field name="partner_id"/>
+                                                <field name="origin_country_id" optional="hide"/>
+                                                <field name="fob_amount" optional="hide"/>
+                                                <field name="freight_amount" optional="hide"/>
+                                                <field name="insurance_amount" optional="hide"
+                                                       invisible="incoterm_selection != 'cif'"/>
+                                                <field name="cost_amount" string="CIF"
+                                                       invisible="incoterm_selection != 'cif'"/>
+                                                <field name="cost_amount" string="CFR"
+                                                       invisible="incoterm_selection != 'cfr'"/>
+                                                <field name="cost_amount" string="FOB"
+                                                       invisible="incoterm_selection != 'fob'"/>
+                                                <field name="amount_total"/>
+                                                <field name="validity" optional="hide"/>
+                                                <field name="state" widget="badge" optional="hide"/>
+                                                <field name="is_sent"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                    <group string="Afrex Offer">
+                                        <field name="sale_order_id" string="Offer" readonly="True"/>
+                                        <field name="sale_order_date" widget="date" invisible="not sale_order_id"/>
+                                        <field name="sale_order_state"/>
+                                    </group>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion accordion-sm accordion-flush mb-4" id="proforma_accordion">
+                    <div class="accordion-item">
+                        <span id="proforma_heading" style="text-align: center;">
+                            <button name="proforma_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#proforma_collapse" aria-expanded="true"
+                                    aria-controls="proforma_collapse">
+                                <strong>Proforma Invoices</strong>
+                            </button>
+                        </span>
+                        <div id="proforma_collapse" class="accordion-collapse collapse"
+                             aria-labelledby="proforma_heading" data-bs-parent="#proforma_accordion">
+                            <div class="accordion-body">
+                                <group>
+                                    <group string="Supplier PFI">
+                                        <field name="supplier_proforma_num" string="PFI No."/>
+                                        <field name="supplier_proforma_date" string="Date"/>
+                                    </group>
+                                    <group string="Afrex PFI">
+                                        <button string="Generate PFI" name="generate_proforma_invoice" type="object"
+                                                class="oe_highlight" colspan="2" invisible="is_afrex_proforma_raised"/>
+                                        <field name="is_afrex_proforma_raised" invisible="True"/>
+                                        <!-- <button string="Generate PFI" name="generate_proforma_invoice" type="object" class="oe_highlight" colspan="2" invisible="sale_order_id"/> -->
+                                        <field name="sale_invoice_id" readonly="True"/>
+                                        <field name="sale_invoice_date"/>
+                                        <field name="sale_invoice_state"/>
+                                    </group>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="purchase_order_accordion">
+                    <div class="accordion-item">
+                        <span id="purchase_order_heading" style="text-align: center;">
+                            <button name="purchase_order_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#purchase_order_collapse"
+                                    aria-expanded="true" aria-controls="purchase_order_collapse">
+                                <strong>Purchase Order</strong>
+                            </button>
+                        </span>
+                        <div id="purchase_order_collapse" class="accordion-collapse collapse"
+                             aria-labelledby="purchase_order_heading" data-bs-parent="#purchase_order_accordion">
+                            <div class="accordion-body">
+                                <group>
+                                    <group string="Afrex PO">
+                                        <field name="purchase_order_id" string="Afrex PO" readonly="True"/>
+                                        <field name="purchase_order_date" widget="date" string="Date"/>
+                                        <field name="purchase_order_qty_delivered"/>
+                                        <field name="purchase_order_incoterm_selection" invisible="True"/>
+                                        <field name="is_purchase_order_invoiced" invisible="True"/>
+                                        <field name="purchase_order_state" widget="badge"/>
+                                    </group>
+                                    <group string="Buyer PO">
+                                        <field name="sale_purchase_order_num" string="PO Num"/>
+                                        <field name="sale_purchase_order_date" string="Date"/>
+                                    </group>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="invoice_accordion">
+                    <div class="accordion-item">
+                        <span id="invoice_heading" style="text-align: center;">
+                            <button name="invoice_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#invoice_collapse" aria-expanded="true"
+                                    aria-controls="invoice_collapse">
+                                <strong>Commercial Invoices</strong>
+                            </button>
+                        </span>
+                        <div id="invoice_collapse" class="accordion-collapse collapse" aria-labelledby="invoice_heading"
+                             data-bs-parent="#invoice_accordion">
+                            <div class="accordion-body">
+                                <group>
+                                    <group string="Supplier Commercial Invoice">
+                                        <field colspan="2" nolabel="1" name="supplier_invoice_ids" readonly="True">
+                                            <tree>
+                                                <field name="currency_id" column_invisible="True"/>
+                                                <field name="name" readonly="True"/>
+                                                <field name="invoice_date" readonly="True"/>
+                                                <field name="ref"/>
+                                                <field name="amount_total"/>
+                                            </tree>
+                                        </field>
+                                        <field name="supplier_invoice_list" string="Invoice No."/>
+                                        <field name="is_switch"/>
+                                        <field name="switch_invoice_num" invisible="not is_switch"/>
+                                        <field name="switch_invoice_amount" string="Amount" invisible="not is_switch"/>
+                                    </group>
+                                    <group string="Afrex Invoice">
+                                        <button string="Generate CI" name="confirm_invoice" type="object"
+                                                class="oe_highlight" colspan="2"
+                                                invisible="is_afrex_commercial_raised"/>
+                                        <field name="is_afrex_commercial_raised" invisible="True"/>
+                                        <field name="sale_invoice_id" readonly="True"/>
+                                        <field name="sale_invoice_date"/>
+                                        <field name="sale_invoice_state"/>
+                                    </group>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="payment_requests_accordion">
+                    <div class="accordion-item">
+                        <span id="payment_requests_heading" style="text-align: center;">
+                            <button name="payment_requests_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#payment_requests_collapse"
+                                    aria-expanded="true" aria-controls="payment_requests_collapse">
+                                <strong>Payment Requests</strong>
+                            </button>
+                        </span>
+                        <div id="payment_requests_collapse" class="accordion-collapse collapse"
+                             aria-labelledby="payment_requests_heading" data-bs-parent="#payment_requests_accordion">
+                            <div class="accordion-body">
+                                <field name="payment_request_ids" readonly="1">
+                                    <tree>
+                                        <field name="type"/>
+                                        <field name="date"/>
+                                        <field name="currency_id" column_invisible="True"/>
+                                        <field name="amount" widget="monetary"/>
+                                        <field name="state" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="document_accordion">
+                    <div class="accordion-item">
+                        <span id="document_heading" style="text-align: center;">
+                            <button name="document_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#document_collapse" aria-expanded="true"
+                                    aria-controls="document_collapse">
+                                <strong>Documents</strong>
+                            </button>
+                        </span>
+                        <div id="document_collapse" style="background: white;" class="accordion-collapse collapse"
+                             aria-labelledby="document_heading" data-bs-parent="#document_accordion">
+                            <div class="accordion-body" style="background: white;">
+                                <group string="Documents to receive"/>
+                                <field name="incoming_doc_ids" readonly="True" context="{'default_type': 'incoming'}">
+                                    <tree default_order="name asc" decoration-success="is_provided"
+                                          decoration-danger="not is_provided">
+                                        <field name="lead_id" column_invisible="True"/>
+                                        <field name="type" column_invisible="True"/>
+                                        <field name="type_id" string="Document"/>
+                                        <field name="name" string="Title/Description"/>
+                                        <field name="responsible" string="From"/>
+                                        <field name="attachment_ids" widget="many2many_binary" readonly="True"/>
+                                        <field name="is_provided" optional="hide"/>
+                                        <!-- <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/> -->
+                                    </tree>
+                                </field>
+                                <group string="Documents to submit"/>
+                                <field name="outgoing_doc_ids" readonly="True" context="{'default_type': 'incoming'}">
+                                    <tree default_order="name asc" decoration-success="is_provided"
+                                          decoration-danger="not is_provided">
+                                        <field name="lead_id" column_invisible="True"/>
+                                        <field name="type" column_invisible="True"/>
+                                        <field name="type_id" string="Document"/>
+                                        <field name="name" string="Title/Description"/>
+                                        <field name="responsible" string="To"/>
+                                        <field name="attachment_ids" widget="many2many_binary" readonly="True"/>
+                                        <field name="is_provided" optional="hide"/>
+                                        <!-- <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/> -->
+                                    </tree>
+                                </field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="logistics_accordion">
+                    <div class="accordion-item">
+                        <span id="logistics_heading" style="text-align: center;">
+                            <button name="logistics_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#logistics_collapse" aria-expanded="true"
+                                    aria-controls="logistics_collapse">
+                                <strong>Logistics</strong>
+                            </button>
+                        </span>
+                        <div id="logistics_collapse" class="accordion-collapse collapse"
+                             aria-labelledby="logistics_heading" data-bs-parent="#logistics_accordion">
+                            <div class="accordion-body">
+                                <group>
+                                    <group>
+                                        <field name="supplier_delivery_method" widget="selection_badge"/>
+                                    </group>
+                                    <group>
+                                        <field name="logistics_state" string="Status"/>
+                                    </group>
+                                </group>
+                                <group invisible="supplier_delivery_method != 'sea'">
+                                    <group>
+                                        <field name="loading_port_id" context="{'default_type': 'road'}"
+                                               domain="[('type', '=', 'road')]"/>
+                                        <field name="discharge_port_id" string="Port of Discharge"
+                                               context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]"/>
+                                        <field name="carrier_id"/>
+                                        <field name="forwarder_id"/>
+                                        <field name="booking_num"/>
+                                        <!-- <field name="booking_list"/> -->
+
+                                        <field name="vessel"/>
+                                        <field name="voyage"/>
+                                        <field name="vessel_voyage_lines" invisible="1"/>
+
+
+                                        <field name="product_qty" readonly="purchase_order_id"/>
+                                        <field name="purchase_order_qty_delivered"/>
+                                    </group>
+                                    <group>
+                                        <field name="breakbulk_container" widget="selection_badge"
+                                               readonly="purchase_order_id"/>
+                                        <field name="is_palletised" widget="selection_badge"
+                                               invisible="breakbulk_container != 'container'"
+                                               readonly="purchase_order_id"/>
+                                        <label for="container_count" string="Container"
+                                               invisible="breakbulk_container != 'container'"/>
+                                        <div name="container_count" class="o_row"
+                                             invisible="breakbulk_container != 'container'">
+                                            <field name="container_count" placeholder="Count..."
+                                                   readonly="purchase_order_id"/>
+                                            x
+                                            <field name="container_type_id" placeholder="Select Size..."
+                                                   options="{'no_open':True}" required="container_count"
+                                                   readonly="purchase_order_id"/>
+                                        </div>
+                                        <label for="container_stuffing" string="Stuffing"
+                                               invisible="breakbulk_container != 'container'"/>
+                                        <div name="container_stuffing" class="o_row"
+                                             invisible="breakbulk_container != 'container'">
+                                            <field name="container_stuffing" readonly="purchase_order_id"/>
+                                            x
+                                            <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                                        </div>
+                                        <field name="trans_shipment" widget="selection_badge"
+                                               readonly="purchase_order_id"/>
+                                        <field name="partial_shipment" widget="selection_badge"
+                                               readonly="purchase_order_id"/>
+                                    </group>
+                                    <group string="Departure">
+                                        <field name="expected_sob_date"/>
+                                        <field name="sob_date"/>
+                                        <field name="expected_shipment_date"/>
+                                        <field name="actual_shipment_date"/>
+                                        <field name="is_shipment_default"/>
+                                    </group>
+                                    <group string="Arrival">
+                                        <field name="expected_arrival_date"/>
+                                        <field name="actual_arrival_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="is_shipment_docs"/>
+                                        <field name="shipment_docs_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="is_bl_released"/>
+                                        <field name="bl_release_date"/>
+                                    </group>
+                                </group>
+                                <group invisible="supplier_delivery_method != 'road'">
+                                    <group>
+                                        <field name="loading_port_id" string="Place of Delivery"
+                                               context="{'default_type': 'road'}" domain="[('type', '=', 'road')]"/>
+                                        <field name="transporter_id"/>
+                                        <field name="clearing_agent_id"/>
+                                        <field name="booking_num"/>
+                                        <!-- <field name="booking_list"/> -->
+                                        <field name="product_qty" readonly="purchase_order_id"/>
+                                        <field name="purchase_order_qty_delivered"/>
+                                    </group>
+                                    <group>
+                                        <field name="is_export_docs"/>
+                                        <field name="export_docs_date" invisible="not is_export_docs"/>
+                                        <field name="is_import_docs"/>
+                                        <field name="import_docs_date" invisible="not is_import_docs"/>
+                                    </group>
+                                    <group string="Departure">
+                                        <field name="expected_loading_date"/>
+                                        <field name="actual_loading_date"/>
+                                        <field name="loading_time" widget="float_time"/>
+                                    </group>
+                                    <group string="Arrival">
+                                        <field name="expected_arrival_date"/>
+                                        <field name="actual_arrival_date"/>
+                                        <field name="offloading_time" widget="float_time"/>
+                                    </group>
+                                </group>
+                                <group string="Shipments"/>
+                                <field colspan="2" nolabel="1" name="stock_move_ids" readonly="True" string="Containers"
+                                       invisible="supplier_delivery_method != 'sea'">
+                                    <tree>
+                                        <field name="lead_id" column_invisible="True"/>
+                                        <field name="picking_id" string="Receipt" optional="hide"/>
+                                        <field name="date" optional="hide"/>
+                                        <field name="container_type_id" optional="hide"/>
+                                        <field name="container_num"/>
+                                        <field name="seal_num"/>
+                                        <field name="marks_numbers" optional="hide"/>
+                                        <field name="quantity"/>
+                                        <field name="picked" string="Received" optional="hide"/>
+                                        <field name="state" optional="hide" widget="badge"
+                                               decoration-danger="state=='cancel'" decoration-info="state== 'assigned'"
+                                               decoration-muted="state == 'draft'" decoration-success="state == 'done'"
+                                               decoration-warning="state not in ('draft','cancel','done','assigned')"/>
+                                    </tree>
+                                </field>
+                                <field colspan="2" nolabel="1" name="stock_move_ids" string="Trucks" readonly="True"
+                                       invisible="supplier_delivery_method != 'road'">
+                                    <tree>
+                                        <field name="lead_id" column_invisible="True"/>
+                                        <field name="picking_id" optional="show"/>
+                                        <field name="date" optional="hide"/>
+                                        <field name="horse_reg_num" optional="show"/>
+                                        <field name="first_trailer_reg_num" optional="show"/>
+                                        <field name="second_trailer_reg_num" optional="show"/>
+                                        <field name="driver_name" optional="show"/>
+                                        <field name="driver_num" optional="show"/>
+                                        <field name="manifest_num" optional="show"/>
+                                        <field name="loading_date" optional="show"/>
+                                        <field name="dispatch_date" optional="show"/>
+                                        <field name="offloading_date" optional="show"/>
+                                        <field name="picked" string="Received" optional="hide"/>
+                                        <field name="state" optional="hide" widget="badge"
+                                               decoration-danger="state=='cancel'" decoration-info="state== 'assigned'"
+                                               decoration-muted="state == 'draft'" decoration-success="state == 'done'"
+                                               decoration-warning="state not in ('draft','cancel','done','assigned')"/>
+                                    </tree>
+                                </field>
+                                <group invisible="supplier_delivery_method != 'air'">
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion accordion-sm accordion-flush mb-4" id="profit_accordion">
+                    <div class="accordion-item">
+                        <span id="profit_heading" style="text-align: center;">
+                            <button name="profit_accordion" class="accordion-button" type="button"
+                                    style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                    data-bs-toggle="collapse" data-bs-target="#profit_collapse" aria-expanded="true"
+                                    aria-controls="profit_collapse">
+                                <strong>Profit Estimate</strong>
+                            </button>
+                        </span>
+                        <div id="profit_collapse" style="background: white;" class="accordion-collapse collapse"
+                             aria-labelledby="profit_heading" data-bs-parent="#profit_accordion">
+                            <div class="accordion-body" style="background: white;">
+                                <field name="minimum_gross_profit" invisible="True"/>
+                                <field name="minimum_markup" invisible="True"/>
+                                <group>
+                                    <group>
+                                        <field name="supplier_id" readonly="True"/>
+                                        <field name="supplier_proforma_num" invisible="supplier_invoice_list"/>
+                                        <field name="supplier_invoice_list" invisible="not supplier_invoice_list"/>
+                                        <field name="product_combination_id" readonly="True"/>
+                                        <field name="product_qty" readonly="True"/>
+                                        <field name="purchase_order_terms_id" string="Supplier Payment Terms"
+                                               readonly="True"/>
+                                        <field name="purchase_order_incoterm_id" readonly="True"/>
+                                        <field name="loading_port_id" string="Port of Loading" readonly="True"
+                                               invisible="supplier_delivery_method != 'sea'"/>
+                                        <field name="loading_port_id" string="Place of Loading" readonly="True"
+                                               invisible="supplier_delivery_method != 'road'"/>
+                                    </group>
+                                    <group>
+                                        <field name="partner_id" readonly="True"/>
+                                        <field name="tentative_sale_order_incoterm_id" string="Incoterms (tentative)"
+                                               invisible="sale_order_id"/>
+                                        <field name="tentative_sale_order_terms_id" string="Payment Terms (tentative)"
+                                               invisible="sale_order_id"/>
+                                        <field name="sale_order_incoterm_id" invisible="not sale_order_id"/>
+                                        <field name="sale_order_terms_id" invisible="not sale_order_id"/>
+                                        <!-- <field name="sale_invoice_incoterm_id" readonly="True"/> -->
+                                        <field name="supplier_delivery_method" invisible="True"/>
+                                        <field name="discharge_port_id" string="Port of Discharge" readonly="True"
+                                               invisible="supplier_delivery_method != 'sea'"/>
+                                        <field name="discharge_port_id" string="Place of Delivery" readonly="True"
+                                               invisible="supplier_delivery_method != 'road'"/>
+                                        <field name="name" string="Trade Folder" readonly="True"/>
+                                        <field name="is_switch"/>
+                                    </group>
+                                    <group invisible="supplier_delivery_method != 'sea'">
+                                        <field name="expected_sob_date"/>
+                                        <field name="sob_date" readonly="True"/>
+                                    </group>
+                                </group>
+                                <group invisible="not is_internal">
+                                    <group>
+                                        <field name="indicative_exchange_rate"/>
+                                    </group>
+                                    <group>
+                                        <field name="exchange_rate"/>
+                                    </group>
+                                </group>
+                                <div>
+                                    <div>
+                                        <table style="width:100%">
+                                            <tr colspan="3"
+                                                style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                <th>
+                                                    <h5>
+                                                        Pricing
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'sea'">
+                                                <th style="width: 40%"
+                                                    invisible="purchase_order_incoterm_selection != 'fob'">
+                                                    Total FOB Cost per Metric Ton in USD
+                                                </th>
+                                                <th style="width: 40%"
+                                                    invisible="purchase_order_incoterm_selection != 'cfr'">
+                                                    Total CFR Cost per Metric Ton in USD
+                                                </th>
+                                                <th style="width: 40%"
+                                                    invisible="purchase_order_incoterm_selection != 'cif'">
+                                                    Total CIF Cost per Metric Ton in USD
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_cost_unit" style="text-align: right;"
+                                                           widget="float" options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;"/>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'road'">
+                                                <th style="width: 40%"
+                                                    invisible="purchase_order_incoterm_selection != 'fca'">
+                                                    Total FCA Cost per Metric Ton in USD
+                                                </th>
+                                                <th style="width: 40%"
+                                                    invisible="purchase_order_incoterm_selection != 'dap'">
+                                                    Total DAP Cost per Metric Ton in USD
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_cost_unit" style="text-align: right;"
+                                                           widget="float" options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;"/>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Total Metric Ton ordered from supplier
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="product_qty" readonly="purchase_order_id"/>
+                                                    MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;"/>
+                                            </tr>
+                                            <tr invisible="purchase_order_incoterm_selection in ['fob', 'fca', 'dap']">
+                                                <th style="width: 40%">
+                                                    Freight
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_freight_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="purchase_order_freight_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="purchase_order_incoterm_selection != 'cif'">
+                                                <th style="width: 40%">
+                                                    Insurance
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_insurance_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="purchase_order_insurance_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="purchase_order_incoterm_selection in ['fca', 'dap']">
+                                                <th style="width: 40%">
+                                                    FOB
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_fob_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="purchase_order_fob_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
+                                                <th style="width: 40%">
+                                                    Insurance MUA Estimate
+                                                    <br/>
+                                                    Insurance Premium:
+                                                    <field name="insurance_premium_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="insurance_premium_unit"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    ZAR
+                                                    <field name="insurance_premium_unit_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="purchase_order_incoterm_selection != 'fob'">
+                                                <th style="width: 40%">
+                                                    Freight (Best Honor)
+                                                    <br/>
+                                                    Rate:
+                                                    <field name="afrex_freight_rate"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="afrex_freight_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="afrex_freight_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'road'">
+                                                <th style="width: 40%">
+                                                    Transportation and Clearance (USD<field
+                                                        name="road_transportation_unit"/>/MT)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="road_transportation_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'road'">
+                                                <th style="width: 40%">
+                                                    Logistics Service (USD<field name="logistics_service_unit"/>/MT)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="logistics_service_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'sea'">
+                                                <th style="width: 40%">
+                                                    CIF Purchase Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_cost_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'road'">
+                                                <th style="width: 40%">
+                                                    DAP Purchase Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="dap_amount" widget="float" options="{'precision': 2}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Procurement Commission
+                                                    <field name="procurement_agent_id"/>
+                                                    <br/>(USD<field name="procurement_commission_unit"/>/MT)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="procurement_commission_unit_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="supplier_delivery_method != 'sea'">
+                                                <th style="width: 40%">
+                                                    Procurement Commission
+                                                    <field name="procurement_agent_id"/>
+                                                    <br/>(
+                                                    <field name="procurement_commission_fob_rate" widget="percentage"/>
+                                                    Calculated against FOB)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="procurement_commission_fob_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="is_internal">
+                                                <th style="width: 40%">
+                                                    Sales Commission
+                                                    <field name="sales_agent_id"/>
+                                                    <br/>(USD<field name="sales_commission_unit"/>/MT)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_commission_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="is_internal or supplier_delivery_method != 'sea'">
+                                                <th style="width: 40%">
+                                                    Switch BL Provision
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="switch_bl_provision_amount"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%; text-align: right;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Cost of Sales [A]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_cost"/>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <hr/>
+                                    <field name="banking_fee_ids">
+                                        <tree editable="bottom">
+                                            <field name="lead_id" column_invisible="True"/>
+                                            <field name="currency_id" column_invisible="True"/>
+                                            <field name="name" string="Banking Fee"/>
+                                            <field name="amount" sum="Total" widget="monetary"/>
+                                        </tree>
+                                    </field>
+                                    <div>
+                                        <table style="width: 100%">
+                                            <tr invisible="is_internal">
+                                                <th style="width: 40%">
+                                                    Credit Cost
+                                                    <br/>
+                                                    <field name="credit_cost_rate" widget="percentage"/>
+                                                    per Annum against CIF over
+                                                    <field name="credit_cost_month"/>
+                                                    months
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_cost_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="credit_cost_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Other Costs [B]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="other_cost" readonly="True"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <separator/>
+                                    <div>
+                                        <table invisible="is_internal" style="width: 100%">
+                                            <tr invisible="True">
+                                                <th style="width: 40%">
+                                                    FOB
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_fob_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="purchase_order_fob_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_cost"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Cost / MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_cost_unit" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Initial Sales Value / MT
+                                                    <br/>
+                                                    Markup:
+                                                    <field name="markup" widget="percentage"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="initial_sales_price_unit" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    (USD<field name="initial_sales_price_unit_unrounded" widget="float"
+                                                               readonly="True"/>)
+                                                </th>
+                                            </tr>
+                                            <separator/>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Initial Sales Value
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="initial_sales_price" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Credit Insurance Cost
+                                                    <br/>
+                                                    <field name="credit_insurance_rate" widget="percentage"/>
+                                                    against CIF Selling Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_insurance_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="credit_insurance_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Final Total Sales Value
+                                                    [C]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_price" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    (USD<field name="sales_price_unrounded" widget="float"
+                                                               readonly="True"/>)
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Final Calculated Sales
+                                                    Price / MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_price_unit" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    <span/>
+                                                    <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
+                                                </th>
+                                            </tr>
+                                        </table>
+                                        <table invisible="not is_internal" style="width: 100%">
+                                            <tr invisible="True">
+                                                <th style="width: 40%">
+                                                    FOB
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="purchase_order_fob_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="purchase_order_fob_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_cost"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <separator/>
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Agreed Procurement Fee
+                                                    <br/>
+                                                    <field name="procurement_fee_rate" widget="percentage"/>
+                                                    against CIF [C]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="procurement_fee_amount" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="procurement_fee_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Credit Cost
+                                                    <br/>
+                                                    <field name="credit_cost_rate" widget="percentage"/>
+                                                    per Annum against CIF
+                                                    <br/>
+                                                    over
+                                                    <field name="credit_cost_month"/>
+                                                    months [D]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_cost_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="credit_cost_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Sales Value [A+C+D]
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_price" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="sales_price_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Sales Value per MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="sales_price_unit" widget="float"
+                                                           options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <separator/>
+                                    <div>
+                                        <table style="width: 100%">
+                                            <tr colspan="3"
+                                                style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                <th>
+                                                    <h5>
+                                                        Profit Analysis
+                                                    </h5>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%;">
+                                                    Estimated Gross Profit as an Amount
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="gross_profit_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%;">
+                                                    Estimated Gross Profit as a Percentage
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="gross_profit_percentage" widget="percentage"
+                                                           decoration-success="gross_profit_percentage &gt; minimum_gross_profit"
+                                                           decoration-danger="gross_profit_percentage &lt; minimum_gross_profit"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%;">
+                                                    Estimated Markup as an Amount
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="markup_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%;">
+                                                    Estimated Markup as a Percentage
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="markup_percentage" widget="percentage"
+                                                           decoration-success="markup_percentage &gt; minimum_markup"
+                                                           decoration-danger="markup_percentage &lt; minimum_markup"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_internal">
+                                                <th style="width: 40%;">
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    Cover Report Amount
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_internal">
+                                                <th style="width: 40%;">
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    ZAR
+                                                    <field name="cover_report_amount"/>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <separator/>
+            </xpath>
+            <xpath expr="//page[@name='lead']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="(//widget[@name='web_ribbon'])[2]" position="attributes">
+                <attribute name="title">Active</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="asc_profit_estimate_form_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.profit.estimate.form</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box mb-2" name="button_box_profit_estimate">
+                        <button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object"
+                                class="btn-primary mx-2" style="color:white; background:#B04949;"/>
+                        <button name="print_profit_estimate" icon="fa-print" string="Print" type="object"
+                                class="btn-primary" style="color:white; background:#B04949;"/>
+                    </div>
+                    <field name="company_id" invisible="True"/>
+                    <field name="is_internal" invisible="True"/>
+                    <field name="purchase_order_id" invisible="True"/>
+                    <field name="sale_order_id" invisible="True"/>
+                    <field name="purchase_order_incoterm_selection" invisible="True"/>
+                    <div class="accordion accordion-sm accordion-flush mb-4" id="profit_accordion">
+                        <div class="accordion-item">
+                            <span id="profit_heading" style="text-align: center;">
+                                <button name="profit_accordion" class="accordion-button" type="button"
+                                        style="font-size:16px; font-weight: bold; text-align: center; color:white; background:#B04949; padding:5px 10px;"
+                                        data-bs-toggle="collapse" data-bs-target="#profit_collapse" aria-expanded="true"
+                                        aria-controls="profit_collapse">
+                                    <strong>Profit Estimate</strong>
+                                </button>
+                            </span>
+                            <div id="profit_collapse" style="background: white;" class="accordion-collapse"
+                                 aria-labelledby="profit_heading" data-bs-parent="#profit_accordion">
+                                <div class="accordion-body" style="background: white;">
+                                    <field name="minimum_gross_profit" invisible="True"/>
+                                    <field name="minimum_markup" invisible="True"/>
+                                    <group>
+                                        <group>
+                                            <field name="supplier_id" readonly="True"/>
+                                            <field name="supplier_proforma_num" invisible="supplier_invoice_list"/>
+                                            <field name="supplier_invoice_list" invisible="not supplier_invoice_list"/>
+                                            <field name="product_combination_id" readonly="True"/>
+                                            <field name="product_qty" readonly="True"/>
+                                            <field name="purchase_order_terms_id" string="Supplier Payment Terms"
+                                                   readonly="True"/>
+                                            <field name="purchase_order_incoterm_id" readonly="True"/>
+                                            <field name="loading_port_id" string="Port of Loading" readonly="True"
+                                                   invisible="supplier_delivery_method != 'sea'"/>
+                                            <field name="loading_port_id" string="Place of Loading" readonly="True"
+                                                   invisible="supplier_delivery_method != 'road'"/>
+                                        </group>
+                                        <group>
+                                            <field name="partner_id" readonly="True"/>
+                                            <field name="tentative_sale_order_incoterm_id"
+                                                   string="Incoterms (tentative)" invisible="sale_order_id"/>
+                                            <field name="tentative_sale_order_terms_id"
+                                                   string="Payment Terms (tentative)" invisible="sale_order_id"/>
+                                            <field name="sale_order_incoterm_id" invisible="not sale_order_id"/>
+                                            <field name="sale_order_terms_id" invisible="not sale_order_id"/>
+                                            <!-- <field name="sale_invoice_incoterm_id" readonly="True"/> -->
+                                            <field name="supplier_delivery_method" invisible="True"/>
+                                            <field name="discharge_port_id" string="Port of Discharge" readonly="True"
+                                                   invisible="supplier_delivery_method != 'sea'"/>
+                                            <field name="discharge_port_id" string="Place of Delivery" readonly="True"
+                                                   invisible="supplier_delivery_method != 'road'"/>
+                                            <field name="name" string="Trade Folder" readonly="True"/>
+                                            <field name="is_switch"/>
+                                        </group>
+                                        <group>
+                                            <field name="expected_sob_date"/>
+                                            <field name="sob_date" readonly="True"/>
+                                        </group>
+                                    </group>
+                                    <group invisible="not is_internal">
+                                        <group>
+                                            <field name="indicative_exchange_rate"/>
+                                        </group>
+                                        <group>
+                                            <field name="exchange_rate"/>
+                                        </group>
+                                    </group>
+                                    <div>
+                                        <div>
+                                            <table style="width:100%">
+                                                <tr colspan="3"
+                                                    style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                    <th>
+                                                        <h5>
+                                                            Pricing
+                                                        </h5>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Total CIF Cost per Metric Ton in USD
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_cost_unit"
+                                                               style="text-align: right;" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"/>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Total Metric Ton ordered from supplier
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="product_qty" readonly="purchase_order_id"/>
+                                                        MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"/>
+                                                </tr>
+                                                <tr invisible="purchase_order_incoterm_selection in ['fob', 'fca', 'dap']">
+                                                    <th style="width: 40%">
+                                                        Freight
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_freight_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="purchase_order_freight_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="purchase_order_incoterm_selection != 'cif'">
+                                                    <th style="width: 40%">
+                                                        Insurance
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_insurance_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="purchase_order_insurance_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="purchase_order_incoterm_selection in ['fca', 'dap']">
+                                                    <th style="width: 40%">
+                                                        FOB
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_fob_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="purchase_order_fob_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
+                                                    <th style="width: 40%">
+                                                        Insurance MUA Estimate
+                                                        <br/>
+                                                        Insurance Premium:
+                                                        <field name="insurance_premium_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="insurance_premium_unit"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        ZAR
+                                                        <field name="insurance_premium_unit_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="purchase_order_incoterm_selection != 'fob'">
+                                                    <th style="width: 40%">
+                                                        Freight (Best Honor)
+                                                        <br/>
+                                                        Rate:
+                                                        <field name="afrex_freight_rate"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="afrex_freight_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="afrex_freight_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="supplier_delivery_method != 'road'">
+                                                    <th style="width: 40%">
+                                                        Transportation and Clearance (USD<field
+                                                            name="road_transportation_unit"/>/MT)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="road_transportation_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="supplier_delivery_method != 'road'">
+                                                    <th style="width: 40%">
+                                                        Logistics Service (USD<field name="logistics_service_unit"/>/MT)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="logistics_service_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="supplier_delivery_method != 'sea'">
+                                                    <th style="width: 40%">
+                                                        CIF Purchase Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_cost_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                </tr>
+                                                <!-- <tr invisible="supplier_delivery_method != 'road'">
+                                                    <th style="width: 40%">
+                                                        Purchase Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD <field name="purchase_order_cost_amount" widget="float" options="{'precision': 2}"/>
+                                                    </th>
+                                                </tr> -->
+                                                <tr invisible="supplier_delivery_method != 'road'">
+                                                    <th style="width: 40%">
+                                                        DAP Purchase Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="dap_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Procurement Commission
+                                                        <field name="procurement_agent_id"/>
+                                                        <br/>(USD<field name="procurement_commission_unit"/>/MT)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="procurement_commission_unit_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%"
+                                                        invisible="supplier_delivery_method != 'sea'">
+                                                        Procurement Commission
+                                                        <field name="procurement_agent_id"/>
+                                                        <br/>(
+                                                        <field name="procurement_commission_fob_rate"
+                                                               widget="percentage"/>
+                                                        Calculated against FOB)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="procurement_commission_fob_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="is_internal">
+                                                    <th style="width: 40%">
+                                                        Sales Commission
+                                                        <field name="sales_agent_id"/>
+                                                        <br/>(USD<field name="sales_commission_unit"/>/MT)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_commission_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="is_internal or supplier_delivery_method != 'sea'">
+                                                    <th style="width: 40%">
+                                                        Switch BL Provision
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="switch_bl_provision_amount"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Cost of Sales [A]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_cost"/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <hr/>
+                                        <field name="banking_fee_ids">
+                                            <tree editable="bottom">
+                                                <field name="lead_id" column_invisible="True"/>
+                                                <field name="currency_id" column_invisible="True"/>
+                                                <field name="name" string="Banking Fee"/>
+                                                <field name="amount" sum="Total" widget="monetary"/>
+                                            </tree>
+                                        </field>
+                                        <div>
+                                            <table style="width: 100%">
+                                                <tr invisible="is_internal">
+                                                    <th style="width: 40%">
+                                                        Credit Cost
+                                                        <br/>
+                                                        <field name="credit_cost_rate" widget="percentage"/>
+                                                        per Annum against CIF over
+                                                        <field name="credit_cost_month"/>
+                                                        months
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_cost_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="credit_cost_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Other Costs [B]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="other_cost" readonly="True"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <separator/>
+                                        <div>
+                                            <table invisible="is_internal" style="width: 100%">
+                                                <tr invisible="True">
+                                                    <th style="width: 40%">
+                                                        FOB
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_fob_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="purchase_order_fob_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_cost"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Cost / MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_cost_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Initial Sales Value /
+                                                        MT
+                                                        <br/>
+                                                        Markup:
+                                                        <field name="markup" widget="percentage"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="initial_sales_price_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        (USD<field name="initial_sales_price_unit_unrounded"
+                                                                   widget="float" readonly="True"/>)
+                                                    </th>
+                                                </tr>
+                                                <separator/>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Initial Sales Value
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="initial_sales_price" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Credit Insurance Cost
+                                                        <br/>
+                                                        <field name="credit_insurance_rate" widget="percentage"/>
+                                                        against CIF Selling Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_insurance_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="credit_insurance_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Final Total Sales
+                                                        Value [C]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_price" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        (USD<field name="sales_price_unrounded" widget="float"
+                                                                   readonly="True"/>)
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Final Calculated Sales
+                                                        Price / MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_price_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        <span/>
+                                                        <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        Agreed Sales Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="agreed_sales_price" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                            <table invisible="not is_internal" style="width: 100%">
+                                                <tr invisible="True">
+                                                    <th style="width: 40%">
+                                                        FOB
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="purchase_order_fob_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="purchase_order_fob_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_cost"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <separator/>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Agreed Procurement Fee
+                                                        <br/>
+                                                        <field name="procurement_fee_rate" widget="percentage"/>
+                                                        against CIF [C]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="procurement_fee_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="procurement_fee_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Credit Cost
+                                                        <br/>
+                                                        <field name="credit_cost_rate" widget="percentage"/>
+                                                        per Annum against CIF
+                                                        <br/>
+                                                        over
+                                                        <field name="credit_cost_month"/>
+                                                        months [D]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_cost_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="credit_cost_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Sales Value
+                                                        [A+C+D]
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_price" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="sales_price_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Sales Value per MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="sales_price_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <separator/>
+                                        <div>
+                                            <table style="width: 100%">
+                                                <tr colspan="3"
+                                                    style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                    <th>
+                                                        <h5>
+                                                            Profit Analysis
+                                                        </h5>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%;">
+                                                        Estimated Gross Profit as an Amount
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="gross_profit_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%;">
+                                                        Estimated Gross Profit as a Percentage
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="gross_profit_percentage" widget="percentage"
+                                                               decoration-success="gross_profit_percentage &gt; minimum_gross_profit"
+                                                               decoration-danger="gross_profit_percentage &lt; minimum_gross_profit"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%;">
+                                                        Estimated Markup as an Amount
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="markup_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%;">
+                                                        Estimated Markup as a Percentage
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="markup_percentage" widget="percentage"
+                                                               decoration-success="markup_percentage &gt; minimum_markup"
+                                                               decoration-danger="markup_percentage &lt; minimum_markup"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_internal">
+                                                    <th style="width: 40%;">
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        Cover Report Amount
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_internal">
+                                                    <th style="width: 40%;">
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        ZAR
+                                                        <field name="cover_report_amount"/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_logistics_form_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.logistics.form</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">110</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box mb-2" name="button_box_logistics">
+                        <button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object"
+                                class="btn-primary mx-2" style="color:white; background:#B04949;"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_crm_lead_search_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.search</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <searchpanel>
+                    <field name="partner_id" enable_counters="1" icon="fa fa-user"/>
+                    <field name="logistics_state" enable_counters="1" icon="fa fa-hourglass-half"/>
+                    <field name="purchase_order_incoterm_id" string="Supplier Incoterms" enable_counters="1"
+                           icon="fa fa-ship"/>
+                    <field name="sale_order_incoterm_id" string="Buyer Incoterms" enable_counters="1"
+                           icon="fa fa-ship"/>
+                    <field name="supplier_delivery_method" string="Mode of Transport" enable_counters="1"
+                           icon="fa fa-truck"/>
+                    <field name="origin_country_id" enable_counters="1" icon="fa fa-globe"/>
+                    <field name="sale_country_id" enable_counters="1" icon="fa fa-globe"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+</odoo>

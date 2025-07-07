@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data noupdate="0">
+
+        <record id="base.main_company" model="res.company">
+            <field name="name">Afrex Limited</field>
+            <field name="partner_id" ref="base.main_partner"/>
+        </record>
+
+        <record id="base.main_partner" model="res.partner">
+            <field name="address_text">Suite 420, 4th Floor, Barkly Wharf Building&#xA;Caudan Waterfront, Port Louis&#xA;Mauritius&#xA;Email: DL-AfrexSupplier@supergrp.com&#xA;Tel: +230 271 1176      Fax: +230 211 8959&#xA;Website: www.supergrp.com</field>
+            <field name="email">DL-AfrexSupplier@supergrp.com</field>
+            <field name="phone">+230 213 7461</field>
+            <field name="fax">+230 211 8959</field>
+            <field name="website">www.supergrp.com</field>
+        </record>
+
+        <record id="asc_trademaw" model="res.partner">
+            <field name="name">Trademaw (Pty) Ltd</field>
+            <field name="is_company">True</field>
+            <field name="is_internal">True</field>
+            <field name="ref">TRADEMAW</field>
+        </record>
+
+        <record id="product.decimal_price" model="decimal.precision">
+            <field name="digits">4</field>
+        </record>
+
+        <record id="product.decimal_product_uom" model="decimal.precision">
+            <field name="digits">4</field>
+        </record>
+
+        <record id="decimal_precision_unit" model="decimal.precision">
+            <field name="name">Prices per Unit</field>
+            <field name="digits">4</field>
+        </record>
+
+        <record id="uom.product_uom_unit" model="uom.uom">
+            <field name="name">MT</field>
+        </record>
+
+        <record id="base.USD" model="res.currency">
+            <field name="symbol">USD</field>
+        </record>
+
+        <record id="base.ZAR" model="res.currency">
+            <field name="symbol">ZAR</field>
+        </record>
+
+    </data>
+</odoo>

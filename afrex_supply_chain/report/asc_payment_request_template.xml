@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="asc_payment_request_template">
+        <t t-call="web.basic_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <t t-set="company" t-value="o.company_id.sudo()"/>
+            <div class="row mb-2" style="margin-left: 2%; margin-right: 2%;">
+                <div class="col-5">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                         style="margin-top: 5px; max-height: 80px;" alt="Logo"/>
+                </div>
+                <div class="col-7 mt-4 text-end">
+                    <table class="table-lg mb-2 table-borderless" style="width: 100%; margin-top: 0;">
+                        <tr>
+                            <th style="width: 25%">
+                                <span></span>
+                            </th>
+                            <th valign="middle"
+                                style="border: 1px solid black; width: 50%; text-align: center; padding-top: 10px; padding-bottom: 2px;">
+                                <h5>
+                                    PAYMENT REQUEST
+                                </h5>
+                            </th>
+                            <th style="width: 25%">
+                                <span></span>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--            <div style=" margin-top: 0;">-->
+            <!--                <table class="table-lg mt-2 mb-4 table-borderless" style="width: 100%; margin-top: 0;">-->
+            <!--                    <tr>-->
+            <!--                        <th style="width: 20%">-->
+            <!--                            <span> </span>-->
+            <!--                        </th>-->
+            <!--                        <th valign="middle" class="h5" style="border: 1px solid black; width: 60%; text-align: center; padding-top: 10px; padding-bottom: 5px;">-->
+            <!--                            <h4>-->
+            <!--                                PAYMENT REQUEST-->
+            <!--                            </h4>-->
+            <!--                        </th>-->
+            <!--                        <th style="width: 20%">-->
+            <!--                            <span> </span>-->
+            <!--                        </th>-->
+            <!--                    </tr>-->
+            <!--                </table>-->
+            <!--            </div>-->
+            <div style="margin-top:1.5em">
+                <table style="width: 100%; font-size:14px;">
+                    <style>
+                        tr, th, td {
+                        padding-top: 7px;
+                        }
+                    </style>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Date:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.date">
+                                <span style="padding-left: 5px;" t-esc="o.date.strftime('%d-%B-%Y')"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 20px; text-align: center">Not Confirmed.</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Request by:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="padding-left: 5px;" t-field="o.company_id.name"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Beneficiary:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="padding-left: 5px;" t-field="o.partner_id.name"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th valign="middle" style="width:35%; text-align:left; valign: middle;">
+                            <span style="padding-left: 5px;">Beneficiary Address:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="display: inline-block; padding-left: 5px;" t-field="o.partner_address"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Beneficiary Bank Name:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="padding-left: 5px;" t-field="o.bank_id.name"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Branch:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_branch">
+                                <span style="padding-left: 5px;" t-field="o.bank_branch"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Address:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_id.address_text">
+                                <span style="display: inline-block; padding-left: 5px;"
+                                      t-field="o.bank_id.address_text"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Account Number:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_account_id.acc_number">
+                                <span style="padding-left: 5px;" t-field="o.bank_account_id.acc_number"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Swift Code:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_swift">
+                                <span style="padding-left: 5px;" t-field="o.bank_swift"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">IFSC Code:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_ifsc">
+                                <span style="padding-left: 5px;" t-field="o.bank_ifsc"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Correspondence Bank:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_id.name">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Account Number:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_acc_num">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_acc_num"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Swift Code:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_swift">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_swift"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Fedwire ABA No.:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_fedwire">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_fedwire"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Chips ABA No.:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_chips_aba">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_chips_aba"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Chips UID No.:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.correspondent_bank_chips_uid">
+                                <span style="padding-left: 5px;" t-field="o.correspondent_bank_chips_uid"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">IBAN:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.bank_iban">
+                                <span style="padding-left: 5px;" t-field="o.bank_iban"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Afrex Pro Forma / Commercial Invoice:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.sale_invoice_id.name">
+                                <span style="padding-left: 5px;" t-field="o.sale_invoice_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Supplier Invoice Number:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.supplier_invoice_ref">
+                                <span style="padding-left: 5px;" t-field="o.supplier_invoice_ref"/>
+                            </t>
+                            <t t-elif="o.supplier_proforma_num">
+                                <span style="padding-left: 5px;" t-field="o.supplier_proforma_num"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Trade Folder Reference:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="padding-left: 5px;" t-field="o.lead_id.name"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Payment Terms:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.payment_term_id.name">
+                                <span style="padding-left: 5px;" t-field="o.payment_term_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Payment Amount Required:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <span style="padding-left: 5px;" t-field="o.currency_id.name"/>
+                            <span style="padding-left: 5px;" t-field="o.amount"
+                                  t-options="{'widget': 'float', 'precision': 2}"/>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Amount in Words:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <strong>
+                                <span style="padding-left: 5px;" t-field="o.amount_words"/>
+                            </strong>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Comments:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.note">
+                                <span style="display: inline-block; padding-left: 5px;" t-field="o.note"/>
+                            </t>
+                            <t t-else="">
+                                <span style="display: inline-block; padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <th style="width:35%; text-align:left;">
+                            <span style="padding-left: 5px;">Special Instructions:</span>
+                        </th>
+                        <td style="width:65%;">
+                            <t t-if="o.instructions">
+                                <span style="display: inline-block; padding-left: 5px;" t-field="o.instructions"/>
+                            </t>
+                            <t t-else="">
+                                <span style="display: inline-block; padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="row mt-2">
+                <table class="table table-sm table-borderless"
+                       style="width: 45%; font-size:16px; margin-top: 90px; margin-right: 10%;">
+                    <tr class="text-center">
+                        <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
+                            <span style="padding-left: 5px;"></span>
+                        </td>
+                    </tr>
+                    <tr class="text-center">
+                        <td style="text-align: center; padding-top: 2px; padding-bottom: 2px;">
+                            <span style="padding-left: 5px;">Samer Kovacs</span>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <td style="text-align: center;">
+                            <span style="padding-left: 5px;" t-esc="datetime.datetime.now().strftime('%d-%B-%Y')"/>
+                        </td>
+                    </tr>
+                </table>
+                <table class="table table-sm table-borderless" style="width: 45%; font-size:16px; margin-top: 90px;">
+                    <tr class="text-center">
+                        <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
+                            <span style="padding-left: 5px;"></span>
+                        </td>
+                    </tr>
+                    <tr class="text-center">
+                        <td style="text-align: center; padding-top: 2px; padding-bottom: 2px;">
+                            <span style="padding-left: 5px;">Sajid Ghoorun</span>
+                        </td>
+                    </tr>
+                    <tr class="text-start">
+                        <td style="text-align: center;">
+                            <span style="padding-left: 5px;" t-esc="datetime.datetime.now().strftime('%d-%B-%Y')"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_asc_payment_request">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="afrex_supply_chain.asc_payment_request_template" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

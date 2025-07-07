@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_res_partner_bank_form_view" model="ir.ui.view">
+        <field name="name">asc.res.partner.bank.form</field>
+        <field name="model">res.partner.bank</field>
+        <field name="inherit_id" ref="base.view_partner_bank_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='acc_number']" position="before">
+                <field name="description" required="True"/>
+            </xpath>
+            <xpath expr="//field[@name='acc_number']" position="after">
+                <field name="iban"/>
+            </xpath>
+            <xpath expr="//field[@name='bank_id']" position="after">
+                <field name="branch"/>
+                <field name="ifsc"/>
+            </xpath>
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="correspondent_bank_id"/>
+                <field name="correspondent_bank_acc_num"/>
+                <field name="chips_aba"/>
+                <field name="chips_uid"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

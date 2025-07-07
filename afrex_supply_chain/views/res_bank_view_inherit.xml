@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_res_bank_form_view" model="ir.ui.view">
+        <field name="name">asc.res.bank.form</field>
+        <field name="model">res.bank</field>
+        <field name="inherit_id" ref="base.view_res_bank_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='bank_details']" position="replace">
+                <group name="bank_details">
+                    <group>
+                        <field name="name"/>
+                        <field name="address_text" required="True"/>
+                    </group>
+                    <group>
+                        <field name="bic"/>
+                        <field name="fedwire"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

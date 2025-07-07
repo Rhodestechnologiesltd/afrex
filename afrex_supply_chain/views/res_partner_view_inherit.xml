@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="asc_res_partner_form_view" model="ir.ui.view">
+        <field name="name">asc.res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//span[@name='address_name']" position="before">
+                <field name="is_internal" string="Internal" widget="boolean_toggle"/>
+            </xpath> -->
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <div>
+                    <field name="is_supplier"/>
+                    <label for="is_supplier"/>
+                    <field name="is_buyer"/>
+                    <label for="is_buyer"/>
+                    <field name="is_internal" invisible="not is_buyer"/>
+                    <label for="is_internal" invisible="not is_buyer"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="sequence_id"/>
+                <field name="trade_count"/>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="ref"/>
+                <field name="sequence_id"/>
+                <field name="trade_count"/>
+            </xpath>
+            <xpath expr="//group[1]" position="after">
+                <group string="Address">
+                    <group>
+                        <field name="address_text"/>
+                    </group>
+                    <group>
+                        <field name="address_payment_request"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

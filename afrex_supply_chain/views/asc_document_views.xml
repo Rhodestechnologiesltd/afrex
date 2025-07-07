@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="asc_document_tree_view" model="ir.ui.view">
+        <field name="name">asc.document.tree</field>
+        <field name="model">asc.document</field>
+        <field name="arch" type="xml">
+            <tree string="All Documents" create='0' delete='0'>
+                <field name="name" readonly="is_provided"/>
+                <field name="type_id" readonly="is_provided"/>
+                <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
+                <field name="is_provided" readonly="True" optional="show"/>
+                <!-- <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/> -->
+            </tree>
+        </field>
+    </record>
+
+    <record id="asc_document_form_view" model="ir.ui.view">
+        <field name="name">asc.document.form</field>
+        <field name="model">asc.document</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="is_provided"/>
+                        <group>
+                            <field name="type_id" readonly="is_provided"/>
+                        </group>
+                        <group>
+                            <field name="is_provided" readonly="is_provided"/>
+                        </group>
+                    </group>
+                    <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asc_document" model="ir.actions.act_window">
+        <field name="name">All Documents</field>
+        <field name="res_model">asc.document</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                All documents
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_asc_document"
+              name="All Documents"
+              action="action_asc_document"
+              parent="crm.crm_menu_config"
+              sequence="100"/>
+</odoo>

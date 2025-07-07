@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="address_layout_inherit" inherit_id="web.address_layout">
+        <xpath expr="//div[@name='address']/t" position="before">
+            <span>Attention to: </span>
+        </xpath>
+    </template>
+
+</odoo>

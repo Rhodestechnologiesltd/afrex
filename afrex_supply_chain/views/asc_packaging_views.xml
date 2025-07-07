@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="asc_packaging_tree_view" model="ir.ui.view">
+        <field name="name">asc.product.packaging.tree</field>
+        <field name="model">asc.product.packaging</field>
+        <field name="arch" type="xml">
+            <tree string="Packaging" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_asc_packaging" model="ir.actions.act_window">
+        <field name="name">Packaging</field>
+        <field name="res_model">asc.product.packaging</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add packaging
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_asc_packaging"
+        name="Packaging"
+        action="action_asc_packaging"
+        parent="crm.crm_menu_config"
+        sequence="100"/>
+
+</odoo>

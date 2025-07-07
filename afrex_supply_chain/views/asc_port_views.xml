@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="asc_port_form_view" model="ir.ui.view">
+        <field name="name">port_form</field>
+        <field name="model">asc.port</field>
+        <field name="arch" type="xml">
+            <form string="Port">
+                <sheet>
+                    <h4>
+                        <field name="name"/>
+                    </h4>
+                    <group>
+                        <field name="city"/>
+                        <field name="country_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_port_tree_view" model="ir.ui.view">
+        <field name="name">asc.port.tree</field>
+        <field name="model">asc.port</field>
+        <field name="arch" type="xml">
+            <tree string="Port" editable="bottom">
+                <field name="name"/>
+                <field name="city"/>
+                <field name="country_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_asc_port" model="ir.actions.act_window">
+        <field name="name">Ports</field>
+        <field name="res_model">asc.port</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add port
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_asc_port"
+        name="Ports"
+        action="action_asc_port"
+        parent="crm.crm_menu_config"
+        sequence="100"/>
+
+</odoo>
