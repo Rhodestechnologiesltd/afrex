@@ -39,12 +39,6 @@ class ConfirmInvoiceWizard(models.TransientModel):
     
     tariff_code = fields.Char(string="Tariff Code", related='sale_invoice_id.tariff_code', readonly=False)
     
-    # insurance_amount = fields.Float("Insurance", related='purchase_order_id.insurance_amount', readonly=True)
-    # freight_amount = fields.Float("Freight", related='purchase_order_id.freight_amount', readonly=True)
-    # interest_amount = fields.Float("Interest", related='lead_id.credit_cost_amount', readonly=True)
-    # procurement_documentation_amount = fields.Float("Procurement and Documentation", related='lead_id.procurement_fee_amount', readonly=True)
-    # cost_amount = fields.Float("Sales Price", related='lead_id.sales_price', readonly=True)
-    
     insurance_amount = fields.Float("Insurance", readonly=False)
     freight_amount = fields.Float("Freight", readonly=False)
     interest_amount = fields.Float("Interest", readonly=False)

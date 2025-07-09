@@ -9,7 +9,7 @@
             <xpath expr="//form" position="inside">
                 <app string="Afrex Supply Chain" data-string="Afrex Supply Chain" name="afrex_supply_chain">
                     <block title="General" name="asc_general_container">
-                        <field name="company_id" invisible="1" />
+                        <field name="company_id" invisible="1"/>
                         <setting>
                             <field name="credit_cost_rate" widget="percentage"/>
                         </setting>
@@ -26,11 +26,11 @@
                             <field name="logistics_service_unit"/>
                         </setting> -->
                     </block>
-                    <block title="Documents" name="asc_document_container">
+                    <!-- <block title="Documents" name="asc_document_container">
                         <setting>
                             <field name="display_partner_child"/>
                         </setting>
-                    </block>
+                    </block> -->
                     <block title="Default Documents (Maritime)" name="asc_document_container_sea">
                         <setting>
                             <field name="sea_purchase_incoming_doc_ids" widget="many2many_tags"/>
@@ -81,12 +81,13 @@
         <field name="context">{'module': 'afrex_supply_chain'}</field>
     </record>
 
-    <!-- <menuitem
-        id="menu_settings"
-        name="Settings"
-        parent="menu_technical"
-        action="action_rhs_res_config_settings"
-        groups="base.group_system,rhodes_helpdesk_base.rhs_group_manager"
-        sequence="10"/> -->
+<!--    <field name="groups_id" eval="[(4, ref('afrex_supply_chain.group_afrex_settings_only'))]"/>-->
+    <!--    <menuitem-->
+    <!--        id="menu_settings"-->
+    <!--        name="Settings"-->
+    <!--        parent="menu_technical"-->
+    <!--        action="action_rhs_res_config_settings"-->
+    <!--        groups="base.group_system,rhodes_helpdesk_base.rhs_group_manager"-->
+    <!--        sequence="10"/>-->
 
 </odoo>

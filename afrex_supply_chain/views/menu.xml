@@ -2,189 +2,191 @@
 <odoo>
 
     <menuitem
-        id="asc_root_menu" 
-        name="Afrex"
-        groups="base.group_user"
-        web_icon="afrex_supply_chain,static/description/icon.png"
-        sequence="-1"/>
+            id="asc_root_menu"
+            name="Afrex"
+            groups="base.group_user"
+            web_icon="afrex_supply_chain,static/description/icon.png"
+            sequence="-1"/>
     <!-- web_icon="static/description/icon.png" -->
-    
-    <menuitem
-        id="asc_main_menu"
-        name="Master"
-        parent="asc_root_menu"
-        action="crm.crm_lead_action_pipeline"
-        sequence="10"/>
 
     <menuitem
-        id="asc_contacts_menu"
-        name="Contacts"
-        parent="asc_root_menu"
-        sequence="20"/>
-    
-    <menuitem
-        id="asc_contacts_all_menu"
-        name="All"
-        parent="asc_contacts_menu"
-        action="contacts.action_contacts"
-        sequence="10"/>
-    
-    <menuitem
-        id="asc_contacts_bank_account_menu"
-        name="Bank Accounts"
-        parent="asc_contacts_menu"
-        action="base.action_res_partner_bank_account_form"
-        sequence="20"/>
+            id="asc_main_menu"
+            name="Master"
+            parent="asc_root_menu"
+            action="crm.crm_lead_action_pipeline"
+            sequence="10"/>
 
     <menuitem
-        id="asc_products_main_menu"
-        name="Products"
-        parent="asc_root_menu"
-        sequence="30"/>
-    
-        
-    <menuitem
-        id="asc_products_menu"
-        name="Master"
-        parent="asc_products_main_menu"
-        action="stock.product_template_action_product"
-        sequence="10"/>
-    
-    <menuitem
-        id="asc_product_combination_menu"
-        name="Product Combinations"
-        parent="asc_products_main_menu"
-        action="action_asc_product_combination"
-        sequence="20"/>
+            id="asc_contacts_menu"
+            name="Contacts"
+            parent="asc_root_menu"
+            sequence="20"/>
 
     <menuitem
-        id="asc_product_specification_menu"
-        name="Specifications"
-        parent="asc_products_main_menu"
-        action="action_asc_specification"
-        sequence="30"/>
+            id="asc_contacts_all_menu"
+            name="All"
+            parent="asc_contacts_menu"
+            action="contacts.action_contacts"
+            sequence="10"/>
 
     <menuitem
-        id="asc_purchase_menu"
-        name="Purchase"
-        parent="asc_root_menu"
-        sequence="40"/>
+            id="asc_contacts_bank_account_menu"
+            name="Bank Accounts"
+            parent="asc_contacts_menu"
+            action="base.action_res_partner_bank_account_form"
+            sequence="20"/>
 
     <menuitem
-        id="asc_purchase_order_menu"
-        name="Orders"
-        parent="asc_purchase_menu"
-        action="purchase.purchase_rfq"
-        sequence="10"/>
+            id="asc_products_main_menu"
+            name="Products"
+            parent="asc_root_menu"
+            sequence="30"/>
+
 
     <menuitem
-        id="asc_payment_request_menu"
-        name="Payment Requests"
-        parent="asc_purchase_menu"
-        action="action_asc_payment_request"
-        sequence="20"/>
+            id="asc_products_menu"
+            name="Master"
+            parent="asc_products_main_menu"
+            action="stock.product_template_action_product"
+            sequence="10"/>
 
     <menuitem
-        id="asc_purchase_invoice_menu"
-        name="Invoices"
-        parent="asc_purchase_menu"
-        action="account.action_move_in_invoice_type"
-        sequence="30"/>
-    
-    <menuitem
-        id="asc_sale_receipt_menu"
-        name="Receipts/GRN"
-        parent="asc_purchase_menu"
-        action="stock.action_picking_tree_incoming"
-        sequence="40"/>
+            id="asc_product_combination_menu"
+            name="Product Combinations"
+            parent="asc_products_main_menu"
+            action="action_asc_product_combination"
+            sequence="20"/>
 
     <menuitem
-        id="asc_sale_menu"
-        name="Sales"
-        parent="asc_root_menu"
-        sequence="50"/>
-    
-    <menuitem
-        id="asc_sale_order_menu"
-        name="Orders"
-        parent="asc_sale_menu"
-        action="sale.action_quotations_with_onboarding"
-        sequence="10"/>
+            id="asc_product_specification_menu"
+            name="Specifications"
+            parent="asc_products_main_menu"
+            action="action_asc_specification"
+            sequence="30"/>
 
     <menuitem
-        id="asc_sale_invoice_menu"
-        name="Invoices"
-        parent="asc_sale_menu"
-        action="account.action_move_out_invoice_type"
-        sequence="20"/>
+            id="asc_purchase_menu"
+            name="Purchase"
+            parent="asc_root_menu"
+            sequence="40"/>
 
     <menuitem
-        id="asc_sale_credit_note_menu"
-        name="Credit Notes"
-        parent="asc_sale_menu"
-        action="account.action_move_out_refund_type"
-        sequence="30"/>
-    
-    <menuitem
-        id="asc_sale_delivery_menu"
-        name="Deliveries"
-        parent="asc_sale_menu"
-        action="stock.action_picking_tree_outgoing"
-        sequence="40"/>        
+            id="asc_purchase_order_menu"
+            name="Orders"
+            parent="asc_purchase_menu"
+            action="purchase.purchase_rfq"
+            sequence="10"/>
 
     <menuitem
-        id="asc_config_menu"
-        name="Configuration"
-        parent="asc_root_menu"
-        sequence="100"/>
-    
-    <menuitem
-        id="asc_config_settings_menu"
-        name="Settings"
-        parent="asc_config_menu"
-        action="action_asc_res_config_settings"
-        sequence="10"/>
-    
-    <menuitem
-        id="asc_config_bank_menu"
-        name="Banks"
-        parent="asc_config_menu"
-        action="base.action_res_bank_form"
-        sequence="20"/>
-    
-    <menuitem
-        id="asc_config_document_type_menu"
-        name="Documents Types"
-        action="action_asc_document_type"
-        parent="asc_config_menu"
-        sequence="30"/>
+            id="asc_payment_request_menu"
+            name="Payment Requests"
+            parent="asc_purchase_menu"
+            action="action_asc_payment_request"
+            sequence="20"/>
 
     <menuitem
-        id="asc_config_packaging_menu"
-        name="Packaging"
-        parent="asc_config_menu"
-        action="action_asc_packaging"
-        sequence="40"/>
+            id="asc_purchase_invoice_menu"
+            name="Invoices"
+            parent="asc_purchase_menu"
+            action="account.action_move_in_invoice_type"
+            sequence="30"/>
 
     <menuitem
-        id="asc_config_payment_term_menu"
-        name="Payment Terms"
-        parent="asc_config_menu"
-        action="account.action_payment_term_form"
-        sequence="50"/>
+            id="asc_sale_receipt_menu"
+            name="Receipts/GRN"
+            parent="asc_purchase_menu"
+            action="stock.action_picking_tree_incoming"
+            sequence="40"/>
 
     <menuitem
-        id="asc_config_port_menu"
-        name="Ports"
-        parent="asc_config_menu"
-        action="action_asc_port"
-        sequence="60"/>
+            id="asc_sale_menu"
+            name="Sales"
+            parent="asc_root_menu"
+            sequence="50"/>
 
     <menuitem
-        id="asc_config_shipping_line_menu"
-        name="Shipping Lines"
-        parent="asc_config_menu"
-        action="action_asc_shipping_line"
-        sequence="70"/>
+            id="asc_sale_order_menu"
+            name="Orders"
+            parent="asc_sale_menu"
+            action="sale.action_quotations_with_onboarding"
+            sequence="10"/>
+
+    <menuitem
+            id="asc_sale_invoice_menu"
+            name="Invoices"
+            parent="asc_sale_menu"
+            action="account.action_move_out_invoice_type"
+            sequence="20"/>
+
+    <menuitem
+            id="asc_sale_credit_note_menu"
+            name="Credit Notes"
+            parent="asc_sale_menu"
+            action="account.action_move_out_refund_type"
+            sequence="30"/>
+
+    <menuitem
+            id="asc_sale_delivery_menu"
+            name="Deliveries"
+            parent="asc_sale_menu"
+            action="stock.action_picking_tree_outgoing"
+            sequence="40"/>
+
+    <menuitem
+            id="asc_config_menu"
+            name="Configuration"
+            parent="asc_root_menu"
+            sequence="100"/>
+
+    <menuitem
+            id="asc_config_settings_menu"
+            name="Settings"
+            parent="asc_config_menu"
+            action="action_asc_res_config_settings"
+            sequence="10"
+            />
+
+
+    <menuitem
+            id="asc_config_bank_menu"
+            name="Banks"
+            parent="asc_config_menu"
+            action="base.action_res_bank_form"
+            sequence="20"/>
+
+    <menuitem
+            id="asc_config_document_type_menu"
+            name="Documents Types"
+            action="action_asc_document_type"
+            parent="asc_config_menu"
+            sequence="30"/>
+
+    <menuitem
+            id="asc_config_packaging_menu"
+            name="Packaging"
+            parent="asc_config_menu"
+            action="action_asc_packaging"
+            sequence="40"/>
+
+    <menuitem
+            id="asc_config_payment_term_menu"
+            name="Payment Terms"
+            parent="asc_config_menu"
+            action="account.action_payment_term_form"
+            sequence="50"/>
+
+    <menuitem
+            id="asc_config_port_menu"
+            name="Ports"
+            parent="asc_config_menu"
+            action="action_asc_port"
+            sequence="60"/>
+
+    <menuitem
+            id="asc_config_shipping_line_menu"
+            name="Shipping Lines"
+            parent="asc_config_menu"
+            action="action_asc_shipping_line"
+            sequence="70"/>
 
 </odoo>

@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
     packaging_id = fields.Many2one('asc.product.packaging', related='product_combination_id.packaging_id')
     product_description = fields.Char(related='product_combination_id.description')
     
-    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id")
+    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id", store=True, readonly=False)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id')
     
     shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
@@ -249,6 +249,17 @@ class SaleOrder(models.Model):
     def generate_proforma_wizard(self):
         if self.is_invoice_generated:
             raise UserError("Proforma invoice has already been generated.")
+        lead = self.lead_id
+        if lead.cover_report_amount:
+            roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+            try:
+                sales_price = lead.cover_report_amount / roe
+            except ZeroDivisionError:
+                sales_price = self.cost_amount
+            procurement_documentation_amount = sales_price - (self.fob_amount + self.freight_amount + self.insurance_amount + self.interest_amount)
+        else:
+            sales_price = self.cost_amount
+            procurement_documentation_amount = self.procurement_documentation_amount
         action = {
             'name': 'Generate Proforma Invoice',
             'type': 'ir.actions.act_window',
@@ -265,11 +276,11 @@ class SaleOrder(models.Model):
                         'default_freight_amount': self.freight_amount,
                         'default_insurance_amount': self.insurance_amount,
                         'default_interest_amount': self.interest_amount,
-                        'default_procurement_documentation_amount': self.procurement_documentation_amount,
+                        'default_procurement_documentation_amount': procurement_documentation_amount,
                         'default_fca_amount': self.fca_amount,
                         'default_road_transportation_amount': self.road_transportation_amount,
                         'default_logistics_service_amount': self.logistics_service_amount,
-                        'default_cost_amount': self.cost_amount,}
+                        'default_cost_amount': sales_price,}
         }
         return action
     

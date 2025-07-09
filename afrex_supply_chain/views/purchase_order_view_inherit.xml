@@ -237,6 +237,7 @@
                             <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
                             Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                     </group>
                 </group>   
                 <group invisible="state != 'purchase' or supplier_delivery_method != 'road'">
@@ -276,6 +277,7 @@
                             <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
                             Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                     </group>
                 </group>
                 <group invisible="state == 'purchase' or supplier_delivery_method != 'sea'">
@@ -304,6 +306,7 @@
                             <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
                             Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                         <div class="o_row" colspan="2">
                             <button name="update_sales_order_wizard" type="object" string=" Update Offer" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer." invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
                         </div>
@@ -353,6 +356,7 @@
                             <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float" options="{'precision': 2}"/>
                             Total: <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                         <div class="o_row" colspan="2">
                             <button name="update_sales_order_wizard" type="object" string=" Update Offer" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer." invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
                         </div>

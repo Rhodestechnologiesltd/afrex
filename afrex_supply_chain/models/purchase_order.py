@@ -35,7 +35,7 @@ class PurchaseOrder(models.Model):
     
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method', string="Supplier Delivery Method", tracking=True)
     
-    loading_port_id = fields.Many2one('asc.port', "Port of Loading", ondelete='restrict', tracking=True)
+    loading_port_id = fields.Many2one('asc.port', "Port of Loading", ondelete='restrict', tracking=True, readonly=False, store=True)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id")
     shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
     shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')
@@ -81,6 +81,8 @@ class PurchaseOrder(models.Model):
     logistics_service_unit = fields.Float(string="Logistics Service fee per MT", tracking=True)
     logistics_service_amount = fields.Float(string="Logistics Service fee", compute='compute_logistics_service_amount', store=True, tracking=True)
     
+    show_breakdown = fields.Boolean("Display Breakdown", help="Show breakdown of costs in the purchase order")
+
     validity = fields.Date("Validity", tracking=True)
     
     initial_fob_unit = fields.Float("Initial FOB/MT", digits="Prices per Unit", tracking=True)
@@ -412,7 +414,10 @@ class PurchaseOrder(models.Model):
             fca = self.fca_amount
             interest = lead.credit_cost_amount
             procurement = lead.procurement_fee_amount
-            sales_price = lead.sales_price
+            if lead.is_sales_price_override:
+                sales_price = lead.agreed_sales_price
+            else:
+                sales_price = lead.sales_price
             if sale_order.incoterm_selection in ['cfr','fob']:
                 insurance = 0.0
             if not lead.is_internal:
@@ -465,7 +470,10 @@ class PurchaseOrder(models.Model):
             fca = self.fca_amount
             interest = lead.credit_cost_amount
             procurement = lead.procurement_fee_amount
-            sales_price = lead.sales_price
+            if lead.is_sales_price_override:
+                sales_price = lead.agreed_sales_price
+            else:
+                sales_price = lead.sales_price
             if sale_order.incoterm_selection in ['cfr','fob']:
                 insurance = 0.0
             if not lead.is_internal:
@@ -662,7 +670,10 @@ class PurchaseOrder(models.Model):
         logistics_service = self.logistics_service_amount
         interest = lead.credit_cost_amount
         procurement = lead.procurement_fee_amount
-        sales_price = lead.sales_price
+        if lead.is_sales_price_override:
+            sales_price = lead.agreed_sales_price
+        else:
+            sales_price = lead.sales_price
         incoterm = lead.sale_order_incoterm_id or lead.tentative_sale_order_incoterm_id
         net_weight = lead.product_qty * 1000  # Assuming 1 MT = 1000 kg
         action = {

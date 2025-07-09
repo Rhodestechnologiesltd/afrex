@@ -127,7 +127,7 @@
                         <li>
                             <button name="generate_payment_request_wizard" icon="fa-usd"
                                     string="Generate Payment Request(s)" type="object" class="btn-mute"
-                                    invisible="is_payment_request_generated"/>
+                                    invisible="is_payment_request_generated or purchase_order_state not in ['done', 'purchase']"/>
                         </li>
                         <li>
                             <button name="generate_offer" icon="fa-file-text-o" string="Make an Offer" type="object"
@@ -157,6 +157,40 @@
                             <button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate"
                                     type="object" class="btn-mute"/>
                         </li>
+                        <li>
+                            <button name="print_quotation" icon="fa-dollar" string="Quote / Offer" type="object"
+                                    class="btn-mute" invisible="not sale_order_id"/>
+                        </li>
+                        <li>
+                            <button name="print_shipping_instructions" icon="fa-list" string="Shipping Instructions"
+                                    type="object" class="btn-mute"
+                                    invisible="purchase_order_state not in ['done', 'purchase']"/>
+                        </li>
+                        <li>
+                            <button name="print_purchase_order" icon="fa-file-text" string="Purchase Order"
+                                    type="object" class="btn-mute"
+                                    invisible="purchase_order_state not in ['done', 'purchase']"/>
+                        </li>
+                        <li>
+                            <button name="print_proforma_invoice" icon="fa-file-text-o" string="Proforma Invoice"
+                                    type="object" class="btn-mute"
+                                    invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'draft'"/>
+                        </li>
+                        <li>
+                            <button name="print_commercial_invoice" icon="fa-file-text" string="Commercial Invoice"
+                                    type="object" class="btn-mute"
+                                    invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'posted'"/>
+                        </li>
+                        <li>
+                            <button name="print_packing_list" icon="fa-list" string="Packing List" type="object"
+                                    class="btn-mute" invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'posted'"/>
+                        </li>
+                        <li>
+                            <button name="print_origin_certificate" icon="fa-industry" string="Certificate of Origin"
+                                    type="object" class="btn-mute"
+                                    invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'posted'"/>
+                        </li>
+
                     </ul>
                 </div>
                 <div class="dropdown" id="goto_dropdown" style="margin-left: 10px;">
@@ -354,13 +388,15 @@
                                         <field name="supplier_proforma_date" string="Date"/>
                                     </group>
                                     <group string="Afrex PFI">
-                                        <button string="Generate PFI" name="generate_proforma_invoice" type="object"
-                                                class="oe_highlight" colspan="2" invisible="is_afrex_proforma_raised"/>
+                                        <!-- <button string="Generate PFI" name="generate_proforma_invoice" type="object"
+                                                class="oe_highlight" colspan="2" invisible="is_afrex_proforma_raised"/> -->
                                         <field name="is_afrex_proforma_raised" invisible="True"/>
                                         <!-- <button string="Generate PFI" name="generate_proforma_invoice" type="object" class="oe_highlight" colspan="2" invisible="sale_order_id"/> -->
                                         <field name="sale_invoice_id" readonly="True"/>
                                         <field name="sale_invoice_date"/>
                                         <field name="sale_invoice_state"/>
+                                        <field name="sale_order_move_type" invisible="1"/>
+
                                     </group>
                                 </group>
                             </div>
@@ -1146,6 +1182,47 @@
                                                     <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
                                                 </th>
                                             </tr>
+                                            <br/>
+                                            <tr>
+                                                <th style="width:30%; text-align: right;">
+                                                    Override Sales Price
+                                                    <field name="is_sales_price_override" widget="boolean_toggle"/>
+                                                </th>
+                                                <th style="width: 40%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    Agreed Sales Price / MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="agreed_sales_price_unit" widget="float"
+                                                            options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    Agreed Sales Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="agreed_sales_price" widget="float"
+                                                            options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
                                         </table>
                                         <table invisible="not is_internal" style="width: 100%">
                                             <tr invisible="True">
@@ -1245,6 +1322,46 @@
                                                            options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 40%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    Override Sales Value
+                                                    <field name="is_sales_price_override" widget="boolean_toggle"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    Agreed Sales Price / MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="agreed_sales_price_unit" widget="float"
+                                                            options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    Agreed Sales Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="agreed_sales_price" widget="float"
+                                                            options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; padding-left: 5px;">
                                                     <span/>
                                                 </th>
                                             </tr>
@@ -1812,9 +1929,8 @@
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
-                                                        <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Final Calculated Sales
-                                                        Price / MT
+                                                        <field name="product_qty" readonly="True" style="color: white; opacity: 0;"/>
+                                                        Final Calculated Sales Price / MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
@@ -1826,7 +1942,34 @@
                                                         <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
                                                     </th>
                                                 </tr>
+                                                <br/>
                                                 <tr>
+                                                    <th style="width:30%; text-align: right;">
+                                                        Override Sales Price
+                                                        <field name="is_sales_price_override" widget="boolean_toggle"/>
+                                                    </th>
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_sales_price_override">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        Agreed Sales Price / MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="agreed_sales_price_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_sales_price_override">
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         Agreed Sales Price
@@ -1917,7 +2060,7 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Sales Value
+                                                               style="color: white; opacity: 0;"/>Total Calculated Sales Value
                                                         [A+C+D]
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
@@ -1936,7 +2079,7 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Sales Value per MT
+                                                               style="color: white; opacity: 0;"/>Calculated Sales Value per MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
@@ -1944,6 +2087,46 @@
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        Override Sales Value
+                                                        <field name="is_sales_price_override" widget="boolean_toggle"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_sales_price_override">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        Agreed Sales Price / MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="agreed_sales_price_unit" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_sales_price_override">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        Agreed Sales Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="agreed_sales_price" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                    <th style="width:30%; padding-left: 5px;">
                                                         <span/>
                                                     </th>
                                                 </tr>

@@ -30,7 +30,7 @@ class GenerateProformaWizard(models.TransientModel):
 
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method')
     
-    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='sale_order_id.loading_port_id')
+    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='sale_order_id.loading_port_id', store=True, readonly=False)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='sale_order_id.discharge_port_id')
     
     currency_id = fields.Many2one('res.currency')
@@ -157,12 +157,12 @@ class GenerateProformaWizard(models.TransientModel):
             else:
                 rec.incoterm_selection = False
     
-    @api.onchange('insurance_amount')
-    def check_incoterm_insurance(self):
-        for rec in self:
-            if rec.incoterm_id == self.env.ref('account.incoterm_CFR'):
-                if rec.insurance_amount > 0:
-                    raise UserError("Insurance amount should be 0 for a CFR deal.")
+    # @api.onchange('insurance_amount')
+    # def check_incoterm_insurance(self):
+    #     for rec in self:
+    #         if rec.incoterm_id == self.env.ref('account.incoterm_CFR'):
+    #             if rec.insurance_amount > 0:
+    #                 raise UserError("Insurance amount should be 0 for a CFR deal.")
 
     @api.onchange('qty_total')
     def _compute_net_weight(self):

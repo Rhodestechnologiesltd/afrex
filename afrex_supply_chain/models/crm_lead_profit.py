@@ -53,12 +53,15 @@ class Lead(models.Model):
     initial_sales_price_unit = fields.Float(string="initial_sales_price_unit", compute='compute_initial_sales_price_unit', store=True)
     initial_sales_price_unit_unrounded = fields.Float(string="Unrounded Initial Sales Price per MT")
     sales_price_unit = fields.Float(string="Final calculated Sales Price", compute='compute_sales_price_unit', store=True)
-    agreed_sales_price = fields.Float(string="Agreed Sales Price")
     sales_price_unit_unrounded = fields.Float(string="Unrounded Final Sales Price per MT")
     
     initial_sales_price = fields.Float(string="initial_sales_price", compute='compute_initial_sales_price', store=True)
     sales_price = fields.Float(string="sales_price", compute='compute_sales_price', store=True)
     sales_price_unrounded = fields.Float(string="Unrounded Final sales_price")
+    
+    is_sales_price_override = fields.Boolean(string="Override Sales Price", help="Check this box if you want to override the calculated sales price")
+    agreed_sales_price_unit = fields.Float(string="Agreed Sales Price per MT")
+    agreed_sales_price = fields.Float(string="Agreed Sales Price", compute='compute_agreed_sales_price', store=True)
     
     gross_profit_amount = fields.Float(string="gross_profit_amount", compute='compute_gross_profit_amount', store=True)
     gross_profit_percentage = fields.Float(string="gross_profit_percentage", compute='compute_gross_profit_percentage', store=True)
@@ -82,6 +85,7 @@ class Lead(models.Model):
     credit_cost_amount_zar = fields.Float(compute='compute_credit_cost_amount_zar', store=True, digits="Prices per Unit")
     credit_insurance_amount_zar = fields.Float(compute='compute_credit_insurance_amount_zar', store=True, digits="Prices per Unit")
     sales_price_zar = fields.Float(compute='compute_sales_price_zar', store=True, digits="Prices per Unit")
+    agreed_sales_price_zar = fields.Float(compute='compute_agreed_sales_price_zar', store=True, digits="Prices per Unit")
     insurance_premium_unit_zar = fields.Float(compute='compute_insurance_premium_unit_zar', store=True, digits="Prices per Unit")
     
     dap_amount = fields.Float(string="DAP Amount", compute="_compute_dap_amount", store=True, digits="Prices per Unit", help="The DAP amount is the total cost of the product including all costs up to delivery at the customer's premises.")
@@ -140,6 +144,12 @@ class Lead(models.Model):
         for rec in self:
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
             rec.sales_price_zar = rec.sales_price * roe
+            
+    @api.depends('agreed_sales_price','indicative_exchange_rate','exchange_rate')
+    def compute_agreed_sales_price_zar(self):
+        for rec in self:
+            roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
+            rec.agreed_sales_price_zar= rec.agreed_sales_price_zar * roe
     
     @api.depends('insurance_premium_unit','indicative_exchange_rate','exchange_rate')
     def compute_insurance_premium_unit_zar(self):
@@ -147,7 +157,7 @@ class Lead(models.Model):
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
             rec.insurance_premium_unit_zar = rec.insurance_premium_unit * roe
     
-    @api.depends('insurance_premium_amount', 'product_qty', 'sales_price')
+    @api.depends('insurance_premium_amount', 'product_qty')
     def compute_insurance_premium_unit(self):
         for rec in self:
             if rec.is_internal:
@@ -155,8 +165,6 @@ class Lead(models.Model):
                     rec.insurance_premium_unit = rec.insurance_premium_amount / rec.product_qty
                 except ZeroDivisionError:
                     rec.insurance_premium_unit = 0
-            # else:
-            #     rec.insurance_premium_unit = (rec.sales_price * 1.1 * 0.0025) + 10
     
     @api.depends('afrex_freight_rate', 'product_qty', 'packaging_weight')
     def compute_afrex_freight_amount(self):
@@ -297,31 +305,47 @@ class Lead(models.Model):
                 try:
                     rec.sales_price_unit_unrounded = rec.sales_price_unrounded / rec.product_qty
                     rec.sales_price_unit = rec.sales_price / rec.product_qty
-                    # rec.sales_price_unit = rec.sales_price / rec.product_qty
                 except ZeroDivisionError:
                     rec.sales_price_unit_unrounded = 0
                     rec.sales_price_unit = 0
+    
+    @api.depends('is_sales_price_override', 'agreed_sales_price_unit', 'product_qty')
+    def compute_agreed_sales_price(self):
+        for rec in self:
+            rec.agreed_sales_price = rec.agreed_sales_price_unit * rec.product_qty
 
-    @api.depends('sales_price', 'sales_cost')
+    @api.depends('sales_price', 'sales_cost', 'is_sales_price_override', 'agreed_sales_price')
     def compute_gross_profit_amount(self):
         for rec in self:
-            rec.gross_profit_amount = abs(rec.sales_price - rec.sales_cost)
+            if rec.is_sales_price_override:
+                rec.gross_profit_amount = abs(rec.agreed_sales_price - rec.sales_cost)
+            else:
+                rec.gross_profit_amount = abs(rec.sales_price - rec.sales_cost)
 
-    @api.depends('gross_profit_amount', 'sales_price')
+    @api.depends('gross_profit_amount', 'sales_price', 'is_sales_price_override', 'agreed_sales_price')
     def compute_gross_profit_percentage(self):
         for rec in self:
             try:
-                rec.gross_profit_percentage = rec.gross_profit_amount / rec.sales_price
+                if rec.is_sales_price_override:
+                    rec.gross_profit_percentage = rec.gross_profit_amount / rec.agreed_sales_price
+                else:
+                    rec.gross_profit_percentage = rec.gross_profit_amount / rec.sales_price
             except ZeroDivisionError:
                 rec.gross_profit_percentage = 0
 
-    @api.depends('sales_price', 'total_cost', 'credit_cost_amount')
+    @api.depends('sales_price', 'total_cost', 'credit_cost_amount', 'is_sales_price_override', 'agreed_sales_price')
     def compute_markup_amount(self):
         for rec in self:
             if rec.is_internal:
-                rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_cost_amount)
+                if rec.is_sales_price_override:
+                    rec.markup_amount = rec.agreed_sales_price - (rec.total_cost + rec.credit_cost_amount)
+                else:
+                    rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_cost_amount)
             else:
-                rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_insurance_amount)
+                if rec.is_sales_price_override:
+                    rec.markup_amount = rec.agreed_sales_price - (rec.total_cost + rec.credit_insurance_amount)
+                else:
+                    rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_insurance_amount)
 
     @api.depends('markup_amount', 'total_cost', 'credit_insurance_amount')
     def compute_markup_percentage(self):

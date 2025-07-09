@@ -1,207 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <record id="view_asc_generate_proforma_form" model="ir.ui.view">
         <field name="name">asc.generate.proforma.form</field>
         <field name="model">asc.generate.proforma</field>
         <field name="arch" type="xml">
-          <form>
-            <field name="lead_id" invisible="True"/>
-            <field name="sale_order_id" invisible="True"/>
-            <field name="company_partner_id" invisible="True"/>
-            <field name="is_internal" invisible="True"/>
-            <field name="incoterm_selection" invisible="True"/>
-            <field name="is_currency_zar" invisible="True"/>
-            <field name="supplier_delivery_method" invisible="True"/>
-            <group>
+            <form>
+                <field name="lead_id" invisible="True"/>
+                <field name="sale_order_id" invisible="True"/>
+                <field name="company_partner_id" invisible="True"/>
+                <field name="is_internal" invisible="True"/>
+                <field name="incoterm_selection" invisible="True"/>
+                <field name="is_currency_zar" invisible="True"/>
+                <field name="supplier_delivery_method" invisible="True"/>
                 <group>
-                    <field name="currency_id" widget="selection_badge"/>
-                    <field name="exchange_rate" invisible="not is_currency_zar"/>
+                    <group>
+                        <field name="currency_id" widget="selection_badge"/>
+                        <field name="exchange_rate" invisible="not is_currency_zar"/>
+                    </group>
+                    <group>
+                        <field name="bank_account_id" domain="[('partner_id', '=', company_partner_id)]"
+                               string="Afrex Bank Account" required="True"/>
+                    </group>
+                </group>
+                <group string="USD">
+                    <group invisible="supplier_delivery_method != 'sea'">
+                        <label for="fob_amount" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount"/>
+                            FOB/MT:
+                            <field name="fob_unit" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT:
+                            <field name="freight_unit" readonly="True"/>
+                        </div>
+                        <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount"/>
+                            CIF/MT:
+                            <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount"/>
+                            CFR/MT:
+                            <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount"/>
+                            FOB/MT:
+                            <field name="cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="supplier_delivery_method != 'road'">
+                        <label for="fca_amount" string="FCA"/>
+                        <div class="o_row">
+                            <field name="fca_amount"/>
+                            FCA/MT:
+                            <field name="fca_unit" readonly="True"/>
+                        </div>
+                        <label for="road_transportation_amount" string="Road Transportation"/>
+                        <div class="o_row">
+                            <field name="road_transportation_amount" readonly="incoterm_selection != 'dap'"/>
+                            Transportation/MT:
+                            <field name="road_transportation_unit" readonly="True"/>
+                        </div>
+                        <label for="cost_amount" string="FCA" invisible="incoterm_selection != 'fca'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'fca'">
+                            <field name="cost_amount"/>
+                            FCA/MT:
+                            <field name="cost_unit" readonly="True"/>
+                        </div>
+                        <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="cost_amount"/>
+                            DAP/MT:
+                            <field name="cost_unit" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="not is_internal">
+                        <label for="logistics_service_amount" string="Logistics Service"
+                               invisible="supplier_delivery_method != 'road'"/>
+                        <div class="o_row" invisible="supplier_delivery_method != 'road'">
+                            <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
+                            Logistics/MT:
+                            <field name="logistics_service_unit" readonly="True"/>
+                        </div>
+                        <field name="interest_amount"/>
+                        <field name="procurement_documentation_amount"/>
+                    </group>
+                </group>
+                <group string="ZAR" invisible="not is_currency_zar">
+                    <group invisible="supplier_delivery_method != 'sea'">
+                        <label for="fob_amount_zar" string="FOB"/>
+                        <div class="o_row">
+                            <field name="fob_amount_zar"/>
+                            FOB/MT:
+                            <field name="fob_unit_zar" readonly="True"/>
+                        </div>
+                        <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
+                        <label for="freight_amount_zar" string="Freight"/>
+                        <div class="o_row">
+                            <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
+                            Freight/MT:
+                            <field name="freight_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                        <label for="cost_amount_zar" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                        <label for="cost_amount_zar" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'cif'">
+                            <field name="cost_amount_zar"/>
+                            CIF/MT:
+                            <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT:
+                            <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <div class="o_row" invisible="incoterm_selection != 'fob'">
+                            <field name="cost_amount_zar"/>
+                            CFR/MT:
+                            <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="supplier_delivery_method != 'road'">
+                        <label for="fca_amount_zar" string="FCA" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="fca_amount_zar"/>
+                            FCA/MT:
+                            <field name="fca_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="road_transportation_amount_zar" string="DAP"
+                               invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="road_transportation_amount_zar"/>
+                            Transportation/MT:
+                            <field name="road_transportation_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="logistics_service_amount_zar" string="Logistics Service"
+                               invisible="not is_internal"/>
+                        <div class="o_row" invisible="not is_internal">
+                            <field name="logistics_service_amount_zar"/>
+                            Logistics/MT:
+                            <field name="logistics_service_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="cost_amount_zar" string="FCA" invisible="incoterm_selection != 'fca'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'fca'">
+                            <field name="cost_amount_zar"/>
+                            FCA/MT:
+                            <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                        <label for="cost_amount_zar" string="DAP" invisible="incoterm_selection != 'dap'"/>
+                        <div class="o_row" invisible="incoterm_selection != 'dap'">
+                            <field name="cost_amount_zar"/>
+                            DAP/MT:
+                            <field name="cost_unit_zar" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="not is_internal">
+                        <label for="logistics_service_amount" string="Logistics Service"
+                               invisible="supplier_delivery_method != 'road'"/>
+                        <div class="o_row" invisible="supplier_delivery_method != 'road'">
+                            <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
+                            Logistics/MT:
+                            <field name="logistics_service_unit" readonly="True"/>
+                        </div>
+                        <field name="interest_amount_zar"/>
+                        <field name="procurement_documentation_amount_zar"/>
+                    </group>
+                </group>
+                <hr/>
+                <group>
+                    <group invisible="supplier_delivery_method != 'sea'">
+                        <field name="breakbulk_container" widget="selection_badge" readonly="True"/>
+                        <field name="is_palletised" widget="selection_badge"
+                               invisible="breakbulk_container != 'container'" readonly="True"/>
+                        <label for="container_count" string="Container" invisible="breakbulk_container != 'container'"/>
+                        <div name="container_count" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_count" placeholder="Count..." readonly="True"/>
+                            x
+                            <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}"
+                                   required="container_count" readonly="True"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing"
+                               invisible="breakbulk_container != 'container'"/>
+                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'container'">
+                            <field name="container_stuffing" readonly="True"/>
+                            x
+                            <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                    </group>
+                    <group invisible="supplier_delivery_method != 'road'">
+                        <label for="container_count" string="Transportation"/>
+                        <div name="container_count" class="o_row">
+                            <field name="container_count" placeholder="Truck/Container Count... (if applicable)"
+                                   readonly="True"/>
+                            x
+                            <field name="container_type_id" options="{'no_open':True}" required="container_count"
+                                   readonly="True"/>
+                        </div>
+                        <label for="container_stuffing" string="Stuffing"/>
+                        <div name="container_stuffing" class="o_row">
+                            <field name="container_stuffing" placeholder="Stuffing... (if applicable)" readonly="True"/>
+                            x
+                            <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
+                    </group>
+                    <group>
+                        <field name="qty_total" readonly="True"/>
+                        <field name="gross_weight" string="Gross Weight (kg)" required="True"/>
+                        <field name="net_weight" string="Net Weight (kg)" required="True"/>
+                        <!-- <field name="vessel"/> -->
+                        <!-- <field name="voyage"/> -->
+                    </group>
                 </group>
                 <group>
-                    <field name="bank_account_id" domain="[('partner_id', '=', company_partner_id)]" string="Afrex Bank Account" required="True"/>
+                    <group string="Shipping Documents to be provided">
+                        <field name="doc_type_ids" string=" " widget="many2many_checkboxes"/>
+                    </group>
+                    <group string="Default Documents">
+                        <field name="sea_default_doc_type_ids" invisible="supplier_delivery_method != 'sea'" widget="many2many_checkboxes" readonly="True"/>
+                        <field name="road_default_doc_type_ids" invisible="supplier_delivery_method != 'road'"/>
+                    </group>
                 </group>
-            </group>
-            <group string="USD">
-                <group invisible="supplier_delivery_method != 'sea'">
-                    <label for="fob_amount" string="FOB"/>
-                    <div class="o_row">
-                        <field name="fob_amount"/>
-                        FOB/MT: <field name="fob_unit" readonly="True"/>
+                <div class="alert alert-info text-center mt-2 mb-2" role="alert">
+                    <div>
+                        <h6>
+                            If you confirm, the offer/quote will be confirmed and a proforma invoice will be generated
+                            with the current costing available.
+                        </h6>
                     </div>
-                    <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
-                    <label for="freight_amount" string="Freight"/>
-                    <div class="o_row">
-                        <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
-                        Freight/MT: <field name="freight_unit" readonly="True"/>
-                    </div>
-                    <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
-                    <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
-                    <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'cif'">
-                        <field name="cost_amount"/>
-                        CIF/MT: <field name="cost_unit" readonly="True"/>
-                    </div>
-                    <div class="o_row" invisible="incoterm_selection != 'cfr'">
-                        <field name="cost_amount"/>
-                        CFR/MT: <field name="cost_unit" readonly="True"/>
-                    </div>
-                    <div class="o_row" invisible="incoterm_selection != 'fob'">
-                        <field name="cost_amount"/>
-                        FOB/MT: <field name="cost_unit" readonly="True"/>
-                    </div>
-                </group>
-                <group invisible="supplier_delivery_method != 'road'">
-                    <label for="fca_amount" string="FCA"/>
-                    <div class="o_row">
-                        <field name="fca_amount"/>
-                        FCA/MT: <field name="fca_unit" readonly="True"/>
-                    </div>
-                    <label for="road_transportation_amount" string="Road Transportation"/>
-                    <div class="o_row">
-                        <field name="road_transportation_amount" readonly="incoterm_selection != 'dap'"/>
-                        Transportation/MT: <field name="road_transportation_unit" readonly="True"/>
-                    </div>
-                    <label for="cost_amount" string="FCA" invisible="incoterm_selection != 'fca'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'fca'">
-                        <field name="cost_amount"/>
-                        FCA/MT: <field name="cost_unit" readonly="True"/>
-                    </div>
-                    <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'dap'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'dap'">
-                        <field name="cost_amount"/>
-                        DAP/MT: <field name="cost_unit" readonly="True"/>
-                    </div>
-                </group>
-                <group invisible="not is_internal">
-                    <label for="logistics_service_amount" string="Logistics Service" invisible="supplier_delivery_method != 'road'"/>
-                    <div class="o_row" invisible="supplier_delivery_method != 'road'">
-                        <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
-                        Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
-                    </div>
-                    <field name="interest_amount"/>
-                    <field name="procurement_documentation_amount"/>
-                </group>
-            </group>
-            <group string="ZAR" invisible="not is_currency_zar">
-                <group invisible="supplier_delivery_method != 'sea'">
-                    <label for="fob_amount_zar" string="FOB"/>
-                    <div class="o_row">
-                        <field name="fob_amount_zar"/>
-                        FOB/MT: <field name="fob_unit_zar" readonly="True"/>
-                    </div>
-                    <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
-                    <label for="freight_amount_zar" string="Freight"/>
-                    <div class="o_row">
-                        <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
-                        Freight/MT: <field name="freight_unit_zar" readonly="True"/>
-                    </div>
-                    <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
-                    <label for="cost_amount_zar" string="CFR" invisible="incoterm_selection != 'cfr'"/>
-                    <label for="cost_amount_zar" string="FOB" invisible="incoterm_selection != 'fob'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'cif'">
-                        <field name="cost_amount_zar"/>
-                        CIF/MT: <field name="cost_unit_zar" readonly="True"/>
-                    </div>
-                    <div class="o_row" invisible="incoterm_selection != 'cfr'">
-                        <field name="cost_amount_zar"/>
-                        CFR/MT: <field name="cost_unit_zar" readonly="True"/>
-                    </div>
-                    <div class="o_row" invisible="incoterm_selection != 'fob'">
-                        <field name="cost_amount_zar"/>
-                        CFR/MT: <field name="cost_unit_zar" readonly="True"/>
-                    </div>
-                </group>
-                <group invisible="supplier_delivery_method != 'road'">
-                    <label for="fca_amount_zar" string="FCA" invisible="incoterm_selection != 'dap'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'dap'">
-                        <field name="fca_amount_zar"/>
-                        FCA/MT: <field name="fca_unit_zar" readonly="True"/>
-                    </div>
-                    <label for="road_transportation_amount_zar" string="DAP" invisible="incoterm_selection != 'dap'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'dap'">
-                        <field name="road_transportation_amount_zar"/>
-                        Transportation/MT: <field name="road_transportation_unit_zar" readonly="True"/>
-                    </div>
-                    <label for="logistics_service_amount_zar" string="Logistics Service" invisible="not is_internal"/>
-                    <div class="o_row" invisible="not is_internal">
-                        <field name="logistics_service_amount_zar"/>
-                        Logistics/MT: <field name="logistics_service_unit_zar" readonly="True"/>
-                    </div>
-                    <label for="cost_amount_zar" string="FCA" invisible="incoterm_selection != 'fca'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'fca'">
-                        <field name="cost_amount_zar"/>
-                        FCA/MT: <field name="cost_unit_zar" readonly="True"/>
-                    </div>
-                    <label for="cost_amount_zar" string="DAP" invisible="incoterm_selection != 'dap'"/>
-                    <div class="o_row" invisible="incoterm_selection != 'dap'">
-                        <field name="cost_amount_zar"/>
-                        DAP/MT: <field name="cost_unit_zar" readonly="True"/>
-                    </div>
-                </group>
-                <group invisible="not is_internal">
-                    <label for="logistics_service_amount" string="Logistics Service" invisible="supplier_delivery_method != 'road'"/>
-                    <div class="o_row" invisible="supplier_delivery_method != 'road'">
-                        <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
-                        Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
-                    </div>
-                    <field name="interest_amount_zar"/>
-                    <field name="procurement_documentation_amount_zar"/>
-                </group>
-            </group>
-            <hr/>
-            <group>
-                <group invisible="supplier_delivery_method != 'sea'">
-                    <field name="breakbulk_container" widget="selection_badge" readonly="True"/>
-                    <field name="is_palletised" widget="selection_badge" invisible="breakbulk_container != 'container'" readonly="True"/>
-                    <label for="container_count" string="Container" invisible="breakbulk_container != 'container'"/>
-                    <div name="container_count" class="o_row" invisible="breakbulk_container != 'container'">
-                        <field name="container_count" placeholder="Count..." readonly="True"/>
-                        x <field name="container_type_id" placeholder="Select Size..." options="{'no_open':True}" required="container_count" readonly="True"/>
-                    </div>
-                    <label for="container_stuffing" string="Stuffing" invisible="breakbulk_container != 'container'"/>
-                    <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'container'">
-                        <field name="container_stuffing" readonly="True"/>
-                        x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
-                    </div>
-                </group>
-                <group invisible="supplier_delivery_method != 'road'">
-                    <label for="container_count" string="Transportation"/>
-                    <div name="container_count" class="o_row">
-                        <field name="container_count" placeholder="Truck/Container Count... (if applicable)" readonly="True"/>
-                        x <field name="container_type_id" options="{'no_open':True}" required="container_count" readonly="True"/>
-                    </div>
-                    <label for="container_stuffing" string="Stuffing"/>
-                    <div name="container_stuffing" class="o_row">
-                        <field name="container_stuffing" placeholder="Stuffing... (if applicable)" readonly="True"/>
-                        x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
-                    </div>
-                </group>
-                <group>
-                    <field name="qty_total" readonly="True"/>
-                    <field name="gross_weight" string="Gross Weight (kg)" required="True"/>
-                    <field name="net_weight" string="Net Weight (kg)" required="True"/>
-                    <!-- <field name="vessel"/> -->
-                    <!-- <field name="voyage"/> -->
-                </group>
-            </group>
-            <group string="Shipping Documents to be provided">
-                <field name="sea_default_doc_type_ids" invisible="True"/>
-                <field name="road_default_doc_type_ids" invisible="True"/>
-                <field name="doc_type_ids" string=" " widget="many2many_checkboxes"/>
-            </group>
-            <div class="alert alert-info text-center mt-2 mb-2" role="alert">
-                <div>
-                    <h6>
-                        If you confirm, the offer/quote will be confirmed and a proforma invoice will be generated with the current costing available.
-                    </h6>
                 </div>
-            </div>
-            <footer>
-                <button name="generate_proforma" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
-                <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
-            </footer>
-          </form>
+                <footer>
+                    <button name="generate_proforma" string="Confirm" type="object" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
         </field>
     </record>
 

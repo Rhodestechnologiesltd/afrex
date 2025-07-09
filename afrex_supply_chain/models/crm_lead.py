@@ -122,7 +122,7 @@ class Lead(models.Model):
     route = fields.Char("Route", compute="compute_route", readonly=False, copy=False)
     seal_num = fields.Char(string="Seal No.", copy=False)
 
-    vessel_voyage_lines = fields.Char(compute='_compute_vessel_voyage_lines')
+    vessel_voyage_lines = fields.Char(compute='_compute_vessel_voyage_lines', store=True)
 
 
     
@@ -207,7 +207,8 @@ class Lead(models.Model):
     sale_invoice_insurance = fields.Float("Afrex Invoice Insurance")
     sale_invoice_freight = fields.Float("Afrex Invoice Freight")
     is_sale_invoice_incoterm_selection = fields.Selection(related="sale_invoice_id.incoterm_selection")
-    
+    sale_order_move_type = fields.Selection(related="sale_invoice_id.move_type")
+
     sale_invoice_state = fields.Selection(related="sale_invoice_id.state")
     
     gross_weight = fields.Float(string="Gross Weight", copy=False)
@@ -228,7 +229,7 @@ class Lead(models.Model):
     is_sale_order_incoterm_selection = fields.Selection(related="sale_order_id.incoterm_selection")
     sale_order_terms_id = fields.Many2one('account.payment.term', related='sale_order_id.payment_term_id', readonly=False)
     sale_order_state = fields.Selection(related="sale_order_id.state")
-    
+
     tentative_sale_order_incoterm_id = fields.Many2one('account.incoterms', string="Afrex Offer Incoterms", readonly=False, copy=False)
     tentative_sale_order_terms_id = fields.Many2one('account.payment.term', readonly=False, copy=False)
     
@@ -264,6 +265,49 @@ class Lead(models.Model):
         }
         return action
 
+    def print_quotation(self):
+            self.ensure_one()
+            if not self.sale_order_id:
+                raise UserError("No Quote / Offer generated.")
+            return self.sale_order_id.print_quotation()
+
+    def print_purchase_order(self):
+            self.ensure_one()
+            if not self.purchase_order_id:
+                raise UserError("No PO generated.")
+            return self.purchase_order_id.print_purchase_order()
+
+    def print_shipping_instructions(self):
+        self.ensure_one()
+        if not self.purchase_order_id:
+            raise UserError("No purchase order found for this lead.")
+        return self.purchase_order_id.print_shipping_instructions()
+
+    def print_proforma_invoice(self):
+            self.ensure_one()
+            if not self.sale_invoice_id:
+                raise UserError("No Proforma invoice generated.")
+            return self.sale_invoice_id.print_proforma_invoice()
+
+    def print_commercial_invoice(self):
+            self.ensure_one()
+            if not self.sale_invoice_id:
+                raise UserError("No commercial invoice generated.")
+            return self.sale_invoice_id.print_commercial_invoice()
+
+    def print_packing_list(self):
+            self.ensure_one()
+            if not self.sale_invoice_id:
+                raise UserError("No invoice generated.")
+            return self.sale_invoice_id.print_packing_list()
+
+    def print_origin_certificate(self):
+            self.ensure_one()
+            if not self.sale_invoice_id:
+                raise UserError("No invoice generated.")
+            return self.sale_invoice_id.print_origin_certificate()
+
+
     def _compute_vessel_voyage_lines(self):
         for rec in self:
             vessels = rec.vessel.split(',') if rec.vessel else []
@@ -271,7 +315,7 @@ class Lead(models.Model):
             combined = []
             for v, voy in zip(vessels, voyages):
                 combined.append(f"{v.strip()} - {voy.strip()}")
-            rec.vessel_voyage_lines = '\n'.join(combined)
+            rec.vessel_voyage_lines = ','.join(combined)
 
     def compute_purchase_order_count(self):
         for record in self:

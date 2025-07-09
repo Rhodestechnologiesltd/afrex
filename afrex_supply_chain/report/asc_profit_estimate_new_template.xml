@@ -170,7 +170,7 @@
                     </tr>
                 </table>
             </div>
-            <table t-if="o.is_internal" class="table-borderless mb-2" style="width: 96%; font-size:11px; margin-left: 2%; margin-right: 2%;">
+            <table t-if="o.is_internal and o.indicative_exchange_rate and not o.exchange_rate" class="table-borderless mb-2" style="width: 96%; font-size:11px; margin-left: 2%; margin-right: 2%;">
                 <tr class="text-start">
                     <th style="width: 30%;">
                         <span style="padding-left: 5px;">*Indicative Rate of Exchange (ROE) USDZAR:</span>
@@ -183,6 +183,16 @@
                     <th colspan="2">
                         <span style="padding-left: 5px;">(FINAL ROE WILL BE AVAILABLE ONCE GOODS HAVE BEEN SHIPPED ON BOARD)</span>
                     </th>
+                </tr>
+            </table>
+            <table t-if="o.is_internal and o.exchange_rate" class="table-borderless mb-2" style="width: 96%; font-size:11px; margin-left: 2%; margin-right: 2%;">
+                <tr class="text-start">
+                    <th style="width: 30%;">
+                        <span style="padding-left: 5px;">*Booked Rate of Exchange (ROE) USDZAR:</span>
+                    </th>
+                    <td>
+                        <span style="padding-left: 5px;" t-field="o.exchange_rate"/>
+                    </td>
                 </tr>
             </table>
             <table class="table-sm table-bordered mt-4" style="width: 96%; font-size:11px; border: 1px solid black; margin-left: 2%; margin-right: 2%;">
@@ -496,7 +506,7 @@
                 <tr t-if="not o.is_internal">
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
-                            <b>Sales Price / MT incl. Credit Insurance Cost</b>
+                            <b>Calculated Sales Price / MT incl. Credit Insurance Cost</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -507,12 +517,39 @@
                 </tr>
                 <tr t-if="not o.is_internal">
                     <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
+                        <span t-if="is_sales_price_override" style="padding-left: 5px;">
+                            <b>Total Calculated Sales Value</b>
+                        </span>
+                        <span t-else="" style="padding-left: 5px;">
                             <b>Total Sales Value [C]</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.sales_price" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                    </th>
+                </tr>
+                <tr t-if="not o.is_internal and o.is_sales_price_override">
+                    <th style="width:40%; text-align: right;">
+                        <span style="padding-left: 5px;">
+                            <b>Agreed Sales Price / MT incl. Credit Insurance Cost</b>
+                        </span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                    </th>
+                </tr>
+                <tr t-if="not o.is_internal and o.is_sales_price_override">
+                    <th style="width:40%; text-align: right;">
+                        <span style="padding-left: 5px;">
+                            <b>Agreed Sales Value [C]</b>
+                        </span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                     </th>
@@ -543,7 +580,10 @@
                 </tr>
                 <tr t-if="o.is_internal">
                     <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
+                        <span t-if="is_sales_price_override" style="padding-left: 5px;">
+                            <b>Total Calculated Sales Value</b>
+                        </span>
+                        <span t-else="" style="padding-left: 5px;">
                             <b>Total Sales Value [A+C+D]</b>
                         </span>
                     </th>
@@ -556,12 +596,40 @@
                 </tr>
                 <tr t-if="o.is_internal">
                     <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
+                        <span t-if="is_sales_price_override" style="padding-left: 5px;">
+                            <b>Calculated Sales Value per MT</b>
+                        </span>
+                        <span t-else="" style="padding-left: 5px;">
                             <b>Sales Value per MT</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                    </th>
+                </tr>
+                <tr t-if="o.is_internal and is_sales_price_override">
+                    <th style="width:40%; text-align: right;">
+                        <span style="padding-left: 5px;">
+                            <b>Total Agreed Sales Value [A+C+D]</b>
+                        </span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price_zar" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                </tr>
+                <tr t-if="o.is_internal and is_sales_price_override">
+                    <th style="width:40%; text-align: right;">
+                        <span style="padding-left: 5px;">
+                            <b>Agreed Sales Value per MT</b>
+                        </span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                     </th>

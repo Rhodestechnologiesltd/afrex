@@ -38,7 +38,7 @@
                                     <span t-field="o.partner_id.address_text"/>
                                 </td>
                             </tr>
-                            <t t-if="o.company_id.display_partner_child and o.partner_id.child_ids">
+                            <t t-if="o.company_id.x_display_partner_child and o.partner_id.child_ids">
                                 <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                                 <t t-foreach="partner_children" t-as="partner_child">
                                     <tr t-if="partner_child.name">
@@ -164,7 +164,7 @@
                             <span t-field="o.first_consignee_id.address_text"/>
                         </td>
                     </tr>
-                    <t t-if="o.company_id.display_partner_child and o.first_consignee_id.child_ids">
+                    <t t-if="o.company_id.x_display_partner_child and o.first_consignee_id.child_ids">
                         <t t-set="partner_children" t-value="o.first_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                         <t t-foreach="partner_children" t-as="partner_child">
                             <tr t-if="partner_child.name">
@@ -201,7 +201,7 @@
                             <span t-field="o.second_consignee_id.address_text"/>
                         </td>
                     </tr>
-                    <t t-if="o.company_id.display_partner_child and o.second_consignee_id.child_ids">
+                    <t t-if="o.company_id.x_display_partner_child and o.second_consignee_id.child_ids">
                         <t t-set="partner_children" t-value="o.second_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                         <t t-foreach="partner_children" t-as="partner_child">
                             <tr t-if="partner_child.name">
