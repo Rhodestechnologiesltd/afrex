@@ -133,9 +133,7 @@
   <record id="asc_product_packaging_47" model="asc.product.packaging">
     <field name="name">200 L Drums</field>
   </record>
-  <record id="asc_product_packaging_48" model="asc.product.packaging">
-    <field name="name">210 Kg Drums</field>
-  </record>
+
   <record id="asc_product_packaging_49" model="asc.product.packaging">
     <field name="name">215 Kg Drums</field>
   </record>
