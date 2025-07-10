@@ -136,9 +136,7 @@
 
 
  
-  <record id="asc_product_packaging_52" model="asc.product.packaging">
-    <field name="name">225 Kg Drums</field>
-  </record>
+
   <record id="asc_product_packaging_53" model="asc.product.packaging">
     <field name="name">23 MT Flexitank</field>
   </record>
