@@ -142,9 +142,7 @@
   </record>
   
  
-  <record id="asc_product_packaging_56" model="asc.product.packaging">
-    <field name="name">24 Kg Barrels</field>
-  </record>
+ 
   <record id="asc_product_packaging_57" model="asc.product.packaging">
     <field name="name">240 Kg Barrels</field>
   </record>
