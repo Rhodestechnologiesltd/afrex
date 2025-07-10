@@ -1,1 +1,360 @@
-
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+  <record id="asc_product_packaging_1" model="asc.product.packaging">
+    <field name="name">1 MT Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_2" model="asc.product.packaging">
+    <field name="name">1.3 MT Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_3" model="asc.product.packaging">
+    <field name="name">10 Kg American Bucket</field>
+  </record>
+  <record id="asc_product_packaging_4" model="asc.product.packaging">
+    <field name="name">10 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_5" model="asc.product.packaging">
+    <field name="name">100 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_6" model="asc.product.packaging">
+    <field name="name">1000 Kg Box</field>
+  </record>
+  <record id="asc_product_packaging_7" model="asc.product.packaging">
+    <field name="name">1000 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_8" model="asc.product.packaging">
+    <field name="name">1000 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_9" model="asc.product.packaging">
+    <field name="name">1000 L Drums</field>
+  </record>
+  <record id="asc_product_packaging_10" model="asc.product.packaging">
+    <field name="name">1050 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_11" model="asc.product.packaging">
+    <field name="name">110 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_12" model="asc.product.packaging">
+    <field name="name">1100 Kg Box</field>
+  </record>
+  <record id="asc_product_packaging_13" model="asc.product.packaging">
+    <field name="name">1100 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_14" model="asc.product.packaging">
+    <field name="name">1100 Kg Flexibags</field>
+  </record>
+  <record id="asc_product_packaging_15" model="asc.product.packaging">
+    <field name="name">1100 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_16" model="asc.product.packaging">
+    <field name="name">1150 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_17" model="asc.product.packaging">
+    <field name="name">1160 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_18" model="asc.product.packaging">
+    <field name="name">1180 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_19" model="asc.product.packaging">
+    <field name="name">1200 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_20" model="asc.product.packaging">
+    <field name="name">1200 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_21" model="asc.product.packaging">
+    <field name="name">1200 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_22" model="asc.product.packaging">
+    <field name="name">1250 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_23" model="asc.product.packaging">
+    <field name="name">1250 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_24" model="asc.product.packaging">
+    <field name="name">1270 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_25" model="asc.product.packaging">
+    <field name="name">1330 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_26" model="asc.product.packaging">
+    <field name="name">1350 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_27" model="asc.product.packaging">
+    <field name="name">1350 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_28" model="asc.product.packaging">
+    <field name="name">1400 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_29" model="asc.product.packaging">
+    <field name="name">1450 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_30" model="asc.product.packaging">
+    <field name="name">1500 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_31" model="asc.product.packaging">
+    <field name="name">1500 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_32" model="asc.product.packaging">
+    <field name="name">160 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_33" model="asc.product.packaging">
+    <field name="name">160 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_34" model="asc.product.packaging">
+    <field name="name">1600 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_35" model="asc.product.packaging">
+    <field name="name">165 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_36" model="asc.product.packaging">
+    <field name="name">1650 Kg IBC</field>
+  </record>
+  <record id="asc_product_packaging_37" model="asc.product.packaging">
+    <field name="name">170 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_38" model="asc.product.packaging">
+    <field name="name">180 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_39" model="asc.product.packaging">
+    <field name="name">190 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_40" model="asc.product.packaging">
+    <field name="name">2 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_41" model="asc.product.packaging">
+    <field name="name">20 Kg American Bucket</field>
+  </record>
+  <record id="asc_product_packaging_42" model="asc.product.packaging">
+    <field name="name">20 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_43" model="asc.product.packaging">
+    <field name="name">20 Kg Cartons</field>
+  </record>
+  <record id="asc_product_packaging_44" model="asc.product.packaging">
+    <field name="name">20 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_45" model="asc.product.packaging">
+    <field name="name">200 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_46" model="asc.product.packaging">
+    <field name="name">200 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_47" model="asc.product.packaging">
+    <field name="name">200 L Drums</field>
+  </record>
+  <record id="asc_product_packaging_48" model="asc.product.packaging">
+    <field name="name">210 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_49" model="asc.product.packaging">
+    <field name="name">215 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_50" model="asc.product.packaging">
+    <field name="name">220 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_51" model="asc.product.packaging">
+    <field name="name">220 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_52" model="asc.product.packaging">
+    <field name="name">225 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_53" model="asc.product.packaging">
+    <field name="name">23 MT Flexitank</field>
+  </record>
+  <record id="asc_product_packaging_54" model="asc.product.packaging">
+    <field name="name">230 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_55" model="asc.product.packaging">
+    <field name="name">230 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_56" model="asc.product.packaging">
+    <field name="name">24 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_57" model="asc.product.packaging">
+    <field name="name">240 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_58" model="asc.product.packaging">
+    <field name="name">240 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_59" model="asc.product.packaging">
+    <field name="name">25 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_60" model="asc.product.packaging">
+    <field name="name">25 Kg Bags in Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_61" model="asc.product.packaging">
+    <field name="name">25 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_62" model="asc.product.packaging">
+    <field name="name">25 L Drums</field>
+  </record>
+  <record id="asc_product_packaging_63" model="asc.product.packaging">
+    <field name="name">25 MT ISO Tank</field>
+  </record>
+  <record id="asc_product_packaging_64" model="asc.product.packaging">
+    <field name="name">250 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_65" model="asc.product.packaging">
+    <field name="name">250 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_66" model="asc.product.packaging">
+    <field name="name">250 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_67" model="asc.product.packaging">
+    <field name="name">26 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_68" model="asc.product.packaging">
+    <field name="name">27 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_69" model="asc.product.packaging">
+    <field name="name">270 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_70" model="asc.product.packaging">
+    <field name="name">270 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_71" model="asc.product.packaging">
+    <field name="name">275 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_72" model="asc.product.packaging">
+    <field name="name">28 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_73" model="asc.product.packaging">
+    <field name="name">280 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_74" model="asc.product.packaging">
+    <field name="name">280 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_75" model="asc.product.packaging">
+    <field name="name">30 Kg Cans</field>
+  </record>
+  <record id="asc_product_packaging_76" model="asc.product.packaging">
+    <field name="name">30 Kg Carboys</field>
+  </record>
+  <record id="asc_product_packaging_77" model="asc.product.packaging">
+    <field name="name">30 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_78" model="asc.product.packaging">
+    <field name="name">30 Kg Polycans</field>
+  </record>
+  <record id="asc_product_packaging_79" model="asc.product.packaging">
+    <field name="name">300 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_80" model="asc.product.packaging">
+    <field name="name">300 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_81" model="asc.product.packaging">
+    <field name="name">330 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_82" model="asc.product.packaging">
+    <field name="name">35 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_83" model="asc.product.packaging">
+    <field name="name">35 Kg Carboys</field>
+  </record>
+  <record id="asc_product_packaging_84" model="asc.product.packaging">
+    <field name="name">35 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_85" model="asc.product.packaging">
+    <field name="name">35 Kg Jerry Cans</field>
+  </record>
+  <record id="asc_product_packaging_86" model="asc.product.packaging">
+    <field name="name">35 Kg Polycans</field>
+  </record>
+  <record id="asc_product_packaging_87" model="asc.product.packaging">
+    <field name="name">36 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_88" model="asc.product.packaging">
+    <field name="name">4 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_89" model="asc.product.packaging">
+    <field name="name">40 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_90" model="asc.product.packaging">
+    <field name="name">40 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_91" model="asc.product.packaging">
+    <field name="name">40 Kg Jerry Cans</field>
+  </record>
+  <record id="asc_product_packaging_92" model="asc.product.packaging">
+    <field name="name">40-45 Kg American Bucket</field>
+  </record>
+  <record id="asc_product_packaging_93" model="asc.product.packaging">
+    <field name="name">45 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_94" model="asc.product.packaging">
+    <field name="name">5 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_95" model="asc.product.packaging">
+    <field name="name">50 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_96" model="asc.product.packaging">
+    <field name="name">50 Kg Carboys</field>
+  </record>
+  <record id="asc_product_packaging_97" model="asc.product.packaging">
+    <field name="name">50 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_98" model="asc.product.packaging">
+    <field name="name">500 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_99" model="asc.product.packaging">
+    <field name="name">500 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_100" model="asc.product.packaging">
+    <field name="name">550 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_101" model="asc.product.packaging">
+    <field name="name">57 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_102" model="asc.product.packaging">
+    <field name="name">6.12 Kg Cartons</field>
+  </record>
+  <record id="asc_product_packaging_103" model="asc.product.packaging">
+    <field name="name">600 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_104" model="asc.product.packaging">
+    <field name="name">650 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_105" model="asc.product.packaging">
+    <field name="name">750 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_106" model="asc.product.packaging">
+    <field name="name">800 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_107" model="asc.product.packaging">
+    <field name="name">800 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_108" model="asc.product.packaging">
+    <field name="name">800 Kg Jumbo Bags</field>
+  </record>
+  <record id="asc_product_packaging_109" model="asc.product.packaging">
+    <field name="name">850 Kg Wooden Box</field>
+  </record>
+  <record id="asc_product_packaging_110" model="asc.product.packaging">
+    <field name="name">9.50 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_111" model="asc.product.packaging">
+    <field name="name">900 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_112" model="asc.product.packaging">
+    <field name="name">950 Kg Bags</field>
+  </record>
+  <record id="asc_product_packaging_113" model="asc.product.packaging">
+    <field name="name">Aluminium Tankers</field>
+  </record>
+  <record id="asc_product_packaging_114" model="asc.product.packaging">
+    <field name="name">Flexibags</field>
+  </record>
+  <record id="asc_product_packaging_115" model="asc.product.packaging">
+    <field name="name">NA</field>
+  </record>
+  <record id="asc_product_packaging_116" model="asc.product.packaging">
+    <field name="name">Nematic Bulk Tanker</field>
+  </record>
+  <record id="asc_product_packaging_117" model="asc.product.packaging">
+    <field name="name">Old Indian Bucket</field>
+  </record>
+  <record id="asc_product_packaging_118" model="asc.product.packaging">
+    <field name="name">SS Tankers</field>
+  </record>
+  <record id="asc_product_packaging_119" model="asc.product.packaging">
+    <field name="name">Steel Drums</field>
+  </record>
+</data>
