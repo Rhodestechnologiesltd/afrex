@@ -117,7 +117,15 @@
   <record id="asc_product_packaging_39" model="asc.product.packaging">
     <field name="name">190 Kg Steel Drums</field>
   </record>
- 
+  <record id="asc_product_packaging_40" model="asc.product.packaging">
+    <field name="name">2 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_41" model="asc.product.packaging">
+    <field name="name">20 Kg American Bucket</field>
+  </record>
+  <record id="asc_product_packaging_42" model="asc.product.packaging">
+    <field name="name">20 Kg Bags</field>
+  </record>
   <record id="asc_product_packaging_43" model="asc.product.packaging">
     <field name="name">20 Kg Cartons</field>
   </record>
@@ -133,16 +141,33 @@
   <record id="asc_product_packaging_47" model="asc.product.packaging">
     <field name="name">200 L Drums</field>
   </record>
-
-
- 
-
+  <record id="asc_product_packaging_48" model="asc.product.packaging">
+    <field name="name">210 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_49" model="asc.product.packaging">
+    <field name="name">215 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_50" model="asc.product.packaging">
+    <field name="name">220 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_51" model="asc.product.packaging">
+    <field name="name">220 Kg Drums</field>
+  </record>
+  <record id="asc_product_packaging_52" model="asc.product.packaging">
+    <field name="name">225 Kg Drums</field>
+  </record>
   <record id="asc_product_packaging_53" model="asc.product.packaging">
     <field name="name">23 MT Flexitank</field>
   </record>
-  
- 
- 
+  <record id="asc_product_packaging_54" model="asc.product.packaging">
+    <field name="name">230 Kg Barrels</field>
+  </record>
+  <record id="asc_product_packaging_55" model="asc.product.packaging">
+    <field name="name">230 Kg Steel Drums</field>
+  </record>
+  <record id="asc_product_packaging_56" model="asc.product.packaging">
+    <field name="name">24 Kg Barrels</field>
+  </record>
   <record id="asc_product_packaging_57" model="asc.product.packaging">
     <field name="name">240 Kg Barrels</field>
   </record>
