@@ -149,7 +149,7 @@ class Lead(models.Model):
     def compute_agreed_sales_price_zar(self):
         for rec in self:
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
-            rec.agreed_sales_price_zar= rec.agreed_sales_price_zar * roe
+            rec.agreed_sales_price_zar = rec.agreed_sales_price_zar * roe
     
     @api.depends('insurance_premium_unit','indicative_exchange_rate','exchange_rate')
     def compute_insurance_premium_unit_zar(self):

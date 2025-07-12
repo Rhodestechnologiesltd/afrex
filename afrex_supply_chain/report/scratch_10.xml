@@ -1,227 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="asc_commercial_invoice_template_new">
-        <t t-set="o" t-value="o.with_context(lang=lang)"/>
-        <t t-set="company" t-value="o.company_id"/>
-        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-                <div style="font-size: 12px; margin-top: 10%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
-                    <div class="row mb8">
-                        <div class="col-5" style="margin-right: 5px;">
-                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
-                                 style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
-                            <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
-                                <style>
-                                    tr, th, td {
-                                    border: 0px solid white;
-                                    }
-                                    td {
-                                    padding-left: 5px;
-                                    }
-                                </style>
-                                <tr>
-                                    <td>
-                                        <b>
-                                            <span style="display: inline-block; border-bottom: 1pt solid black;">Sold
-                                                to:
-                                            </span>
-                                        </b>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>
-                                            <span t-field="o.partner_id.name"/>
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span t-field="o.partner_id.address_text"/>
-                                    </td>
-                                </tr>
-                                <t t-if="o.company_id.x_display_partner_child and o.partner_id.child_ids">
-                                    <t t-set="partner_children"
-                                       t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
-                                    <t t-foreach="partner_children" t-as="partner_child">
-                                        <tr t-if="partner_child.name">
-                                            <td>
-                                                Contact Person:
-                                                <span t-field="partner_child.name"/>
-                                            </td>
-                                        </tr>
-                                        <tr t-if="partner_child.email">
-                                            <td>
-                                                Email:
-                                                <span t-field="partner_child.email"/>
-                                            </td>
-                                        </tr>
-                                        <tr t-if="partner_child.phone">
-                                            <td>
-                                                Phone:
-                                                <span t-field="partner_child.phone"/>
-                                            </td>
-                                        </tr>
-                                    </t>
-                                </t>
-                            </table>
-                            <table t-if="o.consignee_id"
-                                   style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
-                                <style>
-                                    tr, th, td {
-                                    border: 0px solid white;
-                                    }
-                                    td {
-                                    padding-left: 5px;
-                                    }
-                                </style>
-                                <tr>
-                                    <td>
-                                        <b>
-                                            <span style="display: inline-block; border-bottom: 1pt solid black;">
-                                                Consignee:
-                                            </span>
-                                        </b>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>
-                                            <span t-field="o.consignee_id.name"/>
-                                        </strong>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span t-field="o.consignee_id.address_text"/>
-                                    </td>
-                                </tr>
-                                <t t-if="o.company_id.x_display_partner_child and o.consignee_id.child_ids">
-                                    <t t-set="partner_children"
-                                       t-value="o.consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
-                                    <t t-foreach="partner_children" t-as="partner_child">
-                                        <tr t-if="partner_child.name">
-                                            <td>
-                                                Contact Person:
-                                                <span t-field="partner_child.name"/>
-                                            </td>
-                                        </tr>
-                                        <tr t-if="partner_child.email">
-                                            <td>
-                                                Email:
-                                                <span t-field="partner_child.email"/>
-                                            </td>
-                                        </tr>
-                                        <tr t-if="partner_child.phone">
-                                            <td>
-                                                Phone:
-                                                <span t-field="partner_child.phone"/>
-                                            </td>
-                                        </tr>
-                                    </t>
-                                </t>
-                            </table>
-                        </div>
-                        <div class="col-7 text-end mb-2">
-                            <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
-                                <tr>
-                                    <th valign="middle" class="h5"
-                                        style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
-                                        COMMERCIAL INVOICE
-                                    </th>
-                                </tr>
-                            </table>
-                            <table class="table table-sm table-borderless"
-                                   style="width: 70%; margin-left: 30%; border: 0px solid white;">
-                                <tr>
-                                    <th style="text-align: start; padding: 0;">
-                                        <span t-field="o.company_id.name"/>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Suite 420, 4th Floor, Barkly Wharf Building</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Caudan Waterfront, Port Louis</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Mauritius</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Email: DL-AfrexSupplier@supergrp.com</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Tel: +230 271 1176</span>
-                                        <span style="padding-left: 10px;">Fax: +230 211 8959</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: start; padding: 0;">
-                                        <span>Website: www.supergrp.com</span>
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table-sm table-borderless mb-2 mx-0"
-                                   style="font-size: 12px; width: 100%; border: 0px solid white;">
-                                <tr t-if="o.name">
-                                    <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">
-                                        Invoice
-                                        Number:
-                                    </th>
-                                    <th style="width:35%; text-align: left;">
-                                        <span t-field="o.name"/>
-                                    </th>
-                                </tr>
-                                <tr t-if="o.invoice_date">
-                                    <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">
-                                        Date:
-                                    </th>
-                                    <th style="width:35%; text-align: left;">
-                                        <span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Pages:
-                                    </th>
-                                    <th style="width:35%; text-align: left;">
-                                        <span>1 of 1</span>
-                                    </th>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
 
-        </div>
-        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
-             t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});"
-             t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
-             t-att-data-oe-lang="o and o.env.context.get('lang')">
-            <t t-out="0"/>
-        </div>
-        <div class="footer">
-            <div class="page"/>
+    <template id="asc_commercial_invoice_header">
+        <t t-set="o" t-value="o.with_context(lang=lang)"/>
+        <style>
+            table, th, td {
+            border:0px solid white;
+            }
+        </style>
+        <div style="font-size: 12px; margin-top: 10%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+            <div class="row mb8">
+                <div class="col-5" style="margin-right: 5px;">
+                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                         style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                    <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <style>
+                            tr, th, td {
+                            border: 0px solid white;
+                            }
+                            td {
+                            padding-left: 5px;
+                            }
+                        </style>
+                        <tr>
+                            <td>
+                                <b>
+                                    <span style="display: inline-block; border-bottom: 1pt solid black;">Sold to:
+                                    </span>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span t-field="o.partner_id.address_text"/>
+                            </td>
+                        </tr>
+                        <t t-if="o.company_id.x_display_partner_child and o.partner_id.child_ids">
+                            <t t-set="partner_children"
+                               t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                            <t t-foreach="partner_children" t-as="partner_child">
+                                <tr t-if="partner_child.name">
+                                    <td>
+                                        Contact Person:
+                                        <span t-field="partner_child.name"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="partner_child.email">
+                                    <td>
+                                        Email:
+                                        <span t-field="partner_child.email"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="partner_child.phone">
+                                    <td>
+                                        Phone:
+                                        <span t-field="partner_child.phone"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </table>
+                    <table t-if="o.consignee_id"
+                           style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <style>
+                            tr, th, td {
+                            border: 0px solid white;
+                            }
+                            td {
+                            padding-left: 5px;
+                            }
+                        </style>
+                        <tr>
+                            <td>
+                                <b>
+                                    <span style="display: inline-block; border-bottom: 1pt solid black;">
+                                        Consignee:
+                                    </span>
+                                </b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <span t-field="o.consignee_id.name"/>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span t-field="o.consignee_id.address_text"/>
+                            </td>
+                        </tr>
+                        <t t-if="o.company_id.x_display_partner_child and o.consignee_id.child_ids">
+                            <t t-set="partner_children"
+                               t-value="o.consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                            <t t-foreach="partner_children" t-as="partner_child">
+                                <tr t-if="partner_child.name">
+                                    <td>
+                                        Contact Person:
+                                        <span t-field="partner_child.name"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="partner_child.email">
+                                    <td>
+                                        Email:
+                                        <span t-field="partner_child.email"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="partner_child.phone">
+                                    <td>
+                                        Phone:
+                                        <span t-field="partner_child.phone"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </table>
+                </div>
+                <div class="col-7 text-end mb-2">
+                    <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
+                        <tr>
+                            <th valign="middle" class="h5"
+                                style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                                COMMERCIAL INVOICE
+                            </th>
+                        </tr>
+                    </table>
+                    <table class="table table-sm table-borderless"
+                           style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                        <tr>
+                            <th style="text-align: start; padding: 0;">
+                                <span t-field="o.company_id.name"/>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Suite 420, 4th Floor, Barkly Wharf Building</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Caudan Waterfront, Port Louis</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Mauritius</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Email: DL-AfrexSupplier@supergrp.com</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Tel: +230 271 1176</span>
+                                <span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: start; padding: 0;">
+                                <span>Website: www.supergrp.com</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table-sm table-borderless mb-2 mx-0"
+                           style="font-size: 12px; width: 100%; border: 0px solid white;">
+                        <tr t-if="o.name">
+                            <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Invoice
+                                Number:
+                            </th>
+                            <th style="width:35%; text-align: left;">
+                                <span t-field="o.name"/>
+                            </th>
+                        </tr>
+                        <tr t-if="o.invoice_date">
+                            <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
+                            <th style="width:35%; text-align: left;">
+                                <span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Pages:
+                            </th>
+                            <th style="width:35%; text-align: left;">
+                                <span>1 of 1</span>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </template>
 
-    <template id="asc_commercial_invoice_template_sample">
-        <t t-call="afrex_supply_chain.asc_commercial_invoice_template_new">
+    <template id="asc_commercial_invoice_template">
+        <t t-call="web.external_layout_standard">
             <t t-set="o" t-value="o.with_context(lang=lang)"/>
-            <t t-set="company" t-value="o.company_id"/>
-            <div class="page" style="margin-top:0.5em;">
-                <style>
-                    table, th, td {
-                    border:0px solid white;
-                    }
-                </style>
+            <div class="page" style="margin-top:2em;">
+                <t t-call="afrex_supply_chain.asc_commercial_invoice_header"/>
                 <div class="col-6"
                      style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
                     <table style="font-size: 12px; width:100%; margin-bottom:15px; margin-top:20px; border: 1px solid;">
@@ -889,7 +873,6 @@
                             <strong>
                                 <span t-field="o.number_to_words" t-options="{'widget': 'text'}"></span>
                             </strong>
-                            <!-- <strong><span>FOURTEEN THOUSAND EIGHT HUNDRED THIRTY SIX DOLLARS AND FIFTY CENTS</span></strong> -->
                         </th>
                         <th class="text-nowrap" style="width:10%; text-align: right; word-spacing: 4px;">Total Amount
                             Due
@@ -921,11 +904,11 @@
                         </tr>
                         <tr t-if="o.vessel_voyage_lines">
                             <th class="text-start" style="padding-left: 5px;">
-                                <span>Vessel and Voyage</span>
+                                <span style="padding-left: 5px;">Vessel and Voyage</span>
                                 <span style="padding-right: 5px;">:</span>
                             </th>
                             <th class="text-start">
-                                <t t-foreach="o.vessel_voyage_lines.split(',')" t-as="pair">
+                                <t t-foreach="o.vessel_voyage_lines.split('\n')" t-as="pair">
                                     <div>
                                         <span t-esc="pair"/>
                                     </div>
@@ -937,7 +920,7 @@
                                 <span t-if="o.supplier_delivery_method == 'road'" style="padding-left; 5px;">Place of
                                     Loading
                                 </span>
-                                <span t-if="o.supplier_delivery_method == 'sea'" style="padding-left; 5px;">Port of
+                                <span t-if="o.supplier_delivery_method == 'sea'" style="padding-left: 5px;">Port of
                                     Loading
                                 </span>
                                 <span style="padding-right:5px;">:</span>
@@ -1045,7 +1028,7 @@
                             </tr>
                             <tr t-if="o.container_list">
                                 <th class="text-start" style="padding-left: 5px;">
-                                    <span style="padding-left; 5px;">Container No</span>
+                                    <span style="padding-left: 5px;">Container No</span>
                                     <span style="padding-right:5px;">:</span>
                                 </th>
                                 <th class="text-start">
@@ -1057,7 +1040,7 @@
                         </t>
                         <tr>
                             <th class="text-start" style="padding-left: 5px;">
-                                <span style="padding-left; 5px;">Country of Origin</span>
+                                <span style="padding-left: 5px;">Country of Origin</span>
                                 <span style="padding-right:5px;">:</span>
                             </th>
                             <th class="text-start">
@@ -1083,7 +1066,6 @@
                             <t t-foreach="shipping_docs" t-as="shipping_doc">
                                 <tr>
                                     <td class="text-start">
-                                        <!-- <i class="fa fa-check-square"/> -->
                                         -
                                         <span style=" padding-left: 5px;" t-field="shipping_doc.name"/>
                                     </td>
@@ -1093,12 +1075,11 @@
                     </table>
                 </div>
                 <t>
-                    <t t-if="o.partner_bank_id" t-set="bank" t-value="o.partner_bank_id"
-                    />
-                    <div class="row" style="page-break-inside:avoid;">
+                    <t t-if="o.partner_bank_id" t-set="bank" t-value="o.partner_bank_id"/>
+                    <div class="row">
                         <div class="col-7 mt-2"
                              style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; padding-bottom: 0px;">
-                            <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid; page-break-inside:avoid;">
+                            <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
                                 <style>
                                     tr, th, td {
                                     border: 0px solid white;
@@ -1209,7 +1190,7 @@
     <template id="report_asc_commercial_invoice">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="afrex_supply_chain.asc_commercial_invoice_template_sample" t-lang="o.partner_id.lang"/>
+                <t t-call="afrex_supply_chain.asc_commercial_invoice_template" t-lang="o.partner_id.lang"/>
             </t>
         </t>
     </template>
