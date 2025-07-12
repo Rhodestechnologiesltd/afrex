@@ -29,7 +29,7 @@
         'data/data.xml',
         'data/asc_sequence.xml',
         # 'data/asc_port_data.xml',
-        'data/asc_product_packaging_data.xml',
+        # 'data/asc_product_packaging_data.xml',
         'data/asc_document_type_data.xml',
         'data/asc_shipping_line_data.xml',
         'data/asc_container_type_data.xml',
