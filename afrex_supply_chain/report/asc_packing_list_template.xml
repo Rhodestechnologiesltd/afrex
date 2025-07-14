@@ -236,7 +236,7 @@
                 </div>
                 <table class="table table-lg"
                        style="width:80%; margin-left: 5%; margin-right: 15%; border: 1px solid; font-size: 12px;">
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Description</span>
                             <span style="padding-right:5px;">:</span>
@@ -250,7 +250,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Packaging</span>
                             <span style="padding-right:5px;">:</span>
@@ -264,7 +264,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Quantity (Metric Tons)</span>
                             <span style="padding-right:5px;">:</span>
@@ -279,7 +279,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Vessel and Voyage</span>
                             <span style="padding-right:5px;">:</span>
@@ -298,7 +298,7 @@
 
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Port of Loading</span>
                             <span style="padding-right:5px;">:</span>
@@ -307,7 +307,7 @@
                             <span t-field="o.loading_port_id.name"/>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Port of Discharge</span>
                             <span style="padding-right:5px;">:</span>
@@ -316,7 +316,7 @@
                             <span t-field="o.discharge_port_id.name"/>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Shipped on Board Date</span>
                             <span style="padding-right:5px;">:</span>
@@ -330,7 +330,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Estimated Arrival Date</span>
                             <span style="padding-right:5px;">:</span>
@@ -355,7 +355,7 @@
                             <span t-field="o.packaging_id.name"/>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Gross Weight</span>
                             <span style="padding-right:5px;">:</span>
@@ -370,7 +370,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Net Weight</span>
                             <span style="padding-right:5px;">:</span>
@@ -386,7 +386,7 @@
                         </td>
                     </tr>
                     <t t-if="o.breakbulk_container == 'container'" style="border: 1px solid;">
-                        <tr>
+                        <tr style="page-break-inside:avoid;">
                             <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                                 <span style="padding-right:5px; padding-left; 5px;">Number of Containers</span>
                                 <span style="padding-right:5px;">:</span>
@@ -402,7 +402,7 @@
                                 </t>
                             </td>
                         </tr>
-                        <tr style="border: 1px solid;">
+                        <tr style="page-break-inside:avoid; border: 1px solid;">
                             <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                                 <span style="padding-right:5px; padding-left; 5px;">Container No</span>
                                 <span style="padding-right:5px;">:</span>
@@ -416,7 +416,7 @@
                                 </t>
                             </td>
                         </tr>
-                        <tr style="border: 1px solid;">
+                        <tr style="page-break-inside:avoid; border: 1px solid;">
                             <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                                 <span style="padding-right:5px; padding-left; 5px;">Seal No</span>
                                 <span style="padding-right:5px;">:</span>
@@ -431,7 +431,7 @@
                             </td>
                         </tr>
                     </t>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Country of Origin</span>
                             <span style="padding-right:5px;">:</span>

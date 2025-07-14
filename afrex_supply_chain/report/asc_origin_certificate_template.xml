@@ -216,12 +216,12 @@
                 </style>
                 <table class="table table-lg mt-4 mb-4"
                        style="width:80%; margin-left: 5%; margin-right: 5%; border: 1px solid; font-size: 12px;">
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th colspan="2" style="text-align: center; border: 1px solid;">
                             <span style="text-align: center;">Conditions</span>
                         </th>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Means of Transport and Route</span>
                             <span style="padding-right:5px;">:</span>
@@ -235,7 +235,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Country / Region of Destination</span>
                             <span style="padding-right:5px;">:</span>
@@ -249,7 +249,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Marks and Numbers</span>
                             <span style="padding-right:5px;">:</span>
@@ -263,7 +263,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Number and Kind of Packages, Description
                                 of
@@ -285,7 +285,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Quantity (Gross Weight)</span>
                             <span style="padding-right:5px;">:</span>
@@ -302,7 +302,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Quantity (Net Weight)</span>
                             <span style="padding-right:5px;">:</span>
@@ -319,7 +319,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Origin</span>
                             <span style="padding-right:5px;">:</span>
@@ -333,7 +333,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;">Number and Date of Invoice(s)</span>
                             <span style="padding-right:5px;">:</span>
@@ -347,7 +347,7 @@
                             </t>
                         </td>
                     </tr>
-                    <tr style="border: 1px solid;">
+                    <tr style="page-break-inside:avoid; border: 1px solid;">
                         <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
                             <span style="padding-right:5px; padding-left; 5px;"></span>
                         </th>
@@ -361,7 +361,7 @@
                         </td>
                     </tr>
                 </table>
-                <div style="font-size: 14px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+                <div style="page-break-inside:avoid; font-size: 14px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
                     <span>We certify that the goods originate in the country as mentioned above.</span>
                 </div>
                 <div class="mt-4" style="width:40%; margin-left: 55%; margin-right: 5%; font-size: 12px; page-break-inside:avoid;">

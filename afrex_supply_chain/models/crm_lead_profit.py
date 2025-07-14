@@ -283,6 +283,14 @@ class Lead(models.Model):
         for rec in self:
             rec.credit_insurance_amount = rec.credit_insurance_rate * rec.initial_sales_price
 
+    # @api.depends('credit_insurance_rate', 'initial_sales_price')
+    # def compute_credit_insurance_amount(self):
+    #     for rec in self:
+    #         if rec.is_sales_price_override == 'False':
+    #             rec.credit_insurance_amount = rec.credit_insurance_rate * rec.initial_sales_price
+    #         else:
+    #             rec.credit_insurance_amount = rec.credit_insurance_rate * rec.agreed_sales_price
+
     @api.depends('sales_cost', 'procurement_fee_amount', 'credit_cost_amount', 'initial_sales_price', 'credit_insurance_amount')
     def compute_sales_price(self):
         for rec in self:

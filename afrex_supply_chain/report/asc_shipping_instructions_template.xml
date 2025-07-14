@@ -203,22 +203,22 @@
                 </div>
             </t>
             <div class="row mb-2" style="width:100%;">
-                <table class="table-borderless" style="width: 45%; font-size:12px; border: 1px solid;">
-                    <tr class="text-start">
+                <table class="table-borderless" style="width: 45%; font-size:12px; border: 1px solid; page-break-inside:avoid;">
+                    <tr class="text-start" style="page-break-inside:avoid;">
                         <td>
                             <strong>
                                 <span style="border-bottom: 1pt solid black;">2. Consignee and Notify 1:</span>
                             </strong>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="page-break-inside:avoid;">
                         <td>
                             <strong>
                                 <span t-field="o.first_consignee_id.name"/>
                             </strong>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="page-break-inside:avoid;">
                         <td>
                             <span t-field="o.first_consignee_id.address_text"/>
                         </td>
@@ -249,22 +249,22 @@
                     </t>
                 </table>
                 <table class="table-borderless"
-                       style="width: 45%; margin-left: 10%; font-size:12px; border: 1px solid;">
-                    <tr class="text-start">
+                       style="width: 45%; margin-left: 10%; font-size:12px; border: 1px solid;" >
+                    <tr class="text-start" style="page-break-inside:avoid;">
                         <td>
                             <strong>
                                 <span style="border-bottom: 1pt solid black;">3. Notify 2:</span>
                             </strong>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="page-break-inside:avoid;">
                         <td>
                             <strong>
                                 <span t-field="o.second_consignee_id.name"/>
                             </strong>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="page-break-inside:avoid;">
                         <td>
                             <span t-field="o.second_consignee_id.address_text"/>
                         </td>
@@ -273,19 +273,19 @@
                         <t t-set="partner_children"
                            t-value="o.second_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                         <t t-foreach="partner_children" t-as="partner_child">
-                            <tr t-if="partner_child.name">
+                            <tr t-if="partner_child.name" style="page-break-inside:avoid;">
                                 <td>
                                     Contact Person:
                                     <span t-field="partner_child.name"/>
                                 </td>
                             </tr>
-                            <tr t-if="partner_child.email">
+                            <tr t-if="partner_child.email" style="page-break-inside:avoid;">
                                 <td>
                                     Email:
                                     <span t-field="partner_child.email"/>
                                 </td>
                             </tr>
-                            <tr t-if="partner_child.phone">
+                            <tr t-if="partner_child.phone" style="page-break-inside:avoid;">
                                 <td>
                                     Phone:
                                     <span t-field="partner_child.phone"/>
@@ -297,7 +297,7 @@
             </div>
             <table class="table-sm table-borderless"
                    style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 12px;">
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>4. Shipping Marks on Packaging</span>
                     </td>
@@ -313,7 +313,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>5. Shipment Plan</span>
                     </td>
@@ -333,7 +333,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>6. Documentation Requirements and Conditions</span>
                     </td>
@@ -388,7 +388,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>7. Photographic Evidence</span>
                     </td>
@@ -411,7 +411,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>8. Container Load Report</span>
                     </td>
@@ -428,7 +428,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>9. Communication</span>
                     </td>
@@ -448,7 +448,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td class="text-start" style="width:21%;">
                         <span>10. Documents to be provided by Shipper</span>
                     </td>
@@ -494,7 +494,7 @@
             </table>
             <table class="table table-sm table-borderless mt-1"
                    style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 12px; page-break-inside:avoid;">
-                <tr>
+                <tr style="page-break-inside:avoid;">
                     <td style="width: 70%;">
                         <span>Signed and Stamped by:</span>
                         <br/>

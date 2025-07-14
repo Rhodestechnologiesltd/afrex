@@ -192,7 +192,7 @@
                                     <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Pages:
                                     </th>
                                     <th style="width:35%; text-align: left;">
-                                        <span>1 of 1</span>
+                                        <span class="page"></span>
                                     </th>
                                 </tr>
                             </table>
@@ -1207,6 +1207,14 @@
     </template>
 
     <template id="report_asc_commercial_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="afrex_supply_chain.asc_commercial_invoice_template_sample" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_asc_commercial_invoice_extended">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="afrex_supply_chain.asc_commercial_invoice_template_sample" t-lang="o.partner_id.lang"/>

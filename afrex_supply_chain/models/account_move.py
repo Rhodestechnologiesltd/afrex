@@ -47,7 +47,8 @@ class AccountMove(models.Model):
 
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method')
 
-    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id", readonly=False, store=True)
+    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id", readonly=False,
+                                      store=True)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id")
 
     sale_country_id = fields.Many2one('res.country', related='partner_id.country_id', string="Country of Delivery",
@@ -381,10 +382,43 @@ class AccountMove(models.Model):
         }
 
     def print_proforma_invoice(self):
-        return self.env.ref('afrex_supply_chain.action_report_asc_proforma_invoice').report_action(self)
+        self.ensure_one()
+        address = self.partner_id.address_text or ""
+        address_length = len(address)
+
+        if address_length <= 100:
+            report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice'
+        elif address_length <= 250:
+            report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice_extended'
+        else:
+            raise UserError(
+                "Address is too long ({} characters). Please reduce display address content to avoid report overlap.".format(
+                    address_length))
+        # if address_length <= 100:
+        #     report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice'
+        # else:
+        #     report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice_extended'
+
+        return self.env.ref(report_id).report_action(self)
+        # raise UserError(f"Address length: {address_length}, Using report: {report_id}")
+        # return self.env.ref('afrex_supply_chain.action_report_asc_proforma_invoice').report_action(self)
 
     def print_commercial_invoice(self):
-        return self.env.ref('afrex_supply_chain.action_report_asc_commercial_invoice').report_action(self)
+        self.ensure_one()
+        address = self.partner_id.address_text or ""
+        address_length = len(address)
+
+        if address_length <= 100:
+            report_id = 'afrex_supply_chain.action_report_asc_commercial_invoice'
+        elif address_length <= 250:
+            report_id = 'afrex_supply_chain.action_report_asc_commercial_invoice_extended'
+        else:
+            raise UserError(
+                "Address is too long ({} characters). Please reduce display address content to avoid report overlap.".format(
+                    address_length))
+        return self.env.ref(report_id).report_action(self)
+
+        # return self.env.ref('afrex_supply_chain.action_report_asc_commercial_invoice').report_action(self)
 
     def print_credit_note(self):
         return self.env.ref('afrex_supply_chain.action_report_asc_credit_note').report_action(self)
