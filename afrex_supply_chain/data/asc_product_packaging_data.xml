@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<data>
+<data noupdate="1">
   <record id="asc_product_packaging_1" model="asc.product.packaging">
     <field name="name">1.3MT Jumbo Bags</field>
   </record>
