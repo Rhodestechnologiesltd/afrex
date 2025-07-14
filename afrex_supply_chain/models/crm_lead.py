@@ -261,7 +261,7 @@ class Lead(models.Model):
             'res_model': 'asc.generate.payment.request',
             'target': 'new',
             'context': {'default_purchase_order_id': self.id,
-                        'default_currency_id': self.currency_id.id,}
+                        'default_currency_id': self.env.company.currency_id.id,}
         }
         return action
 
