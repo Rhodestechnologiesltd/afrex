@@ -15,6 +15,9 @@
             <group>
                 <field name="product_qty"/>
             </group>
+            <group>
+                <field name="packaging_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
+            </group>
             <group col="3">
                 <group>
                     <field name="first_spec_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
@@ -25,9 +28,6 @@
                 <group>
                     <field name="third_spec_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
                 </group>
-            </group>
-            <group>
-                <field name="packaging_id" options="{'no_create': True, 'no_quick_create':True,'no_create_edit':True,'no_open': True,}"/>
             </group>
             <hr/>
             <group>

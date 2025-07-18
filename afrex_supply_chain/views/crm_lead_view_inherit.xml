@@ -183,7 +183,8 @@
                         </li>
                         <li>
                             <button name="print_packing_list" icon="fa-list" string="Packing List" type="object"
-                                    class="btn-mute" invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'posted'"/>
+                                    class="btn-mute"
+                                    invisible="sale_order_move_type not in ('out_invoice') or sale_invoice_state != 'posted'"/>
                         </li>
                         <li>
                             <button name="print_origin_certificate" icon="fa-industry" string="Certificate of Origin"
@@ -753,9 +754,9 @@
                                         <field name="sale_order_terms_id" invisible="not sale_order_id"/>
                                         <!-- <field name="sale_invoice_incoterm_id" readonly="True"/> -->
                                         <field name="supplier_delivery_method" invisible="True"/>
-                                        <field name="discharge_port_id" string="Port of Discharge" readonly="True"
+                                        <field name="discharge_port_id" string="Port of Discharge" readonly="False"
                                                invisible="supplier_delivery_method != 'sea'"/>
-                                        <field name="discharge_port_id" string="Place of Delivery" readonly="True"
+                                        <field name="discharge_port_id" string="Place of Delivery" readonly="False"
                                                invisible="supplier_delivery_method != 'road'"/>
                                         <field name="name" string="Trade Folder" readonly="True"/>
                                         <field name="is_switch"/>
@@ -877,14 +878,14 @@
                                             </tr>
                                             <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
                                                 <th style="width: 40%">
-                                                    Insurance MUA Estimate
+                                                    Insurance Estimate
                                                     <br/>
-                                                    Insurance Premium:
-                                                    <field name="insurance_premium_amount"/>
+<!--                                                    Insurance Premium :<br/>-->
+                                                    (USD<field name="insurance_premium_unit"/>/MT)
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="insurance_premium_unit"/>
+                                                    <field name="insurance_premium_amount"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     ZAR
@@ -894,10 +895,10 @@
                                             </tr>
                                             <tr invisible="purchase_order_incoterm_selection != 'fob'">
                                                 <th style="width: 40%">
-                                                    Freight (Best Honor)
+                                                    Freight (Freight Forwarder)
                                                     <br/>
                                                     Rate:
-                                                    <field name="afrex_freight_rate"/>
+                                                    (USD <field name="afrex_freight_rate"/>/MT)
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
@@ -1203,7 +1204,7 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="agreed_sales_price_unit" widget="float"
-                                                            options="{'precision': 2}"/>
+                                                           options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; padding-left: 5px;">
                                                     <span/>
@@ -1217,10 +1218,27 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="agreed_sales_price" widget="float"
-                                                            options="{'precision': 2}"/>
+                                                           options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; padding-left: 5px;">
                                                     <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th style="width: 40%">
+                                                    Credit Insurance Cost
+                                                    <br/>
+                                                    <field name="agreed_credit_insurance_rate" widget="percentage"/>
+                                                    against Agreed Sales Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="agreed_credit_insurance_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="agreed_credit_insurance_amount_zar" widget="float"
+                                                           options="{'precision': 4}"/>
                                                 </th>
                                             </tr>
                                         </table>
@@ -1345,7 +1363,7 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="agreed_sales_price_unit" widget="float"
-                                                            options="{'precision': 2}"/>
+                                                           options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; padding-left: 5px;">
                                                     <span/>
@@ -1359,7 +1377,7 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="agreed_sales_price" widget="float"
-                                                            options="{'precision': 2}"/>
+                                                           options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; padding-left: 5px;">
                                                     <span/>
@@ -1622,14 +1640,16 @@
                                                 </tr>
                                                 <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
                                                     <th style="width: 40%">
-                                                        Insurance MUA Estimate
+                                                        Insurance Estimate
                                                         <br/>
-                                                        Insurance Premium:
-                                                        <field name="insurance_premium_amount"/>
+<!--                                                        Insurance Premium:<br/> -->
+                                                        (USD
+                                                        <field name="insurance_premium_unit"/>/MT)
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="insurance_premium_unit"/>
+                                                        <field name="insurance_premium_amount"/>
+
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         ZAR
@@ -1639,10 +1659,9 @@
                                                 </tr>
                                                 <tr invisible="purchase_order_incoterm_selection != 'fob'">
                                                     <th style="width: 40%">
-                                                        Freight (Best Honor)
+                                                        Freight (Freight Forwarder)
                                                         <br/>
-                                                        Rate:
-                                                        <field name="afrex_freight_rate"/>
+                                                        Rate : (USD<field name="afrex_freight_rate"/>/MT)
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
@@ -1929,7 +1948,8 @@
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
-                                                        <field name="product_qty" readonly="True" style="color: white; opacity: 0;"/>
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>
                                                         Final Calculated Sales Price / MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
@@ -1981,6 +2001,24 @@
                                                     </th>
                                                     <th style="width:30%; padding-left: 5px;">
                                                         <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="not is_sales_price_override">
+                                                    <th style="width: 40%">
+                                                        Credit Insurance Cost
+                                                        <br/>
+                                                        <field name="agreed_credit_insurance_rate" widget="percentage"/>
+                                                        against Agreed Sales Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="agreed_credit_insurance_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="agreed_credit_insurance_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
                                             </table>
@@ -2060,7 +2098,8 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Calculated Sales Value
+                                                               style="color: white; opacity: 0;"/>Total Calculated Sales
+                                                        Value
                                                         [A+C+D]
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
@@ -2079,7 +2118,8 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Calculated Sales Value per MT
+                                                               style="color: white; opacity: 0;"/>Calculated Sales Value
+                                                        per MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD

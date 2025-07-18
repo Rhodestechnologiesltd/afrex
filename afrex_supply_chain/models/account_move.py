@@ -257,6 +257,37 @@ class AccountMove(models.Model):
                 if rec.purchase_order_id.invoice_status != 'invoiced':
                     raise UserError("Please ensure Supplier CI is recorded first.")
             lead = rec.lead_id
+            if lead.purchase_order_id:
+                if rec.incoterm_selection == 'cfr':
+                    insurance = 0.0
+                    freight = rec.purchase_order_id.freight_amount
+                    fob = rec.purchase_order_id.fob_amount
+                elif rec.incoterm_selection == 'cif':
+                    insurance = rec.purchase_order_id.insurance_amount
+                    freight = rec.purchase_order_id.freight_amount
+                    fob = rec.purchase_order_id.fob_amount
+                elif rec.incoterm_selection == 'fob':
+                    insurance = 0.0
+                    freight = 0.0
+                    fob = rec.purchase_order_id.fob_amount
+            else:
+                raise UserError("No Purchase Order or Supplier CI found for this deal.")
+            interest = lead.credit_cost_amount
+            procurement = lead.procurement_fee_amount
+            if lead.cover_report_amount:
+                sales_price = lead.cover_report_amount
+            else:
+                sales_price = rec.cost_amount
+            if rec.currency_id == self.env.ref('base.ZAR'):
+                roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+                try:
+                    sales_price = sales_price / roe
+                except ZeroDivisionError:
+                    raise UserError("Exchange rate is zero, cannot convert sales price to ZAR.")
+            if not lead.is_internal:
+                fob = sales_price - (freight + insurance)
+            else:
+                procurement = sales_price - (fob + freight + insurance + interest)
             action = {
                 'name': 'Commercial Invoice',
                 'type': 'ir.actions.act_window',
@@ -265,7 +296,14 @@ class AccountMove(models.Model):
                 'res_model': 'asc.confirm.invoice',
                 'target': 'new',
                 'context': {'default_sale_invoice_id': rec.id,
-                            'default_date': rec.invoice_date, }
+                            'default_date': rec.invoice_date,
+                            'default_currency_id': rec.currency_id.id,
+                            'default_insurance_amount': insurance,
+                            'default_freight_amount': freight,
+                            'default_interest_amount': interest,
+                            'default_procurement_documentation_amount': procurement,
+                            'default_cost_amount': sales_price,
+                            'default_fob_amount': fob,}
             }
             return action
         else:
@@ -386,32 +424,21 @@ class AccountMove(models.Model):
         address = self.partner_id.address_text or ""
         address_length = len(address)
 
-        if address_length <= 100:
+        if address_length <= 250:
             report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice'
-        elif address_length <= 250:
-            report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice_extended'
         else:
             raise UserError(
                 "Address is too long ({} characters). Please reduce display address content to avoid report overlap.".format(
                     address_length))
-        # if address_length <= 100:
-        #     report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice'
-        # else:
-        #     report_id = 'afrex_supply_chain.action_report_asc_proforma_invoice_extended'
-
         return self.env.ref(report_id).report_action(self)
-        # raise UserError(f"Address length: {address_length}, Using report: {report_id}")
-        # return self.env.ref('afrex_supply_chain.action_report_asc_proforma_invoice').report_action(self)
 
     def print_commercial_invoice(self):
         self.ensure_one()
         address = self.partner_id.address_text or ""
         address_length = len(address)
 
-        if address_length <= 100:
+        if address_length <= 250:
             report_id = 'afrex_supply_chain.action_report_asc_commercial_invoice'
-        elif address_length <= 250:
-            report_id = 'afrex_supply_chain.action_report_asc_commercial_invoice_extended'
         else:
             raise UserError(
                 "Address is too long ({} characters). Please reduce display address content to avoid report overlap.".format(

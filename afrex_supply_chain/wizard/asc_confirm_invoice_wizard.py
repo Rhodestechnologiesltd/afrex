@@ -33,7 +33,7 @@ class ConfirmInvoiceWizard(models.TransientModel):
     expected_arrival_date = fields.Date("Estimated Arrival Date", related='sale_invoice_id.expected_arrival_date', readonly=False, required=True)
     sob_date = fields.Date("Shipped on Board Date", related='sale_invoice_id.sob_date', readonly=False, required=True)
 
-    currency_id = fields.Many2one('res.currency', related='sale_invoice_id.currency_id')
+    currency_id = fields.Many2one('res.currency')
     is_currency_zar = fields.Boolean("Currency is ZAR", compute='_compute_is_currency_zar')
     exchange_rate = fields.Float(string="Rate of Exchange (ROE) USDZAR", related='lead_id.exchange_rate', digits="Prices per Unit", readonly=False)
     
@@ -44,7 +44,7 @@ class ConfirmInvoiceWizard(models.TransientModel):
     interest_amount = fields.Float("Interest", readonly=False)
     procurement_documentation_amount = fields.Float("Procurement and Documentation", readonly=False)
     cost_amount = fields.Float("Sales Price", readonly=False)
-    fob_amount = fields.Float("FOB", compute='compute_fob_amount')
+    fob_amount = fields.Float("FOB", readonly=False)
     
     fob_amount_zar = fields.Float("FOB")
     freight_amount_zar = fields.Float("Freight")
@@ -63,25 +63,25 @@ class ConfirmInvoiceWizard(models.TransientModel):
     
     can_confirm = fields.Boolean(compute='_compute_can_confirm')
     
-    @api.onchange('sale_invoice_id')
-    def _onchange_sale_invoice_id(self):
-        for rec in self:
-            if rec.sale_invoice_id:
-                lead = rec.sale_invoice_id.lead_id
-                if lead:
-                    rec.interest_amount = lead.credit_cost_amount
-                    rec.procurement_documentation_amount = lead.procurement_fee_amount
-                    rec.cost_amount = lead.sales_price
-                    if lead.purchase_order_id:
-                        if rec.incoterm_selection == 'cfr':
-                            rec.insurance_amount = 0.0
-                            rec.freight_amount = rec.purchase_order_id.freight_amount
-                        elif rec.incoterm_selection == 'cif':
-                            rec.insurance_amount = rec.purchase_order_id.insurance_amount
-                            rec.freight_amount = rec.purchase_order_id.freight_amount
-                        elif rec.incoterm_selection == 'fob':
-                            rec.insurance_amount = 0.0
-                            rec.freight_amount = 0.0
+    # @api.onchange('sale_invoice_id')
+    # def _onchange_sale_invoice_id(self):
+    #     for rec in self:
+    #         if rec.sale_invoice_id:
+    #             lead = rec.sale_invoice_id.lead_id
+    #             if lead:
+    #                 rec.interest_amount = lead.credit_cost_amount
+    #                 rec.procurement_documentation_amount = lead.procurement_fee_amount
+    #                 rec.cost_amount = lead.sales_price
+    #                 if lead.purchase_order_id:
+    #                     if rec.incoterm_selection == 'cfr':
+    #                         rec.insurance_amount = 0.0
+    #                         rec.freight_amount = rec.purchase_order_id.freight_amount
+    #                     elif rec.incoterm_selection == 'cif':
+    #                         rec.insurance_amount = rec.purchase_order_id.insurance_amount
+    #                         rec.freight_amount = rec.purchase_order_id.freight_amount
+    #                     elif rec.incoterm_selection == 'fob':
+    #                         rec.insurance_amount = 0.0
+    #                         rec.freight_amount = 0.0
     
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
@@ -143,12 +143,13 @@ class ConfirmInvoiceWizard(models.TransientModel):
                 rec.payment_due_date,
             ])
     
-    @api.onchange('exchange_rate','insurance_amount','freight_amount','interest_amount','procurement_documentation_amount','cost_amount')
+    @api.onchange('exchange_rate','insurance_amount','freight_amount','interest_amount','procurement_documentation_amount','cost_amount','sale_invoice_id','currency_id')
     def compute_zar_amount(self):
         for rec in self:
             rec.freight_amount_zar = rec.freight_amount * rec.exchange_rate
             rec.cost_amount_zar = rec.cost_amount * rec.exchange_rate
             rec.insurance_amount_zar = rec.insurance_amount * rec.exchange_rate
+            rec.fob_amount_zar = rec.fob_amount * rec.exchange_rate
             rec.interest_amount_zar = rec.interest_amount * rec.exchange_rate
             rec.procurement_documentation_amount_zar = rec.procurement_documentation_amount * rec.exchange_rate
             rec.fob_unit_zar = rec.fob_unit * rec.exchange_rate
@@ -163,15 +164,15 @@ class ConfirmInvoiceWizard(models.TransientModel):
             else:
                 rec.is_currency_zar = False
                 
-    @api.depends('cost_amount', 'insurance_amount', 'freight_amount', 'interest_amount', 'procurement_documentation_amount','exchange_rate')
-    def compute_fob_amount(self):
-        lead = self.lead_id
-        if not lead.is_internal:
-            self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount)
-            self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount)) * self.exchange_rate
-        else:
-            self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)
-            self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)) * self.exchange_rate
+    # @api.depends('cost_amount', 'insurance_amount', 'freight_amount', 'interest_amount', 'procurement_documentation_amount','exchange_rate')
+    # def compute_fob_amount(self):
+    #     lead = self.lead_id
+    #     if not lead.is_internal:
+    #         self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount)
+    #         self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount)) * self.exchange_rate
+    #     else:
+    #         self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)
+    #         self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)) * self.exchange_rate
     
     @api.depends('fob_amount','quantity')
     def _compute_fob_unit(self):

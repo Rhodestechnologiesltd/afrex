@@ -62,6 +62,9 @@ class Lead(models.Model):
     is_sales_price_override = fields.Boolean(string="Override Sales Price", help="Check this box if you want to override the calculated sales price")
     agreed_sales_price_unit = fields.Float(string="Agreed Sales Price per MT")
     agreed_sales_price = fields.Float(string="Agreed Sales Price", compute='compute_agreed_sales_price', store=True)
+
+    agreed_credit_insurance_rate = fields.Float(string="agreed_credit_insurance_rate", default=0.006)
+    agreed_credit_insurance_amount = fields.Float(string="Credit Insurance Cost against Agreed Selling Price", compute='compute_agreed_credit_insurance_amount', store=True)
     
     gross_profit_amount = fields.Float(string="gross_profit_amount", compute='compute_gross_profit_amount', store=True)
     gross_profit_percentage = fields.Float(string="gross_profit_percentage", compute='compute_gross_profit_percentage', store=True)
@@ -86,6 +89,7 @@ class Lead(models.Model):
     credit_insurance_amount_zar = fields.Float(compute='compute_credit_insurance_amount_zar', store=True, digits="Prices per Unit")
     sales_price_zar = fields.Float(compute='compute_sales_price_zar', store=True, digits="Prices per Unit")
     agreed_sales_price_zar = fields.Float(compute='compute_agreed_sales_price_zar', store=True, digits="Prices per Unit")
+    agreed_credit_insurance_amount_zar = fields.Float(compute='compute_agreed_credit_insurance_amount_zar', store=True, digits="Prices per Unit")
     insurance_premium_unit_zar = fields.Float(compute='compute_insurance_premium_unit_zar', store=True, digits="Prices per Unit")
     
     dap_amount = fields.Float(string="DAP Amount", compute="_compute_dap_amount", store=True, digits="Prices per Unit", help="The DAP amount is the total cost of the product including all costs up to delivery at the customer's premises.")
@@ -228,11 +232,13 @@ class Lead(models.Model):
             else:
                 rec.credit_cost_amount = 0
     
-    @api.depends('supplier_delivery_method', 'purchase_order_cost_amount', 'procurement_commission_fob_amount', 'procurement_commission_unit_amount', 'sales_commission_amount', 'switch_bl_provision_amount', 'road_transportation_amount', 'logistics_service_amount')
+    @api.depends('supplier_delivery_method', 'purchase_order_cost_amount', 'procurement_commission_fob_amount', 'procurement_commission_unit_amount', 'sales_commission_amount', 'switch_bl_provision_amount', 'road_transportation_amount', 'logistics_service_amount', 'afrex_freight_amount', 'insurance_premium_amount', 'is_internal')
     def compute_sales_cost(self):
         for rec in self:
             if rec.supplier_delivery_method == 'sea':
                 rec.sales_cost = rec.purchase_order_cost_amount + rec.procurement_commission_fob_amount + rec.procurement_commission_unit_amount + rec.sales_commission_amount + rec.switch_bl_provision_amount
+                if rec.is_internal:
+                    rec.sales_cost += rec.afrex_freight_amount + rec.insurance_premium_amount
             if rec.supplier_delivery_method == 'road':
                 rec.sales_cost = rec.purchase_order_cost_amount + rec.procurement_commission_unit_amount + rec.sales_commission_amount + rec.road_transportation_amount + rec.logistics_service_amount
 
@@ -321,6 +327,17 @@ class Lead(models.Model):
     def compute_agreed_sales_price(self):
         for rec in self:
             rec.agreed_sales_price = rec.agreed_sales_price_unit * rec.product_qty
+    
+    @api.depends('agreed_credit_insurance_rate', 'agreed_sales_price')
+    def compute_agreed_credit_insurance_amount(self):
+        for rec in self:
+            rec.agreed_credit_insurance_amount = (rec.agreed_credit_insurance_rate * rec.agreed_sales_price)
+
+    @api.depends('agreed_credit_insurance_amount','indicative_exchange_rate','exchange_rate')
+    def compute_agreed_credit_insurance_amount_zar(self):
+        for rec in self:
+            roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
+            rec.agreed_credit_insurance_amount_zar = rec.agreed_credit_insurance_amount * roe
 
     @api.depends('sales_price', 'sales_cost', 'is_sales_price_override', 'agreed_sales_price')
     def compute_gross_profit_amount(self):
