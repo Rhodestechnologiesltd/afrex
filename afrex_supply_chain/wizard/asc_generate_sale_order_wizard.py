@@ -25,7 +25,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method')
 
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='purchase_order_id.loading_port_id', store=True, readonly=False)
-    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='purchase_order_id.discharge_port_id')
+    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='purchase_order_id.discharge_port_id', readonly=False)
     
     incoterm_id = fields.Many2one('account.incoterms', string="Incoterms", required=True)
     incoterm_selection = fields.Selection([('cfr', 'CFR'),

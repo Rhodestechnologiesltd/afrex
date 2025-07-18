@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="asc_shipping_instruction_header">
-        <t t-set="o" t-value="o.with_context(lang=lang)"/>
-        <t t-set="company" t-value="o.company_id"/>
-        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-            <div style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; padding-bottom: 0px;">
+    
+    <template id="asc_shipping_instructions_template">
+        <t t-call="web.basic_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <!-- <link href="https://fonts.googleapis.com/css?family=Times New Roman" rel="stylesheet"/> -->
+            <style>
+                table, th, td {
+                border:0px solid white;
+                }
+            </style>
+            <div style="font-size: 10px; margin-top: 0%; margin-bottom: 0%; padding-bottom: 0px;">
                 <div class="row mb8">
                     <div class="col-5" style="margin-right: 5px;">
-                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
-                             style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
-                        <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                        <table style="font-size: 10px; width:100%; margin-bottom:15px; border: 1px solid;">
                             <style>
                                 tr, th, td {
                                 border: 0px solid white;
@@ -20,16 +25,12 @@
                             </style>
                             <tr class="text-start">
                                 <td>
-                                    <strong>
-                                        <span style="border-bottom: 1pt solid black;">1. Shipper</span>
-                                    </strong>
+                                    <strong><span style="border-bottom: 1pt solid black;">1. Shipper </span></strong>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <strong>
-                                        <span t-field="o.partner_id.name"/>
-                                    </strong>
+                                    <strong><span t-field="o.partner_id.name"/></strong>
                                 </td>
                             </tr>
                             <tr>
@@ -38,25 +39,21 @@
                                 </td>
                             </tr>
                             <t t-if="o.company_id.x_display_partner_child and o.partner_id.child_ids">
-                                <t t-set="partner_children"
-                                   t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                                 <t t-foreach="partner_children" t-as="partner_child">
                                     <tr t-if="partner_child.name">
                                         <td>
-                                            Contact Person:
-                                            <span t-field="partner_child.name"/>
+                                            Contact Person: <span t-field="partner_child.name"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.email">
                                         <td>
-                                            Email:
-                                            <span t-field="partner_child.email"/>
+                                            Email: <span t-field="partner_child.email"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.phone">
                                         <td>
-                                            Phone:
-                                            <span t-field="partner_child.phone"/>
+                                            Phone: <span t-field="partner_child.phone"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -66,14 +63,12 @@
                     <div class="col-7 text-end mb-2">
                         <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
                             <tr>
-                                <th valign="middle" class="h5"
-                                    style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                                <th valign="middle" class="h5" style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
                                     SHIPPING INSTRUCTIONS
                                 </th>
                             </tr>
                         </table>
-                        <table class="table-borderless mb-1"
-                               style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                        <table class="table-borderless mb-1" style="width: 70%; margin-left: 30%; border: 0px solid white;">
                             <tr>
                                 <th style="text-align: start; padding: 0;">
                                     <span t-field="o.company_id.name"/>
@@ -101,8 +96,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align: start; padding: 0;">
-                                    <span>Tel: +230 271 1176</span>
-                                    <span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                                    <span>Tel: +230 271 1176</span><span style="padding-left: 10px;">Fax: +230 211 8959</span>
                                 </td>
                             </tr>
                             <tr>
@@ -111,91 +105,42 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="table-borderless mb-2 mx-0"
-                               style="font-size: 12px; width: 100%; border: 0px solid white;">
+                        <table class="table-borderless mb-2 mx-0" style="font-size: 10px; width: 100%; border: 0px solid white;">
                             <tr t-if="o.name">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Afrex
-                                    Purchase Order Number:
-                                </th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-field="o.name"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Afrex Purchase Order Number:</th>
+                                <td style="width:35%; text-align: left;"><span t-field="o.name"/></td>
                             </tr>
                             <tr t-if="o.date_approve">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Date:</th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-esc="o.date_approve.strftime('%d-%B-%Y')"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
+                                <td style="width:35%; text-align: left;"><span t-esc="o.date_approve.strftime('%d-%B-%Y')"/></td>
                             </tr>
                             <tr t-if="o.partner_ref">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Vendor
-                                    Reference Document No.:
-                                </th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-field="o.partner_ref"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Vendor Reference Document No.:</th>
+                                <td style="width:35%; text-align: left;"><span t-field="o.partner_ref"/></td>
                             </tr>
                             <tr t-if="o.supplier_reference_doc_date">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Vendor
-                                    Reference Document Date:
-                                </th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-esc="o.supplier_reference_doc_date.strftime('%d-%B-%Y')"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Vendor Reference Document Date:</th>
+                                <td style="width:35%; text-align: left;"><span t-esc="o.supplier_reference_doc_date.strftime('%d-%B-%Y')"/></td>
                             </tr>
                             <tr t-if="o.lead_id">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Our
-                                    Reference:
-                                </th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-field="o.lead_id.name"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Our Reference:</th>
+                                <td style="width:35%; text-align: left;"><span t-field="o.lead_id.name"/></td>
                             </tr>
                             <tr t-if="o.incoterm_id">
-                                <th style="width:65%; text-align: left; padding-top:0px; padding-left:5px;">Incoterms (
-                                    <span t-field="o.incoterm_implementation_year"/>):
-                                </th>
-                                <td style="width:35%; text-align: left;">
-                                    <span t-field="o.incoterm_id.code"/>
-                                    <span t-field="o.discharge_port_id.name"/>
-                                </td>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Incoterms (<span t-field="o.incoterm_implementation_year"/>):</th>
+                                <td style="width:35%; text-align: left;"><span t-field="o.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/></td>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
-
-        </div>
-        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
-             t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});"
-             t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
-             t-att-data-oe-lang="o and o.env.context.get('lang')">
-            <t t-out="0"/>
-        </div>
-        <div class="footer">
-            <div class="page"/>
-        </div>
-    </template>
-
-    <template id="asc_shipping_instructions_template">
-        <t t-call="afrex_supply_chain.asc_shipping_instruction_header">
-            <t t-set="o" t-value="o.with_context(lang=lang)"/>
-            <!-- <link href="https://fonts.googleapis.com/css?family=Times New Roman" rel="stylesheet"/> -->
-            <t t-set="company" t-value="o.company_id"/>
-            <style>
-                table, th, td {
-                border:0px solid white;
-                }
-            </style>
             <t t-if="o.lead_id.is_switch">
-                <div class="mb-2 text-center"
-                     style="font-size: 11px; margin-top: 0%; margin-bottom: 0%; padding-bottom: 0px;">
-                    <span style="text-align:center;">
+                <div class="mb-2 text-center" style="font-size: 10px; margin-top: 0%; margin-bottom: 0%; padding-bottom: 0px;">
+                    <span style="text-align:center; color:red;">
                         <u>
                             THIS TRANSACTION WILL REQUIRE A SWITCH BILL OF LADING.
                             <br/>
-                            SWITCH LOCATION IS MAURITIUS. SHIPPING LINE MUST HAVE A REPRESENTATIVE OFFICE IN MAURITIUS
-                            TO FACILITATE SWITCH PROCESS.
+                            SWITCH LOCATION IS MAURITIUS. SHIPPING LINE MUST HAVE A REPRESENTATIVE OFFICE IN MAURITIUS TO FACILITATE SWITCH PROCESS.
                             <br/>
                             IMPORTANT!! SHIPMENT VIA OCEAN NETWORK EXPRESS (ONE) LINE IS NOT ALLOWED.
                         </u>
@@ -203,207 +148,144 @@
                 </div>
             </t>
             <div class="row mb-2" style="width:100%;">
-                <table class="table-borderless" style="width: 45%; font-size:12px; border: 1px solid; page-break-inside:avoid;">
-                    <tr class="text-start" style="page-break-inside:avoid;">
+                <table class="table-borderless" style="width: 45%; font-size:12px; border: 1px solid;">
+                    <tr class="text-start">
                         <td>
-                            <strong>
-                                <span style="border-bottom: 1pt solid black;">2. Consignee and Notify 1:</span>
-                            </strong>
+                            <strong><span style="border-bottom: 1pt solid black;">2. Consignee and Notify 1: </span></strong>
                         </td>
                     </tr>
-                    <tr style="page-break-inside:avoid;">
+                    <tr>
                         <td>
-                            <strong>
-                                <span t-field="o.first_consignee_id.name"/>
-                            </strong>
+                            <strong><span t-field="o.first_consignee_id.name"/></strong>
                         </td>
                     </tr>
-                    <tr style="page-break-inside:avoid;">
+                    <tr>
                         <td>
                             <span t-field="o.first_consignee_id.address_text"/>
                         </td>
                     </tr>
                     <t t-if="o.company_id.x_display_partner_child and o.first_consignee_id.child_ids">
-                        <t t-set="partner_children"
-                           t-value="o.first_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                        <t t-set="partner_children" t-value="o.first_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                         <t t-foreach="partner_children" t-as="partner_child">
                             <tr t-if="partner_child.name">
                                 <td>
-                                    Contact Person:
-                                    <span t-field="partner_child.name"/>
+                                    Contact Person: <span t-field="partner_child.name"/>
                                 </td>
                             </tr>
                             <tr t-if="partner_child.email">
                                 <td>
-                                    Email:
-                                    <span t-field="partner_child.email"/>
+                                    Email: <span t-field="partner_child.email"/>
                                 </td>
                             </tr>
                             <tr t-if="partner_child.phone">
                                 <td>
-                                    Phone:
-                                    <span t-field="partner_child.phone"/>
+                                    Phone: <span t-field="partner_child.phone"/>
                                 </td>
                             </tr>
                         </t>
                     </t>
                 </table>
-                <table class="table-borderless"
-                       style="width: 45%; margin-left: 10%; font-size:12px; border: 1px solid;" >
-                    <tr class="text-start" style="page-break-inside:avoid;">
+                <table class="table-borderless" style="width: 45%; margin-left: 10%; font-size:12px; border: 1px solid;">
+                    <tr class="text-start">
                         <td>
-                            <strong>
-                                <span style="border-bottom: 1pt solid black;">3. Notify 2:</span>
-                            </strong>
+                            <strong><span style="border-bottom: 1pt solid black;">3. Notify 2: </span></strong>
                         </td>
                     </tr>
-                    <tr style="page-break-inside:avoid;">
+                    <tr>
                         <td>
-                            <strong>
-                                <span t-field="o.second_consignee_id.name"/>
-                            </strong>
+                            <strong><span t-field="o.second_consignee_id.name"/></strong>
                         </td>
                     </tr>
-                    <tr style="page-break-inside:avoid;">
+                    <tr>
                         <td>
                             <span t-field="o.second_consignee_id.address_text"/>
                         </td>
                     </tr>
                     <t t-if="o.company_id.x_display_partner_child and o.second_consignee_id.child_ids">
-                        <t t-set="partner_children"
-                           t-value="o.second_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                        <t t-set="partner_children" t-value="o.second_consignee_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                         <t t-foreach="partner_children" t-as="partner_child">
-                            <tr t-if="partner_child.name" style="page-break-inside:avoid;">
+                            <tr t-if="partner_child.name">
                                 <td>
-                                    Contact Person:
-                                    <span t-field="partner_child.name"/>
+                                    Contact Person: <span t-field="partner_child.name"/>
                                 </td>
                             </tr>
-                            <tr t-if="partner_child.email" style="page-break-inside:avoid;">
+                            <tr t-if="partner_child.email">
                                 <td>
-                                    Email:
-                                    <span t-field="partner_child.email"/>
+                                    Email: <span t-field="partner_child.email"/>
                                 </td>
                             </tr>
-                            <tr t-if="partner_child.phone" style="page-break-inside:avoid;">
+                            <tr t-if="partner_child.phone">
                                 <td>
-                                    Phone:
-                                    <span t-field="partner_child.phone"/>
+                                    Phone: <span t-field="partner_child.phone"/>
                                 </td>
                             </tr>
                         </t>
                     </t>
                 </table>
             </div>
-            <table class="table-sm table-borderless"
-                   style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 12px;">
-                <tr style="page-break-inside:avoid;">
+            <table class="table-sm table-borderless" style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 10px;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>4. Shipping Marks on Packaging</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div>
-                            <span t-if="o.lead_id.is_internal" style="display: block;">Neutral Packaging, Product
-                                Description, Gross Weight, Net Weight, Manufacturing Date, Expiry Date, Batch No,
-                                Country of Origin
-                            </span>
-                            <span t-else="o.lead_id.is_internal" style="display: block;">Product Description, Gross
-                                Weight, Net Weight, Manufacturing Date, Expiry Date, Batch No, Country of Origin
-                            </span>
+                            <span t-if="o.lead_id.is_internal" style="display: block;">Neutral Packaging, Product Description, Gross Weight, Net Weight, Manufacturing Date, Expiry Date, Batch No, Country of Origin</span>
+                            <span t-else="o.lead_id.is_internal" style="display: block;">Product Description, Gross Weight, Net Weight, Manufacturing Date, Expiry Date, Batch No, Country of Origin</span>
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>5. Shipment Plan</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div t-if="not o.incoterm_selection == 'fob'">
-                            <span style="display: block;">Shipping details to be communicated as soon as booking is
-                                confirmed by shipping line.
-                            </span>
-                            <span style="display: block;">Minimum 14 days free demurrage / detention at destination must
-                                be negotiated with the shipping line at the time of booking.
-                            </span>
+                            <span style="display: block;">Shipping details to be communicated as soon as booking is confirmed by shipping line.</span>
+                            <span style="display: block;">Minimum 14 days free demurrage / detention at destination must be negotiated with the shipping line at the time of booking.</span>
                         </div>
                         <div t-if="o.incoterm_selection == 'fob'">
-                            <span style="display: block;">Shipping Details as confirmed by Best Honor Shipping Co.,
-                                Ltd
-                            </span>
+                            <span style="display: block;">Shipping Details as confirmed by Best Honor Shipping Co., Ltd</span>
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>6. Documentation Requirements and Conditions</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div t-if="not o.lead_id.is_internal">
-                            <span t-if="o.breakbulk_container == 'container'" style="display: block;">Manufacturer
-                                Certificate of Analysis for all batches to be provided prior container stuffing.
-                            </span>
-                            <span t-if="o.breakbulk_container == 'breakbulk'" style="display: block;">Certificate of
-                                Analysis for all batches to be provided prior despatch of goods to port.
-                            </span>
-                            <span style="display: block;">Draft Bill of Lading to be sent to Afrex Limited at least 2
-                                working days before shipping line cut-off for our approval.
-                            </span>
-                            <span style="display: block;">Draft shipping documents (commercial invoice, packing list,
-                                certificate of origin, insurance certificate or any other relevant documents) to be sent
-                                for our approval before vessel departure.
-                            </span>
-                            <span style="display: block;">Shipper must provide a scan copy of the final original Bill of
-                                Lading.
-                            </span>
-                            <span style="display: block;">Shipper to surrender full set original Bill of Lading to
-                                shipping line's offices at port of loading or place of issue (as applicable).
-                            </span>
-                            <span style="display: block;">Full set of final documents to be sent via e-mail or DHL
-                                Express (as required).
-                            </span>
+                            <span t-if="o.breakbulk_container == 'container'" style="display: block;">Manufacturer Certificate of Analysis for all batches to be provided prior container stuffing.</span>
+                            <span t-if="o.breakbulk_container == 'breakbulk'" style="display: block;">Certificate of Analysis for all batches to be provided prior despatch of goods to port.</span>
+                            <span style="display: block;">Draft Bill of Lading to be sent to Afrex Limited at least 2 working days before shipping line cut-off for our approval.</span>
+                            <span style="display: block;">Draft shipping documents (commercial invoice, packing list, certificate of origin, insurance certificate or any other relevant documents) to be sent for our approval before vessel departure.</span>
+                            <span style="display: block;">Shipper must provide a scan copy of the final original Bill of Lading.</span>
+                            <span style="display: block;">Shipper to surrender full set original Bill of Lading to shipping line's offices at port of loading or place of issue (as applicable).</span>
+                            <span style="display: block;">Full set of final documents to be sent via e-mail or DHL Express (as required).</span>
                         </div>
                         <div t-if="o.lead_id.is_internal">
-                            <span t-if="o.breakbulk_container == 'container'" style="display: block;">Manufacturer
-                                Certificate of Analysis for all batches to be provided prior container stuffing.
-                            </span>
-                            <span t-if="o.breakbulk_container == 'breakbulk'" style="display: block;">Certificate of
-                                Analysis for all batches to be provided prior despatch of goods to port.
-                            </span>
-                            <span style="display: block;">Draft Bill of Lading to be sent to both Notify parties at
-                                least 2 working days before carrier cut-off for approval.
-                            </span>
-                            <span style="display: block;">Draft shipping documents (Commercial Invoice, Packing List,
-                                Certificate of Origin, Insurance Certificate or any other relevant documents) to be sent
-                                for our approval before vessel departure.
-                            </span>
-                            <span style="display: block;">Shipper must provide a scan copy of the final original Bill of
-                                Lading.
-                            </span>
-                            <span style="display: block;">Shipper to facilitate Telex release immediately upon
-                                presentation of Proof of Payment (SWIFT) from Afrex Limited.
-                            </span>
-                            <span style="display: block;">Full set of final documents to be sent via e-mail or DHL
-                                Express (as required).
-                            </span>
+                            <span t-if="o.breakbulk_container == 'container'" style="display: block;">Manufacturer Certificate of Analysis for all batches to be provided prior container stuffing.</span>
+                            <span t-if="o.breakbulk_container == 'breakbulk'" style="display: block;">Certificate of Analysis for all batches to be provided prior despatch of goods to port.</span>
+                            <span style="display: block;">Draft Bill of Lading to be sent to both Notify parties at least 2 working days before carrier cut-off for approval.</span>
+                            <span style="display: block;">Draft shipping documents (Commercial Invoice, Packing List, Certificate of Origin, Insurance Certificate or any other relevant documents) to be sent for our approval before vessel departure.</span>
+                            <span style="display: block;">Shipper must provide a scan copy of the final original Bill of Lading.</span>
+                            <span style="display: block;">Shipper to facilitate Telex release immediately upon presentation of Proof of Payment (SWIFT) from Afrex Limited.</span>
+                            <span style="display: block;">Full set of final documents to be sent via e-mail or DHL Express (as required).</span>
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>7. Photographic Evidence</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div t-if="o.breakbulk_container == 'container'">
-                            <span style="display: block;">Packaging and labels for per batch before container is
-                                stuffed.
-                            </span>
+                            <span style="display: block;">Packaging and labels for per batch before container is stuffed.</span>
                             <span style="display: block;">Container inside while empty.</span>
                             <span style="display: block;">Container inside with goods half loaded.</span>
                             <span style="display: block;">Container inside fully loaded.</span>
                             <span style="display: block;">Container with doors closed and sealed affixed.</span>
-                            <span style="display: block;">Seal(s) affixed to container clearly indicating seal reference
-                                number.
-                            </span>
+                            <span style="display: block;">Seal(s) affixed to container clearly indicating seal reference number.</span>
                         </div>
                         <div t-if="o.breakbulk_container == 'breakbulk'">
                             <span style="display: block;">Packaging and labels per batch before vessel is loaded.</span>
@@ -411,36 +293,28 @@
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>8. Container Load Report</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div t-if="o.breakbulk_container == 'container'">
-                            <span style="display: block;">A Container Load Report or a VGM report must be provided upon
-                                completion of container stuffing.
-                            </span>
+                            <span style="display: block;">A Container Load Report or a VGM report must be provided upon completion of container stuffing.</span>
                         </div>
                         <div t-if="o.breakbulk_container == 'breakbulk'">
-                            <span style="display: block;">A VGM report and Master's Receipt must be provided upon
-                                completion of vessel loading.
-                            </span>
+                            <span style="display: block;">A VGM report and Master's Receipt must be provided upon completion of vessel loading.</span>
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>9. Communication</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div>
-                            <span style="display: block;">Communications relating to the order / shipment must include
-                                the PFI and the Afrex PO number in the email subject line.
-                            </span>
+                            <span style="display: block;">Communications relating to the order / shipment must include the PFI and the Afrex PO number in the email subject line.</span>
                             <span style="display: block;">Do not include multiple orders in one email.</span>
-                            <span style="display: block;">Draft documents, pictures and final documents to be sent to
-                                the below recipients:
-                            </span>
+                            <span style="display: block;">Draft documents, pictures and final documents to be sent to the below recipients:</span>
                             <span style="display: block;">DL-AfrexSupplier@supergrp.com</span>
                             <span style="display: block;">roshan.bamma@supergrp.com</span>
                             <span style="display: block;">yashna.ramanaick@supergrp.com</span>
@@ -448,60 +322,40 @@
                         </div>
                     </td>
                 </tr>
-                <tr style="page-break-inside:avoid;">
+                <tr>
                     <td class="text-start" style="width:21%;">
                         <span>10. Documents to be provided by Shipper</span>
                     </td>
                     <td class="text-start" style="width:79%">
                         <div t-if="not o.lead_id.is_internal">
-                            <span style="display: block;">Commercial invoice made out to Afrex Limited - where shipping
-                                CPT/CIF/DAP/DDU/DDP - split of values must be shown separately on invoice.
-                            </span>
-                            <span style="display: block;">Packing list made out to Afrex Limited - include total number
-                                of pallets loaded (if applicable).
-                            </span>
-                            <span style="display: block;">Manufacturer Certificate of Analysis made out to Afrex
-                                Limited.
-                            </span>
-                            <span style="display: block;">Certificate of Origin made out to Afrex Limited - BL number to
-                                be included on COO.
-                            </span>
-                            <span style="display: block;">Certificate of Marine Cargo Insurance - BL number to be
-                                included on Insurance Certificate (if applicable).
-                            </span>
+                            <span style="display: block;">Commercial invoice made out to Afrex Limited - where shipping CPT/CIF/DAP/DDU/DDP - split of values must be shown separately on invoice.</span>
+                            <span style="display: block;">Packing list made out to Afrex Limited - include total number of pallets loaded (if applicable).</span>
+                            <span style="display: block;">Manufacturer Certificate of Analysis made out to Afrex Limited.</span>
+                            <span style="display: block;">Certificate of Origin made out to Afrex Limited - BL number to be included on COO.</span>
+                            <span style="display: block;">Certificate of Marine Cargo Insurance - BL number to be included on Insurance Certificate (if applicable).</span>
                             <span style="display: block;">MSDS, TDS and Specs of the product(s).</span>
                             <span style="display: block;">Health Certificate (if applicable).</span>
                         </div>
                         <div t-if="o.lead_id.is_internal">
-                            <span style="display: block;">Commercial invoice made out to Afrex Limited - where shipping
-                                CPT/CIF/DAP/DDU/DDP - split of values must be shown separately on invoice.
-                            </span>
+                            <span style="display: block;">Commercial invoice made out to Afrex Limited - where shipping CPT/CIF/DAP/DDU/DDP - split of values must be shown separately on invoice.</span>
                             <span style="display: block;">Packing list made out to the Consignee.</span>
                             <span style="display: block;">Manufacturer Certificate of Analysis.</span>
-                            <span style="display: block;">Certificate of Origin made out to the Consignee - BL number to
-                                be included on COO.
-                            </span>
-                            <span style="display: block;">Certificate of Marine Cargo Insurance - BL number to be
-                                included on Insurance Certificate (if applicable).
-                            </span>
+                            <span style="display: block;">Certificate of Origin made out to the Consignee - BL number to be included on COO.</span>
+                            <span style="display: block;">Certificate of Marine Cargo Insurance - BL number to be included on Insurance Certificate (if applicable).</span>
                             <span style="display: block;">MSDS, TDS and Specs of the product(s).</span>
-                            <span style="display: block;">Health Certificate made out to the Consignee (if
-                                applicable).
-                            </span>
+                            <span style="display: block;">Health Certificate made out to the Consignee (if applicable).</span>
                         </div>
                     </td>
                 </tr>
             </table>
-            <table class="table table-sm table-borderless mt-1"
-                   style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 12px; page-break-inside:avoid;">
-                <tr style="page-break-inside:avoid;">
+            <table class="table table-sm table-borderless mt-1" style="width:100%; margin-bottom:0px; padding-bottom: 0px; border: 0px solid white; font-size: 10px;">
+                <tr>
                     <td style="width: 70%;">
                         <span>Signed and Stamped by:</span>
                         <br/>
                         <span t-field="o.company_id.name"/>
                         <br/>
-                        <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)"
-                             style="margin-top: 5px; padding-left: 120px; max-height: 60px;" alt="Logo"/>
+                        <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)" style="margin-top: 5px; padding-left: 120px; max-height: 60px;" alt="Logo"/>
                     </td>
                     <td style="width: 30%;">
                         <span>Signed and Stamped by:</span>
@@ -509,16 +363,16 @@
                         <span t-field="o.partner_id.name"/>
                     </td>
                 </tr>
-            </table>
+            </table>                
         </t>
     </template>
 
     <template id="report_asc_shipping_instructions">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="afrex_supply_chain.asc_shipping_instructions_template" t-lang="o.partner_id.lang"/>
+                <t t-call="afrex_supply_chain.asc_shipping_instructions_template" t-lang="o.partner_id.lang" />
             </t>
         </t>
     </template>
-
+        
 </odoo>

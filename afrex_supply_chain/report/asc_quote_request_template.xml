@@ -140,7 +140,7 @@
                 </tr>
                 <tr t-if="o.supplier_delivery_method == 'sea'">
                     <th style="width:30%; text-align:left; padding-left: 5px;">
-                        <span style="float:left;">POD</span>
+                        <span style="float:left;">Port of Discharge</span>
                     </th>
                     <td style="width:70%"><span t-field="o.discharge_port_id.name"/></td>
                 </tr>
@@ -229,7 +229,7 @@
                         <td t-if="o.insurance_amount != 0" style="width:70%"><span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/> <span t-field="o.insurance_amount" t-options='{"widget": "float", "precision": 2}'/></td>
                         <td t-else="" style="width:70%"><span> </span></td>
                     </tr>
-                    <tr>
+                    <tr t-if="o.incoterm_selection != 'fob'">
                         <th style="width:30%; text-align:left; padding-left: 5px;">
                             <span style="float:left;"><span t-field="o.incoterm_id.code"/>/MT</span>
                         </th>

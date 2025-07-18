@@ -261,7 +261,7 @@ class Lead(models.Model):
             'res_model': 'asc.generate.payment.request',
             'target': 'new',
             'context': {'default_purchase_order_id': self.id,
-                        'default_currency_id': self.currency_id.id,}
+                        'default_currency_id': self.env.company.currency_id.id,}
         }
         return action
 
@@ -307,7 +307,7 @@ class Lead(models.Model):
                 raise UserError("No invoice generated.")
             return self.sale_invoice_id.print_origin_certificate()
 
-
+    @api.depends('vessel', 'voyage')
     def _compute_vessel_voyage_lines(self):
         for rec in self:
             vessels = rec.vessel.split(',') if rec.vessel else []

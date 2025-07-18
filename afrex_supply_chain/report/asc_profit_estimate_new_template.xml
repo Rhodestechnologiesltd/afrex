@@ -261,9 +261,20 @@
                         <t t-else="">To be confirmed</t>
                     </th>
                 </tr>
+                 <tr t-if="o.purchase_order_incoterm_selection == 'fob'">
+                    <th class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">Freight (Freight Forwarder)</span>
+                    </th>
+                    <th class="text-start" style="width:30%; padding-left: 5px;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.afrex_freight_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%; padding-left: 5px;" invisible="not o.is_internal">
+                        ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.afrex_freight_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                </tr>
                 <tr t-if="o.supplier_delivery_method == 'sea' and o.purchase_order_incoterm_selection != 'cif'">
                     <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Insurance MUA Estimate</span>
+                        <span style="padding-left: 5px;">Insurance Estimate</span>
                         <span style="padding-left: 5px;"> (Sales Value x 110% x 0.25% + USD 10)</span>
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -273,6 +284,7 @@
                         ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.insurance_premium_unit_zar" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
+
                 <tr t-if="o.supplier_delivery_method == 'road'">
                     <th class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">Transportation and Clearance</span>
@@ -428,14 +440,6 @@
                     </th>
                 </tr>
                 <tr>
-                    <th t-if="o.is_internal" colspan="3">
-                        <span style="height:0px;"/>
-                    </th>
-                    <th t-if="not o.is_internal" colspan="2">
-                        <span style="height:0px;"/>
-                    </th>
-                </tr>
-                <tr>
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
                             <b>Total Costs [A + B]</b>
@@ -492,7 +496,11 @@
                     </th>
                 </tr>
                 <tr t-if="not o.is_internal">
-                    <th class="text-start" style="width:40%;">
+                    <th t-if="o.is_sales_price_override" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">Credit Insurance Cost </span>
+                        <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/> against calculated Selling Price
+                    </th>
+                    <th t-else="" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">Credit Insurance Cost </span>
                         <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/> against CIF Selling Price
                     </th>
@@ -505,8 +513,11 @@
                 </tr>
                 <tr t-if="not o.is_internal">
                     <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
+                        <span t-if="o.is_sales_price_override" style="padding-left: 5px;">
                             <b>Calculated Sales Price / MT incl. Credit Insurance Cost</b>
+                        </span>
+                        <span t-else="" style="padding-left: 5px;">
+                            <b>Sales Price / MT incl. Credit Insurance Cost</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -517,7 +528,7 @@
                 </tr>
                 <tr t-if="not o.is_internal">
                     <th style="width:40%; text-align: right;">
-                        <span t-if="is_sales_price_override" style="padding-left: 5px;">
+                        <span t-if="o.is_sales_price_override" style="padding-left: 5px;">
                             <b>Total Calculated Sales Value</b>
                         </span>
                         <span t-else="" style="padding-left: 5px;">
@@ -552,6 +563,18 @@
                         USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                    </th>
+                </tr>
+                <tr t-if="not o.is_internal and o.is_sales_price_override">
+                    <th class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">Credit Insurance Cost </span>
+                        <span t-esc="'{:.2f}%'.format((o.agreed_credit_insurance_rate or 0) * 100)"/> against Agreed Sales Value
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_credit_insurance_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                        ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_credit_insurance_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
                 <tr t-if="o.is_internal">
@@ -612,7 +635,7 @@
                 <tr t-if="o.is_internal and is_sales_price_override">
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
-                            <b>Total Agreed Sales Value [A+C+D]</b>
+                            <b>Total Agreed Sales Value</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -632,6 +655,14 @@
                         USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.agreed_sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                    </th>
+                </tr>
+                <tr>
+                    <th t-if="o.is_internal" colspan="3">
+                        <span style="height:0px;"/>
+                    </th>
+                    <th t-if="not o.is_internal" colspan="2">
+                        <span style="height:0px;"/>
                     </th>
                 </tr>
                 <tr>
@@ -702,8 +733,8 @@
                     </th>
                 </tr>
             </table>
-            <div class="row mt-4" style="margin-left: 2%; margin-right: 2%;">
-                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 110px; margin-right: 10%;">
+            <div class="row mt-2" style="margin-left: 2%; margin-right: 2%;">
+                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 90px; margin-right: 10%;">
                     <tr class="text-center">
                         <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
                             <span style="padding-left: 5px;"></span>
@@ -720,7 +751,7 @@
                         </td>
                     </tr>
                 </table>
-                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 110px;">
+                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 90px;">
                     <tr class="text-center">
                         <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
                             <span style="padding-left: 5px;"></span>

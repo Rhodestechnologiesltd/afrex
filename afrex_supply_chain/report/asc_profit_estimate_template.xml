@@ -221,7 +221,7 @@
                 </tr>
                 <tr t-if="o.purchase_order_incoterm_selection != 'cif'">
                     <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Insurance MUA Estimate</span>
+                        <span style="padding-left: 5px;">Insurance Estimate</span>
                         <span style="padding-left: 5px;"> (Sales Value x 110% x 0.25% + USD 10)</span>
                     </th>
                     <th class="text-start" style="width:30%; padding-left: 5px;">
@@ -233,7 +233,7 @@
                 </tr>
                 <tr t-if="o.purchase_order_incoterm_selection == 'fob'">
                     <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Freight (Best Honor)</span>
+                        <span style="padding-left: 5px;">Freight (Freight Forwarder)</span>
                     </th>
                     <th class="text-start" style="width:30%; padding-left: 5px;">
                         USD <span class="float-end" style="padding-right: 5px; text-align: right;" t-field="o.afrex_freight_amount" t-options="{'widget': 'float', 'precision': 2}"/>

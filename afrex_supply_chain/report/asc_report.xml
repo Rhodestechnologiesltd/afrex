@@ -34,7 +34,7 @@
         <field name="report_name">afrex_supply_chain.report_asc_shipping_instructions</field>
         <field name="report_file">afrex_supply_chain.report_asc_shipping_instructions</field>
         <field name="print_report_name">"Shippings Instructions [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_customer_invoice"/>
+        <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="model_purchase_order" />
         <field name="binding_type">report</field>
         <field name="attachment">"Shippings Instructions [%s]" % object.name</field>
@@ -60,20 +60,7 @@
         <field name="report_name">afrex_supply_chain.report_asc_proforma_invoice</field>
         <field name="report_file">afrex_supply_chain.report_asc_proforma_invoice</field>
         <field name="print_report_name">"Afrex PFI [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_custom_invoice"/>
-        <field name="binding_model_id" ref="account.model_account_move" />
-        <field name="binding_type">report</field>
-        <field name="attachment">"Afrex PFI [%s]" % object.name</field>
-    </record>
-
-    <record id="action_report_asc_proforma_invoice_extended" model="ir.actions.report">
-        <field name="name">Afrex PFI-extended</field>
-        <field name="model">account.move</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">afrex_supply_chain.report_asc_proforma_invoice_extended</field>
-        <field name="report_file">afrex_supply_chain.report_asc_proforma_invoice_extended</field>
-        <field name="print_report_name">"Afrex PFI [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_extended_invoice"/>
+        <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="account.model_account_move" />
         <field name="binding_type">report</field>
         <field name="attachment">"Afrex PFI [%s]" % object.name</field>
@@ -86,20 +73,7 @@
         <field name="report_name">afrex_supply_chain.report_asc_commercial_invoice</field>
         <field name="report_file">afrex_supply_chain.report_asc_commercial_invoice</field>
         <field name="print_report_name">"Afrex CI [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_custom_invoice"/>
-        <field name="binding_model_id" ref="account.model_account_move" />
-        <field name="binding_type">report</field>
-        <field name="attachment">"Afrex CI [%s]" % object.name</field>
-    </record>
-
-    <record id="action_report_asc_commercial_invoice_extended" model="ir.actions.report">
-        <field name="name">Afrex CI-extended</field>
-        <field name="model">account.move</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">afrex_supply_chain.report_asc_commercial_invoice_extended</field>
-        <field name="report_file">afrex_supply_chain.report_asc_commercial_invoice_extended</field>
-        <field name="print_report_name">"Afrex CI [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_extended_invoice"/>
+        <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="account.model_account_move" />
         <field name="binding_type">report</field>
         <field name="attachment">"Afrex CI [%s]" % object.name</field>
@@ -138,7 +112,7 @@
         <field name="report_name">afrex_supply_chain.report_asc_packing_list</field>
         <field name="report_file">afrex_supply_chain.report_asc_packing_list</field>
         <field name="print_report_name">"Packing List [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_custom_invoice"/>
+        <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="account.model_account_move" />
         <field name="binding_type">report</field>
         <field name="attachment">"Packing List [%s]" % object.name</field>
@@ -151,7 +125,7 @@
         <field name="report_name">afrex_supply_chain.report_asc_origin_certificate</field>
         <field name="report_file">afrex_supply_chain.report_asc_origin_certificate</field>
         <field name="print_report_name">"COO [%s]" % object.name</field>
-        <field name="paperformat_id" ref="afrex_supply_chain.paperformat_custom_invoice"/>
+        <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="account.model_account_move" />
         <field name="binding_type">report</field>
         <field name="attachment">"COA [%s]" % object.name</field>
