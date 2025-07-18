@@ -36,7 +36,7 @@ class PurchaseOrder(models.Model):
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method', string="Supplier Delivery Method", tracking=True)
     
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", ondelete='restrict', tracking=True, readonly=False, store=True)
-    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id")
+    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id", readonly=False)
     shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
     shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')
     breakbulk_container = fields.Selection([('breakbulk', "Breakbulk"),

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="asc_origin_certificate_header">
-        <t t-set="o" t-value="o.with_context(lang=lang)"/>
-        <t t-set="company" t-value="o.company_id"/>
-        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-            <div style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+    
+    <template id="asc_origin_certificate_template">
+        <t t-call="web.basic_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <style>
+                table, th, td {
+                border:0px solid white;
+                }
+            </style>
+            <div style="font-size: 10px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
                 <div class="row mb8">
                     <div class="col-5" style="margin-right: 5px;">
-                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
-                             style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
-                        <table t-if="o.company_id.partner_id"
-                               style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                        <table t-if="o.company_id.partner_id" style="font-size: 10px; width:100%; margin-bottom:15px; border: 1px solid;">
                             <style>
                                 tr, th, td {
                                 border: 0px solid white;
@@ -21,51 +24,41 @@
                             </style>
                             <tr>
                                 <td>
-                                    <b>
-                                        <span style="display: inline-block; border-bottom: 1pt solid black;">Goods
-                                            consigned from:
-                                        </span>
-                                    </b>
+                                <b><span style="display: inline-block; border-bottom: 1pt solid black;">Goods consigned from: </span></b>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <strong>
-                                        <span t-field="o.company_id.partner_id.name"/>
-                                    </strong>
+                                    <strong><span t-field="o.company_id.partner_id.name"/></strong>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <span t-field="o.company_id.partner_id.address_text"/>
+                                <span t-field="o.company_id.partner_id.address_text"/>
                                 </td>
                             </tr>
                             <t t-if="o.company_id.x_display_partner_child and o.company_id.partner_id.child_ids">
-                                <t t-set="partner_children"
-                                   t-value="o.company_id.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-set="partner_children" t-value="o.company_id.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                                 <t t-foreach="partner_children" t-as="partner_child">
                                     <tr t-if="partner_child.name">
                                         <td>
-                                            Contact Person:
-                                            <span t-field="partner_child.name"/>
+                                            Contact Person: <span t-field="partner_child.name"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.email">
                                         <td>
-                                            Email:
-                                            <span t-field="partner_child.email"/>
+                                            Email: <span t-field="partner_child.email"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.phone">
                                         <td>
-                                            Phone:
-                                            <span t-field="partner_child.phone"/>
+                                            Phone: <span t-field="partner_child.phone"/>
                                         </td>
                                     </tr>
                                 </t>
                             </t>
                         </table>
-                        <table style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <table style="font-size: 10px; width:100%; margin-bottom:15px; border: 1px solid;">
                             <style>
                                 tr, th, td {
                                 border: 0px solid white;
@@ -76,45 +69,35 @@
                             </style>
                             <tr>
                                 <td>
-                                    <b>
-                                        <span style="display: inline-block; border-bottom: 1pt solid black;">Goods
-                                            consigned to:
-                                        </span>
-                                    </b>
+                                <b><span style="display: inline-block; border-bottom: 1pt solid black;">Goods consigned to: </span></b>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <strong>
-                                        <span t-field="o.partner_id.name"/>
-                                    </strong>
+                                    <strong><span t-field="o.partner_id.name"/></strong>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <span t-field="o.partner_id.address_text"/>
+                                <span t-field="o.partner_id.address_text"/>
                                 </td>
                             </tr>
                             <t t-if="o.company_id.x_display_partner_child and o.partner_id.child_ids">
-                                <t t-set="partner_children"
-                                   t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                                 <t t-foreach="partner_children" t-as="partner_child">
                                     <tr t-if="partner_child.name">
                                         <td>
-                                            Contact Person:
-                                            <span t-field="partner_child.name"/>
+                                            Contact Person: <span t-field="partner_child.name"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.email">
                                         <td>
-                                            Email:
-                                            <span t-field="partner_child.email"/>
+                                            Email: <span t-field="partner_child.email"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.phone">
                                         <td>
-                                            Phone:
-                                            <span t-field="partner_child.phone"/>
+                                            Phone: <span t-field="partner_child.phone"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -124,14 +107,12 @@
                     <div class="col-7 text-end mb-2">
                         <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
                             <tr>
-                                <th valign="middle" class="h5"
-                                    style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                                <th valign="middle" class="h5" style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
                                     Certificate of Origin
                                 </th>
                             </tr>
                         </table>
-                        <table class="table table-sm table-borderless"
-                               style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                        <table class="table table-sm table-borderless" style="width: 70%; margin-left: 30%; border: 0px solid white;">
                             <tr>
                                 <th style="text-align: start; padding: 0;">
                                     <span t-field="o.company_id.name"/>
@@ -159,8 +140,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align: start; padding: 0;">
-                                    <span>Tel: +230 271 1176</span>
-                                    <span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                                    <span>Tel: +230 271 1176</span><span style="padding-left: 10px;">Fax: +230 211 8959</span>
                                 </td>
                             </tr>
                             <tr>
@@ -169,211 +149,165 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="table table-borderless mb-2 mx-0"
-                               style="font-size: 12px; width: 100%; border: 0px solid white;">
+                        <table class="table table-borderless mb-2 mx-0" style="font-size: 10px; width: 100%; border: 0px solid white;">
                             <tr t-if="o.origin_certificate_date">
                                 <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
-                                <th style="width:35%; text-align: left;">
-                                    <span t-esc="o.origin_certificate_date.strftime('%d-%B-%Y')"/>
-                                </th>
+                                <th style="width:35%; text-align: left;"><span t-esc="o.origin_certificate_date.strftime('%d-%B-%Y')"/></th>
                             </tr>
                             <tr t-if="not o.origin_certificate_date">
                                 <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
                                 <th style="width:35%; text-align: left;">To be confirmed</th>
                             </tr>
                             <tr t-if="o.name">
-                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference
-                                    Number:
-                                </th>
-                                <th style="width:35%; text-align: left;">
-                                    <span t-field="o.name"/>
-                                </th>
+                                <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference Number:</th>
+                                <th style="width:35%; text-align: left;"><span t-field="o.name"/></th>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
-
-        </div>
-        <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_report_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
-             t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});"
-             t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
-             t-att-data-oe-lang="o and o.env.context.get('lang')">
-            <t t-out="0"/>
-        </div>
-        <div class="footer">
-            <div class="page"/>
-        </div>
-    </template>
-    <template id="asc_origin_certificate_template">
-        <t t-call="afrex_supply_chain.asc_origin_certificate_header">
-            <div class="page" style="margin-top:0.5em;">
-                <t t-set="o" t-value="o.with_context(lang=lang)"/>
-                <style>
-                    table, th, td {
-                    border:0px solid white;
-                    }
-                </style>
-                <table class="table table-lg mt-4 mb-4"
-                       style="width:80%; margin-left: 5%; margin-right: 5%; border: 1px solid; font-size: 12px;">
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th colspan="2" style="text-align: center; border: 1px solid;">
-                            <span style="text-align: center;">Conditions</span>
-                        </th>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Means of Transport and Route</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.route">
-                                <span t-field="o.route"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Country / Region of Destination</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.sale_country_id.name">
-                                <span t-field="o.sale_country_id.name"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Marks and Numbers</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.marks_numbers">
-                                <span t-field="o.marks_numbers"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Number and Kind of Packages, Description
-                                of
-                                Goods
-                            </span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.product_combination_id and o.packaging_id and o.container_stuffing">
-                                <span>
-                                    <span t-field="o.container_stuffing"/>
-                                    x
-                                    <span t-field="o.packaging_id"/>
-                                    <span t-field="o.product_combination_id"/>
-                                </span>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Quantity (Gross Weight)</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.gross_weight > 0">
-                                <span>
-                                    <span t-field="o.gross_weight" t-options="{'widget': 'float', 'precision': 2}"/>
-                                    Kg
-                                </span>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Quantity (Net Weight)</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.net_weight > 0">
-                                <span>
-                                    <span t-field="o.net_weight" t-options="{'widget': 'float', 'precision': 2}"/>
-                                    Kg
-                                </span>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Origin</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.origin_country_id.name">
-                                <span t-field="o.origin_country_id.name"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;">Number and Date of Invoice(s)</span>
-                            <span style="padding-right:5px;">:</span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.name">
-                                <span t-field="o.name"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                    <tr style="page-break-inside:avoid; border: 1px solid;">
-                        <th class="text-start" style="width:30%; padding-left: 5px; border: 1px solid;">
-                            <span style="padding-right:5px; padding-left; 5px;"></span>
-                        </th>
-                        <td class="text-start" style="border: 1px solid;">
-                            <t t-if="o.invoice_date">
-                                <span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
-                            </t>
-                            <t t-else="">
-                                <span>To be confirmed</span>
-                            </t>
-                        </td>
-                    </tr>
-                </table>
-                <div style="page-break-inside:avoid; font-size: 14px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
-                    <span>We certify that the goods originate in the country as mentioned above.</span>
-                </div>
-                <div class="mt-4" style="width:40%; margin-left: 55%; margin-right: 5%; font-size: 12px; page-break-inside:avoid;">
-                    <div>
-                        <br/>
-                        <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)"
-                             style="max-height:130px;" alt="Seal"/>
-                        <br/>
-                        <span t-if="o.origin_certificate_date" style="padding-left: 180px;">Date:</span>
-                        <span t-if="o.origin_certificate_date" t-esc="o.origin_certificate_date.strftime('%d-%B-%Y')"/>
-                        <span t-else="" style="padding-left: 180px;">To be confirmed</span>
-                    </div>
+            <table class="table table-lg mt-4 mb-4" style="width:80%; margin-left: 5%; margin-right: 5%; border: 1px solid; font-size: 10px;">
+                <tr style="border: 1px solid;">
+                    <th colspan="2" style="text-align: center; border: 1px solid;">
+                        <span style="text-align: center;">Conditions</span>
+                    </th>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Means of Transport and Route</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.route">
+                            <span t-field="o.route"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Country / Region of Destination</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.sale_country_id.name">
+                            <span t-field="o.sale_country_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Marks and Numbers</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.marks_numbers">
+                            <span t-field="o.marks_numbers"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Number and Kind of Packages, Description of Goods</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.product_combination_id and o.packaging_id and o.container_stuffing">
+                            <span><span t-field="o.container_stuffing"/> x <span t-field="o.packaging_id"/> <span t-field="o.product_combination_id"/></span>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Quantity (Gross Weight)</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.gross_weight > 0">
+                            <span><span t-field="o.gross_weight" t-options="{'widget': 'float', 'precision': 2}"/> Kg</span>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Quantity (Net Weight)</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.net_weight > 0">
+                            <span><span t-field="o.net_weight" t-options="{'widget': 'float', 'precision': 2}"/> Kg</span>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Origin</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.origin_country_id.name">
+                            <span t-field="o.origin_country_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;">Number and Date of Invoice(s)</span>
+                        <span style="padding-right:5px;">:</span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.name">
+                            <span t-field="o.name"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid;">
+                    <th class="text-start" style="width:32%; padding-left: 5px; border: 1px solid;">
+                        <span style="padding-right:5px; padding-left; 5px;"> </span>
+                    </th>
+                    <td class="text-start" style="border: 1px solid;">
+                        <t t-if="o.invoice_date">
+                            <span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
+                        </t>
+                        <t t-else="">
+                            <span>To be confirmed</span>
+                        </t>
+                    </td>
+                </tr>
+            </table>
+            <div style="font-size: 14px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
+                <span>We certify that the goods originate in the country as mentioned above.</span>
+            </div>
+            <div class="mt-4" style="width:40%; margin-left: 55%; margin-right: 5%; font-size: 10px;">
+                <div>
+                    <br/>
+                    <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)" style="max-height:130px;" alt="Seal"/>
+                    <br/>
+                    <span t-if="o.origin_certificate_date" style="padding-left: 180px;">Date: </span><span t-if="o.origin_certificate_date" t-esc="o.origin_certificate_date.strftime('%d-%B-%Y')"/>
+                    <span t-else="" style="padding-left: 180px;">To be confirmed</span>
                 </div>
             </div>
         </t>
@@ -382,7 +316,7 @@
     <template id="report_asc_origin_certificate">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="afrex_supply_chain.asc_origin_certificate_template" t-lang="o.partner_id.lang"/>
+                <t t-call="afrex_supply_chain.asc_origin_certificate_template" t-lang="o.partner_id.lang" />
             </t>
         </t>
     </template>

@@ -31,7 +31,7 @@ class GenerateProformaWizard(models.TransientModel):
     supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method')
     
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='sale_order_id.loading_port_id', store=True, readonly=False)
-    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='sale_order_id.discharge_port_id')
+    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='sale_order_id.discharge_port_id', readonly=False)
     
     currency_id = fields.Many2one('res.currency')
     is_currency_zar = fields.Boolean("Currency is ZAR")

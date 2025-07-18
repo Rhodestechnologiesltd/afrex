@@ -38,7 +38,7 @@ class SaleOrder(models.Model):
     product_description = fields.Char(related='product_combination_id.description')
     
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id", store=True, readonly=False)
-    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id')
+    discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id', readonly=False)
     
     shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
     shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')

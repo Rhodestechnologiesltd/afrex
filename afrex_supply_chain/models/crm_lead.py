@@ -307,7 +307,7 @@ class Lead(models.Model):
                 raise UserError("No invoice generated.")
             return self.sale_invoice_id.print_origin_certificate()
 
-
+    @api.depends('vessel', 'voyage')
     def _compute_vessel_voyage_lines(self):
         for rec in self:
             vessels = rec.vessel.split(',') if rec.vessel else []
