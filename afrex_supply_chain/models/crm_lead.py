@@ -62,6 +62,8 @@ class Lead(models.Model):
     purchase_order_is_invoiced = fields.Boolean("Purchase Order Invoiced", related="purchase_order_id.is_invoiced", copy=False)
     purchase_order_state = fields.Selection(related='purchase_order_id.state', string="Purchase Order Status", copy=False)
     
+    purchase_order_cif_amount = fields.Float("CIF Amount", compute="_compute_purchase_order_cif_amount", store=True, copy=False)
+
     road_transportation_unit = fields.Float(related='purchase_order_id.road_transportation_unit', readonly=False)
     road_transportation_amount = fields.Float(related='purchase_order_id.road_transportation_amount')
         
@@ -249,6 +251,27 @@ class Lead(models.Model):
     
     outgoing_doc_ids = fields.One2many('asc.document', 'lead_id', domain=[('type','=', 'outgoing')], string="Documents to be provided")
     incoming_doc_ids = fields.One2many('asc.document', 'lead_id', domain=[('type','=', 'incoming')], string="Documents to receive")
+
+    @api.depends('purchase_order_fob_amount', 'purchase_order_freight_amount', 'purchase_order_insurance_amount', 'afrex_freight_amount', 'insurance_premium_amount')
+    def _compute_purchase_order_cif_amount(self):
+        for rec in self:
+            if rec.supplier_delivery_method == 'sea':
+                # Calculate CIF amount based on FOB, Freight, and Insurance
+                if rec.purchase_order_incoterm_selection == 'cif':
+                    fob = rec.purchase_order_fob_amount
+                    freight = rec.purchase_order_freight_amount
+                    insurance = rec.purchase_order_insurance_amount
+                elif rec.purchase_order_incoterm_selection == 'cfr':
+                    fob = rec.purchase_order_fob_amount
+                    freight = rec.purchase_order_freight_amount
+                    insurance = rec.insurance_premium_amount
+                elif rec.purchase_order_incoterm_selection == 'fob':
+                    fob = rec.purchase_order_fob_amount
+                    freight = rec.afrex_freight_amount
+                    insurance = rec.insurance_premium_amount
+                else:
+                    fob, freight, insurance = 0.0, 0.0, 0.0
+                rec.purchase_order_cif_amount = fob + freight + insurance
 
     def generate_payment_request_wizard(self):
         # if self.state not in ['purchase', 'done']:

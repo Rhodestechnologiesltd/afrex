@@ -938,7 +938,7 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="purchase_order_cost_amount" widget="float"
+                                                    <field name="purchase_order_cif_amount" widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
@@ -1702,7 +1702,7 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_cost_amount" widget="float"
+                                                        <field name="purchase_order_cif_amount" widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                 </tr>
