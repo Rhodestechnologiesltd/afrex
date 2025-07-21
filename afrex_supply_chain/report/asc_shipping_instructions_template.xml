@@ -128,7 +128,8 @@
                             </tr>
                             <tr t-if="o.incoterm_id">
                                 <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Incoterms (<span t-field="o.incoterm_implementation_year"/>):</th>
-                                <td style="width:35%; text-align: left;"><span t-field="o.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/></td>
+                                <td t-if="o.incoterm_selection not in ['fob','fca','exw']" style="width:35%; text-align: left;"><span t-field="o.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/></td>
+                                <td t-if="o.incoterm_selection in ['fob','fca','exw']" style="width:35%; text-align: left;"><span t-field="o.incoterm_id.code"/> <span t-field="o.loading_port_id.name"/></td>
                             </tr>
                         </table>
                     </div>

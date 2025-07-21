@@ -178,12 +178,6 @@ class GenerateSaleOrderWizard(models.TransientModel):
             rec.road_transportation_unit_zar = rec.road_transportation_unit * rec.exchange_rate
             rec.logistics_service_unit_zar = rec.logistics_service_unit * rec.exchange_rate
                 
-    @api.onchange('incoterm_id')
-    def check_incoterm_insurance(self):
-        for rec in self:
-            if rec.incoterm_id != self.env.ref('account.incoterm_CFR'):
-                rec.insurance_amount = 0
-                
     @api.depends('cost_amount','freight_amount','insurance_amount','interest_amount','procurement_documentation_amount')
     def _compute_fob_amount(self):
         for rec in self:

@@ -15,7 +15,7 @@ class Lead(models.Model):
     afrex_insurance_agent_id = fields.Many2one('res.partner', string="Insurance Agent")
 
     insurance_premium_amount = fields.Float("Insurance Premium")
-    insurance_premium_unit = fields.Float("Insurance Premium per MT", compute="compute_insurance_premium_unit", readonly=False, store=True)
+    insurance_premium_unit = fields.Float("Insurance Premium per MT", compute="compute_insurance_premium_unit", store=True)
 
     afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount", store=True)
     afrex_freight_rate = fields.Float("Freight Rate / MT")
@@ -155,20 +155,19 @@ class Lead(models.Model):
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
             rec.agreed_sales_price_zar = rec.agreed_sales_price_zar * roe
     
+    @api.depends('insurance_premium_amount', 'product_qty')
+    def compute_insurance_premium_unit(self):
+        for rec in self:
+            try:
+                rec.insurance_premium_unit = rec.insurance_premium_amount / rec.product_qty
+            except ZeroDivisionError:
+                rec.insurance_premium_unit = 0
+    
     @api.depends('insurance_premium_unit','indicative_exchange_rate','exchange_rate')
     def compute_insurance_premium_unit_zar(self):
         for rec in self:
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
             rec.insurance_premium_unit_zar = rec.insurance_premium_unit * roe
-    
-    @api.depends('insurance_premium_amount', 'product_qty')
-    def compute_insurance_premium_unit(self):
-        for rec in self:
-            if rec.is_internal:
-                try:
-                    rec.insurance_premium_unit = rec.insurance_premium_amount / rec.product_qty
-                except ZeroDivisionError:
-                    rec.insurance_premium_unit = 0
     
     @api.depends('afrex_freight_rate', 'product_qty', 'packaging_weight')
     def compute_afrex_freight_amount(self):

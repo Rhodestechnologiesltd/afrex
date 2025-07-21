@@ -90,8 +90,11 @@
                         <th>
                             <span style="padding-left: 5px;">Supplier Incoterms (<span t-field="o.incoterm_implementation_year"/>):</span>
                         </th>
-                        <td>
+                        <td t-if="o.purchase_order_id.incoterm_selection not in ['fob','fca','exw']" class="text-start" style="width:70%">
                             <span style="padding-left: 5px;" t-field="o.purchase_order_id.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/>
+                        </td>
+                        <td t-if="o.purchase_order_id.incoterm_selection in ['fob','fca','exw']" class="text-start" style="width:70%">
+                            <span style="padding-left: 5px;" t-field="o.purchase_order_id.incoterm_id.code"/> <span t-field="o.loading_port_id.name"/>
                         </td>
                     </tr>
                     <tr t-if="o.supplier_delivery_method == 'sea'" class="text-start">
@@ -143,7 +146,12 @@
                             <span style="padding-left: 5px;">Buyer Incoterms (<span t-field="o.incoterm_implementation_year"/>):</span>
                         </th>
                         <td t-if="o.sale_order_id.incoterm_id">
-                            <span style="padding-left: 5px;" t-field="o.sale_order_id.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/>
+                            <td t-if="o.sale_order_id.incoterm_selection not in ['fob','fca','exw']" class="text-start" style="width:70%">
+                                <span style="padding-left: 5px;" t-field="o.sale_order_id.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/>
+                            </td>
+                            <td t-if="o.sale_order_id.incoterm_selection in ['fob','fca','exw']" class="text-start" style="width:70%">
+                                <span style="padding-left: 5px;" t-field="o.sale_order_id.incoterm_id.code"/> <span t-field="o.loading_port_id.name"/>
+                            </td>
                         </td>
                         <td t-elif="o.tentative_sale_order_incoterm_id">
                             <span style="padding-left: 5px;" t-field="o.tentative_sale_order_incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/>
@@ -261,7 +269,7 @@
                         <t t-else="">To be confirmed</t>
                     </th>
                 </tr>
-                 <tr t-if="o.purchase_order_incoterm_selection == 'fob'">
+                <tr t-if="o.purchase_order_incoterm_selection == 'fob'">
                     <th class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">Freight (Freight Forwarder)</span>
                     </th>
@@ -275,13 +283,13 @@
                 <tr t-if="o.supplier_delivery_method == 'sea' and o.purchase_order_incoterm_selection != 'cif'">
                     <th class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">Insurance Estimate</span>
-                        <span style="padding-left: 5px;"> (Sales Value x 110% x 0.25% + USD 10)</span>
+                        <span style="padding-left: 5px;">(Sales Value x 110% x 0.25% + USD 10)</span>
                     </th>
                     <th class="text-start" style="width:30%;">
-                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.insurance_premium_unit" t-options="{'widget': 'float', 'precision': 2}"/>
+                        USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.insurance_premium_amount" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;" invisible="not o.is_internal">
-                        ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.insurance_premium_unit_zar" t-options="{'widget': 'float', 'precision': 2}"/>
+                        ZAR <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.insurance_premium_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
 
