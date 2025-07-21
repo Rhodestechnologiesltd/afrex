@@ -39,7 +39,7 @@
                         </th>
                         <td style="width:70%"><span style="float: left;" t-field="o.incoterm_id.code"/></td>
                     </tr>
-                    <tr>
+                    <tr t-if="o.incoterm_selection != 'fob'">
                         <th style="width:30%; text-align:left; padding-left: 5px;">
                             <span style="float:left;">POD</span>
                         </th>
