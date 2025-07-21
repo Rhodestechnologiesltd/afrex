@@ -195,10 +195,10 @@ class Lead(models.Model):
         for rec in self:
             rec.procurement_commission_unit_amount = rec.procurement_commission_unit * rec.product_qty
     
-    @api.depends('procurement_fee_rate', 'purchase_order_cost_amount')
+    @api.depends('procurement_fee_rate', 'purchase_order_cif_amount')
     def compute_procurement_fee_amount(self):
         for rec in self:
-            rec.procurement_fee_amount = rec.procurement_fee_rate * rec.purchase_order_cost_amount
+            rec.procurement_fee_amount = rec.procurement_fee_rate * rec.purchase_order_cif_amount
 
     @api.depends('sales_commission_unit', 'product_qty')
     def compute_sales_commission_amount(self):
@@ -223,22 +223,21 @@ class Lead(models.Model):
                 total += fee.amount
             rec.bank_fee_total = total
 
-    @api.depends('purchase_order_cost_amount', 'credit_cost_rate', 'credit_cost_month')
+    @api.depends('purchase_order_cif_amount', 'credit_cost_rate', 'credit_cost_month')
     def compute_credit_cost_amount(self):
         # =(CIF PURCHASE PRICE *(4.25%/12))*4
         for rec in self:
             if rec.credit_cost_rate > 0:
-                rec.credit_cost_amount = (rec.purchase_order_cost_amount * (rec.credit_cost_rate/12) * rec.credit_cost_month)
+                rec.credit_cost_amount = (rec.purchase_order_cif_amount * (rec.credit_cost_rate/12) * rec.credit_cost_month)
             else:
                 rec.credit_cost_amount = 0
     
-    @api.depends('supplier_delivery_method', 'purchase_order_cost_amount', 'procurement_commission_fob_amount', 'procurement_commission_unit_amount', 'sales_commission_amount', 'switch_bl_provision_amount', 'road_transportation_amount', 'logistics_service_amount', 'afrex_freight_amount', 'insurance_premium_amount', 'is_internal')
+    @api.depends('supplier_delivery_method', 'purchase_order_cif_amount', 'procurement_commission_fob_amount', 'procurement_commission_unit_amount', 'sales_commission_amount', 'switch_bl_provision_amount', 'road_transportation_amount', 'logistics_service_amount', 'is_internal')
     def compute_sales_cost(self):
         for rec in self:
             if rec.supplier_delivery_method == 'sea':
-                rec.sales_cost = rec.purchase_order_cost_amount + rec.procurement_commission_fob_amount + rec.procurement_commission_unit_amount + rec.sales_commission_amount + rec.switch_bl_provision_amount
-                if rec.is_internal:
-                    rec.sales_cost += rec.afrex_freight_amount + rec.insurance_premium_amount
+                # purchase_order_cif_amount includes 'afrex_freight_amount', 'insurance_premium_amount', 'purchase_order_cost_amount'
+                rec.sales_cost = rec.purchase_order_cif_amount + rec.procurement_commission_fob_amount + rec.procurement_commission_unit_amount + rec.sales_commission_amount + rec.switch_bl_provision_amount
             if rec.supplier_delivery_method == 'road':
                 rec.sales_cost = rec.purchase_order_cost_amount + rec.procurement_commission_unit_amount + rec.sales_commission_amount + rec.road_transportation_amount + rec.logistics_service_amount
 
