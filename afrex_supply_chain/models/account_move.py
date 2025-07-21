@@ -257,23 +257,12 @@ class AccountMove(models.Model):
                 if rec.purchase_order_id.invoice_status != 'invoiced':
                     raise UserError("Please ensure Supplier CI is recorded first.")
             lead = rec.lead_id
-            if lead.purchase_order_id:
-                if rec.incoterm_selection == 'cfr':
-                    insurance = 0.0
-                    freight = rec.purchase_order_id.freight_amount
-                    fob = rec.purchase_order_id.fob_amount
-                elif rec.incoterm_selection == 'cif':
-                    insurance = rec.purchase_order_id.insurance_amount
-                    freight = rec.purchase_order_id.freight_amount
-                    fob = rec.purchase_order_id.fob_amount
-                elif rec.incoterm_selection == 'fob':
-                    insurance = 0.0
-                    freight = 0.0
-                    fob = rec.purchase_order_id.fob_amount
-            else:
+            if not lead.purchase_order_id:
                 raise UserError("No Purchase Order or Supplier CI found for this deal.")
-            interest = lead.credit_cost_amount
-            procurement = lead.procurement_fee_amount
+            insurance = rec.insurance_amount
+            freight = rec.freight_amount
+            interest = self.interest_amount
+            procurement = self.procurement_documentation_amount
             if lead.cover_report_amount:
                 sales_price = lead.cover_report_amount
             else:
@@ -283,7 +272,7 @@ class AccountMove(models.Model):
                 try:
                     sales_price = sales_price / roe
                 except ZeroDivisionError:
-                    raise UserError("Exchange rate is zero, cannot convert sales price to ZAR.")
+                    raise UserError("Exchange rate is zero, cannot convert sales price.")
             if not lead.is_internal:
                 fob = sales_price - (freight + insurance)
             else:

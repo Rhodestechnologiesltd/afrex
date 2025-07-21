@@ -17,6 +17,7 @@
                     <group>
                         <field name="currency_id" widget="selection_badge"/>
                         <field name="exchange_rate" invisible="not is_currency_zar"/>
+                        <field name="cover_report_amount" invisible="not is_internal or not is_currency_zar"/>
                     </group>
                     <group>
                         <field name="bank_account_id" domain="[('partner_id', '=', company_partner_id)]"

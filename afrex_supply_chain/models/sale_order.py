@@ -250,13 +250,19 @@ class SaleOrder(models.Model):
         if self.is_invoice_generated:
             raise UserError("Proforma invoice has already been generated.")
         lead = self.lead_id
-        if lead.cover_report_amount:
-            roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
-            try:
-                sales_price = lead.cover_report_amount / roe
-            except ZeroDivisionError:
+        if lead.is_internal:
+            if lead.cover_report_amount:
+                roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+                if not roe:
+                    raise UserError("Cover Report Amount is set but the exchange rate is not set.")
+                try:
+                    sales_price = lead.cover_report_amount / roe
+                except ZeroDivisionError:
+                    sales_price = self.cost_amount
+                procurement_documentation_amount = sales_price - (self.fob_amount + self.freight_amount + self.insurance_amount + self.interest_amount)
+            else:
                 sales_price = self.cost_amount
-            procurement_documentation_amount = sales_price - (self.fob_amount + self.freight_amount + self.insurance_amount + self.interest_amount)
+                procurement_documentation_amount = self.procurement_documentation_amount
         else:
             sales_price = self.cost_amount
             procurement_documentation_amount = self.procurement_documentation_amount
@@ -276,7 +282,7 @@ class SaleOrder(models.Model):
                         'default_freight_amount': self.freight_amount,
                         'default_insurance_amount': self.insurance_amount,
                         'default_interest_amount': self.interest_amount,
-                        'default_procurement_documentation_amount': procurement_documentation_amount,
+                        'default_procurement_documentation_amount': procurement_documentation_amount if self.procurement_documentation_amount else 0,
                         'default_fca_amount': self.fca_amount,
                         'default_road_transportation_amount': self.road_transportation_amount,
                         'default_logistics_service_amount': self.logistics_service_amount,

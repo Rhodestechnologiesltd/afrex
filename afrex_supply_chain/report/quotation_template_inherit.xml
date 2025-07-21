@@ -72,7 +72,7 @@
                                 <span t-field="doc.incoterm_id.code"/> <span t-field="doc.discharge_port_id.name"/>
                             </td>
                         </tr>
-                        <tr t-if="doc.discharge_port_id">
+                        <tr t-if="doc.discharge_port_id and doc.incoterm_selection != 'fob'">
                             <th style="width:40%; text-align:left; padding-left: 5px;">
                                 <span style="float:left;">POD</span>
                             </th>

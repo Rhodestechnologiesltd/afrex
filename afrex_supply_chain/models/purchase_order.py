@@ -663,17 +663,44 @@ class PurchaseOrder(models.Model):
                 raise UserError("An offer has already been sent to the buyer for this deal. Refer to %s" % str(self.sale_order_id.name))
         self.lead_id.sudo().compute_sales_price()
         self.env.cr.commit()
-        insurance = self.insurance_amount
-        freight = self.freight_amount
-        fca = self.fca_amount
-        road_transportation = self.road_transportation_amount
-        logistics_service = self.logistics_service_amount
+
+        if self.supplier_delivery_method == 'sea':
+            # Insurance
+            if self.incoterm_selection == 'cif':
+                insurance = self.insurance_amount
+            else:
+                insurance = lead.insurance_premium_amount
+            # Freight
+            if self.incoterm_selection == 'fob':
+                freight = lead.afrex_freight_amount
+            else:
+                freight = self.freight_amount
+            fca = 0
+            road_transportation = 0
+            logistics_service = 0
+        
         interest = lead.credit_cost_amount
-        procurement = lead.procurement_fee_amount
+
         if lead.is_sales_price_override:
             sales_price = lead.agreed_sales_price
         else:
             sales_price = lead.sales_price
+
+        if not lead.is_internal:
+            procurement = lead.procurement_fee_amount
+            fob = sales_price - (insurance + freight)
+        else:
+            fob = self.fob_amount
+            procurement = sales_price - (fob + insurance + freight + interest)
+
+        if self.supplier_delivery_method == 'road':
+            fca = self.fca_amount
+            road_transportation = self.road_transportation_amount
+            logistics_service = self.logistics_service_amount
+            fob = 0
+            insurance = 0
+            freight = 0
+
         incoterm = lead.sale_order_incoterm_id or lead.tentative_sale_order_incoterm_id
         net_weight = lead.product_qty * 1000  # Assuming 1 MT = 1000 kg
         action = {
@@ -687,6 +714,7 @@ class PurchaseOrder(models.Model):
                         'default_loading_port_id': self.loading_port_id.id,
                         'default_currency_id': self.currency_id.id,
                         'default_cost_amount': sales_price,
+                        'default_fob_amount': fob,
                         'default_freight_amount': freight,
                         'default_insurance_amount': insurance,
                         'default_interest_amount': interest,

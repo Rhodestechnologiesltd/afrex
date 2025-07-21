@@ -33,7 +33,8 @@ class GenerateSaleOrderWizard(models.TransientModel):
                                            ('fob', 'FOB'),
                                            ('dap', 'DAP'),
                                            ('fca', 'FCA'),
-                                           ('exw', 'EXW')], compute="_compute_incoterm_selection")
+                                           ('exw', 'EXW')], store=True)
+    incoterm_change = fields.Boolean("Incoterm Changed", default=False, help="Indicates if the incoterm has been changed.")
     
     currency_id = fields.Many2one('res.currency')
     is_currency_zar = fields.Boolean("Currency is ZAR")
@@ -51,30 +52,29 @@ class GenerateSaleOrderWizard(models.TransientModel):
     
     net_weight = fields.Float(string="Net Weight (kg)", related="lead_id.net_weight", readonly=False)
     
-    
-    fob_amount = fields.Float("FOB", compute="_compute_fob_amount", store=True)
-    freight_amount = fields.Float("Freight")
-    cost_amount = fields.Float("Cost")
-    insurance_amount = fields.Float("Insurance")
-    interest_amount = fields.Float("Interest")
-    procurement_documentation_amount = fields.Float("Procurement & Documentation")
+    fob_amount = fields.Float("FOB", store=True)
+    freight_amount = fields.Float("Freight", store=True)
+    cost_amount = fields.Float("Cost", store=True)
+    insurance_amount = fields.Float("Insurance", store=True)
+    interest_amount = fields.Float("Interest", store=True)
+    procurement_documentation_amount = fields.Float("Procurement & Documentation", store=True)
     
     fca_amount = fields.Float("FCA", compute="_compute_fca_amount", store=True, readonly=False)
-    road_transportation_amount = fields.Float("Road Transportation")
-    logistics_service_amount = fields.Float("Logistics Service")
+    road_transportation_amount = fields.Float("Road Transportation", store=True)
+    logistics_service_amount = fields.Float("Logistics Service", store=True)
     
     cost_unit = fields.Float("Cost/MT", compute="_compute_cost_unit", store=True, digits="Prices per Unit")
     
-    fob_amount_zar = fields.Float("FOB in ZAR")
-    freight_amount_zar = fields.Float("Freight in ZAR")
-    cost_amount_zar = fields.Float("Cost in ZAR")
-    insurance_amount_zar = fields.Float("Insurance in ZAR")
-    interest_amount_zar = fields.Float("Interest in ZAR")
-    procurement_documentation_amount_zar = fields.Float("Procurement & Documentation in ZAR")
+    fob_amount_zar = fields.Float("FOB in ZAR", store=True)
+    freight_amount_zar = fields.Float("Freight in ZAR", store=True)
+    cost_amount_zar = fields.Float("Cost in ZAR", store=True)
+    insurance_amount_zar = fields.Float("Insurance in ZAR", store=True)
+    interest_amount_zar = fields.Float("Interest in ZAR", store=True)
+    procurement_documentation_amount_zar = fields.Float("Procurement & Documentation in ZAR", store=True)
     
-    fca_amount_zar = fields.Float("FCA in ZAR")
-    road_transportation_amount_zar = fields.Float("Road Transportation in ZAR")
-    logistics_service_amount_zar = fields.Float("Logistics Service in ZAR")
+    fca_amount_zar = fields.Float("FCA in ZAR", store=True)
+    road_transportation_amount_zar = fields.Float("Road Transportation in ZAR", store=True)
+    logistics_service_amount_zar = fields.Float("Logistics Service in ZAR", store=True)
     
     fob_unit = fields.Float("FOB/MT", compute="_compute_fob_unit", store=True, digits="Prices per Unit")
     freight_unit = fields.Float("Freight/MT", compute="_compute_freight_unit", store=True, digits="Prices per Unit")
@@ -93,63 +93,100 @@ class GenerateSaleOrderWizard(models.TransientModel):
     logistics_service_unit_zar = fields.Float("Logistics Service/MT in ZAR", compute="_compute_logistics_service_unit_zar", store=True, digits="Prices per Unit")
    
    
+    @api.onchange('incoterm_id')
+    def _onchange_incoterm_id(self):
+        for rec in self:
+            if rec.incoterm_id:
+                incoterm = rec.incoterm_id
+                if incoterm == self.env.ref('account.incoterm_CFR'):
+                    rec.incoterm_selection = 'cfr'
+                elif incoterm == self.env.ref('account.incoterm_CIF'):
+                    rec.incoterm_selection = 'cif'
+                elif incoterm == self.env.ref('account.incoterm_FOB'):
+                    rec.incoterm_selection = 'fob'
+                elif incoterm == self.env.ref('account.incoterm_DAP'):
+                    rec.incoterm_selection = 'dap'
+                elif incoterm == self.env.ref('account.incoterm_FCA'):
+                    rec.incoterm_selection = 'fca'
+                rec.incoterm_change = True
+
     @api.onchange('qty_total')
     def compute_net_weight(self):
        for rec in self:
            rec.net_weight = rec.qty_total * 1000
     
-    @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
         for rec in self:
             incoterm = rec.incoterm_id
             if incoterm:
-                if incoterm == self.env.ref('account.incoterm_CFR'):
-                    rec.incoterm_selection = 'cfr'
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                    rec.freight_amount_zar = rec.purchase_order_id.freight_amount * rec.exchange_rate
-                elif incoterm == self.env.ref('account.incoterm_CIF'):
-                    rec.incoterm_selection = 'cif'
-                    rec.insurance_amount = rec.purchase_order_id.insurance_amount
-                    rec.insurance_amount_zar = rec.purchase_order_id.insurance_amount * rec.exchange_rate
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                    rec.freight_amount_zar = rec.purchase_order_id.freight_amount * rec.exchange_rate
-                elif incoterm == self.env.ref('account.incoterm_FOB'):
-                    rec.incoterm_selection = 'fob'
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
-                elif incoterm == self.env.ref('account.incoterm_DAP'):
-                    rec.incoterm_selection = 'dap'
-                    rec.fob_amount = 0.0
-                    rec.fob_amount_zar = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
-                    rec.fca_amount = rec.purchase_order_id.fca_amount
-                    rec.fca_amount_zar = rec.purchase_order_id.fca_amount * rec.exchange_rate
-                    rec.road_transportation_amount = rec.purchase_order_id.road_transportation_amount
-                    rec.road_transportation_amount_zar = rec.purchase_order_id.road_transportation_amount * rec.exchange_rate
-                elif incoterm == self.env.ref('account.incoterm_FCA'):
-                    rec.incoterm_selection = 'fca'
-                    rec.fob_amount = 0.0
-                    rec.fob_amount_zar = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
-                    rec.fca_amount = rec.purchase_order_id.cost_amount
-                    rec.fca_amount_zar = rec.purchase_order_id.cost_amount * rec.exchange_rate
-                    rec.road_transportation_amount = 0.0
-                    rec.road_transportation_amount_zar = 0.0
+                if rec.supplier_delivery_method == 'sea':
+                    if incoterm == self.env.ref('account.incoterm_CFR'):
+                        rec.incoterm_selection = 'cfr'
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = rec.get_freight_amount()
+                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    elif incoterm == self.env.ref('account.incoterm_CIF'):
+                        rec.incoterm_selection = 'cif'
+                        rec.insurance_amount = rec.get_insurance_amount()
+                        rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
+                        rec.freight_amount = rec.get_freight_amount()
+                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    elif incoterm == self.env.ref('account.incoterm_FOB'):
+                        rec.incoterm_selection = 'fob'
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = 0.0
+                        rec.freight_amount_zar = 0.0
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    else:
+                        raise UserError("This incoterm is not allowed for a Maritime deal.")
                 else:
-                    raise UserError("This incoterm is not allowed for a deal yet.")
+                    if incoterm == self.env.ref('account.incoterm_DAP'):
+                        rec.incoterm_selection = 'dap'
+                        rec.fob_amount = 0.0
+                        rec.fob_amount_zar = 0.0
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = 0.0
+                        rec.freight_amount_zar = 0.0
+                        rec.fca_amount = rec.purchase_order_id.fca_amount
+                        rec.fca_amount_zar = rec.purchase_order_id.fca_amount * rec.exchange_rate
+                        rec.road_transportation_amount = rec.purchase_order_id.road_transportation_amount
+                        rec.road_transportation_amount_zar = rec.purchase_order_id.road_transportation_amount * rec.exchange_rate
+                    elif incoterm == self.env.ref('account.incoterm_FCA'):
+                        rec.incoterm_selection = 'fca'
+                        rec.fob_amount = 0.0
+                        rec.fob_amount_zar = 0.0
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = 0.0
+                        rec.freight_amount_zar = 0.0
+                        rec.fca_amount = rec.purchase_order_id.cost_amount
+                        rec.fca_amount_zar = rec.purchase_order_id.cost_amount * rec.exchange_rate
+                        rec.road_transportation_amount = 0.0
+                        rec.road_transportation_amount_zar = 0.0
+                    else:
+                        raise UserError("This incoterm is not allowed for a Road deal.")
             else:
                 rec.incoterm_selection = False
-                
+    
+    def action_apply_incoterm(self):
+        for rec in self:
+            rec._compute_incoterm_selection()
+            rec.incoterm_change = False
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': self._name,
+                'res_id': self.id,
+                'view_mode': 'form',
+                'target': 'new',  # stays in wizard/modal
+            }
                 
     @api.onchange('currency_id')
     def _compute_is_currency_zar(self):
@@ -159,7 +196,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
             else:
                 rec.is_currency_zar = False
     
-    @api.onchange('exchange_rate')
+    @api.depends('exchange_rate','currency_id')
     def compute_zar_amount(self):
         for rec in self:
             rec.fob_amount_zar = rec.fob_amount * rec.exchange_rate
@@ -178,22 +215,19 @@ class GenerateSaleOrderWizard(models.TransientModel):
             rec.road_transportation_unit_zar = rec.road_transportation_unit * rec.exchange_rate
             rec.logistics_service_unit_zar = rec.logistics_service_unit * rec.exchange_rate
                 
-    @api.onchange('incoterm_id')
-    def check_incoterm_insurance(self):
-        for rec in self:
-            if rec.incoterm_id != self.env.ref('account.incoterm_CFR'):
-                rec.insurance_amount = 0
-                
-    @api.depends('cost_amount','freight_amount','insurance_amount','interest_amount','procurement_documentation_amount')
-    def _compute_fob_amount(self):
+    @api.onchange('cost_amount','freight_amount','insurance_amount','interest_amount')
+    def _compute_sale_values(self):
         for rec in self:
             if rec.supplier_delivery_method == 'sea':
                 if rec.is_internal:
-                    rec.fob_amount = rec.cost_amount - (rec.freight_amount +  rec.insurance_amount + rec.interest_amount + rec.procurement_documentation_amount)
-                    rec.fob_amount_zar = (rec.cost_amount - (rec.freight_amount +  rec.insurance_amount + rec.interest_amount + rec.procurement_documentation_amount)) * self.exchange_rate
+                    procurement = rec.cost_amount - (rec.fob_amount + rec.freight_amount +  rec.insurance_amount + rec.interest_amount)
+                    rec.procurement_documentation_amount = procurement
+                    rec.procurement_documentation_amount_zar = procurement * self.exchange_rate
+                    self.get_fob_amount()
                 else:
-                    rec.fob_amount = rec.cost_amount - (rec.freight_amount +  rec.insurance_amount)
-                    rec.fob_amount_zar = (rec.cost_amount - (rec.freight_amount +  rec.insurance_amount)) * self.exchange_rate
+                    fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                    rec.fob_amount = fob
+                    rec.fob_amount_zar = fob * self.exchange_rate
             else:
                 rec.fob_amount = 0.0
                 rec.fob_amount_zar = 0.0
@@ -307,11 +341,38 @@ class GenerateSaleOrderWizard(models.TransientModel):
                 rec.cost_unit_zar = rec.cost_amount_zar / rec.qty_total
             except ZeroDivisionError:
                 rec.cost_unit_zar = 0
+
+    def get_insurance_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if order.incoterm_selection == 'cif':
+            insurance = order.insurance_amount
+        else:
+            insurance = lead.insurance_premium_amount
+        return insurance
+
+    def get_freight_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if order.incoterm_selection in ['cfr', 'cif']:
+            freight = order.freight_amount
+        else:
+            freight = lead.afrex_freight_amount
+        return freight
+    
+    def get_fob_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if self.is_internal:
+            fob = order.fob_amount
+        else:
+            fob = 0
+        return fob
     
     def generate_sale_order(self):
         order = self.purchase_order_id
         lead = self.lead_id
-        
+        self._compute_sale_values()
         sale_order = self.env['sale.order'].sudo().search([('lead_id', '=', lead.id), ('state', '=', 'sale')])
         if sale_order:
             raise UserError("An offer has already been confirmed for this deal.")

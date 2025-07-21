@@ -933,12 +933,13 @@
                                                 </th>
                                             </tr>
                                             <tr invisible="supplier_delivery_method != 'sea'">
-                                                <th style="width: 40%">
-                                                    CIF Purchase Price
+                                                <th style="width: 40%; text-align: right;">
+                                                    <field name="product_qty" readonly="True"
+                                                            style="color: white; opacity: 0;"/>CIF Purchase Price
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="purchase_order_cost_amount" widget="float"
+                                                    <field name="purchase_order_cif_amount" widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
@@ -1697,13 +1698,14 @@
                                                     </th>
                                                 </tr>
                                                 <tr invisible="supplier_delivery_method != 'sea'">
-                                                    <th style="width: 40%">
-                                                        CIF Purchase Price
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <field name="product_qty" readonly="True"
+                                                                style="color: white; opacity: 0;"/>CIF Purchase Price
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_cost_amount" widget="float"
-                                                               options="{'precision': 2}"/>
+                                                        <field name="purchase_order_cif_amount" widget="float"
+                                                            options="{'precision': 2}"/>
                                                     </th>
                                                 </tr>
                                                 <!-- <tr invisible="supplier_delivery_method != 'road'">

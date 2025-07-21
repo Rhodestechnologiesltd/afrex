@@ -57,6 +57,8 @@ class GenerateProformaWizard(models.TransientModel):
                                      string="Palletised or Loose", related='sale_order_id.is_palletised')
     sale_purchase_order_num = fields.Char(related='sale_order_id.client_order_ref', string="Buyer PO Reference", readonly=False)
     
+    cover_report_amount = fields.Float("Cover Report Amount", related='lead_id.cover_report_amount')
+
     fob_amount = fields.Float("FOB")
     freight_amount = fields.Float("Freight")
     cost_amount = fields.Float("Cost")
@@ -157,12 +159,21 @@ class GenerateProformaWizard(models.TransientModel):
             else:
                 rec.incoterm_selection = False
     
-    # @api.onchange('insurance_amount')
-    # def check_incoterm_insurance(self):
-    #     for rec in self:
-    #         if rec.incoterm_id == self.env.ref('account.incoterm_CFR'):
-    #             if rec.insurance_amount > 0:
-    #                 raise UserError("Insurance amount should be 0 for a CFR deal.")
+    @api.onchange('cost_amount','freight_amount','insurance_amount','interest_amount')
+    def _compute_sale_values(self):
+        for rec in self:
+            if rec.supplier_delivery_method == 'sea':
+                if rec.is_internal:
+                    procurement = rec.cost_amount - (rec.fob_amount + rec.freight_amount +  rec.insurance_amount + rec.interest_amount)
+                    rec.procurement_documentation_amount = procurement
+                    rec.procurement_documentation_amount_zar = procurement * self.exchange_rate
+                else:
+                    fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                    rec.fob_amount = fob
+                    rec.fob_amount_zar = fob * self.exchange_rate
+            else:
+                rec.fob_amount = 0.0
+                rec.fob_amount_zar = 0.0
 
     @api.onchange('qty_total')
     def _compute_net_weight(self):
@@ -269,7 +280,7 @@ class GenerateProformaWizard(models.TransientModel):
         order = self.sale_order_id
         lead = self.lead_id
         documents = self.env['asc.document']
-        
+        self._compute_sale_values()
         order.action_confirm()
         
         generated_invoices = self.env['account.move']

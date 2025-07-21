@@ -35,11 +35,27 @@
                     </group>
                 </group>
                 <hr/>
+                <group string="Final Supplier Costing">
+                    <group>
+                        <field name="supplier_id" string="Supplier" readonly="True"/>
+                        <field name="purchase_incoterm_id" string="Incoterms" widget="badge"/>
+                        <field name="purchase_cost_amount" string="CIF/CFR/FOB" readonly="True"/>
+                    </group>
+                    <group>
+                        <field name="purchase_fob_amount" string="FOB" readonly="True"/>
+                        <field name="purchase_freight_amount" string="Freight" readonly="True"/>
+                        <field name="purchase_insurance_amount" string="Insurance" readonly="True"/>
+                    </group>
+                </group>
+                <hr/>
                 <div class="alert alert-info text-center" role="alert">
                     <div>
                         <h6>
-                            The following costing has been calculated based on the updated Supplier Costing and Profit Estimate values.
+                            To update and overwrite costing below based on the final Supplier Costing and Profit Estimate values, click on "Update".
                         </h6>
+                        <h5>
+                            <button name="action_update_pricing" string="Update" type="object" data-hotkey="a"/>
+                        </h5>
                     </div>
                 </div>
                 <group string="USD">

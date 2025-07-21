@@ -14,12 +14,8 @@ class ConfirmInvoiceWizard(models.TransientModel):
     purchase_order_id = fields.Many2one('purchase.order', related='lead_id.purchase_order_id', string='Purchase Order')
     is_internal = fields.Boolean("Internal deal", related='lead_id.is_internal')
     incoterm_id = fields.Many2one('account.incoterms', string='Incoterm', related="sale_invoice_id.invoice_incoterm_id")
-    incoterm_selection = fields.Selection([('cfr', 'CFR'),
-                                           ('cif', 'CIF'),
-                                           ('fob', 'FOB'),
-                                           ('dap', 'DAP'),
-                                           ('fca', 'FCA'),
-                                           ('exw', 'EXW')], compute="_compute_incoterm_selection")
+    incoterm_selection = fields.Selection(related="sale_invoice_id.incoterm_selection")
+    supplier_delivery_method = fields.Selection(related='lead_id.supplier_delivery_method')
     
     date = fields.Date(string='Invoice Date', required=True)
     quantity = fields.Float(string='Quantity', related='sale_invoice_id.qty_delivered', digits="Product Unit of Measure")
@@ -39,6 +35,13 @@ class ConfirmInvoiceWizard(models.TransientModel):
     
     tariff_code = fields.Char(string="Tariff Code", related='sale_invoice_id.tariff_code', readonly=False)
     
+    supplier_id = fields.Many2one('res.partner', string='Supplier', related='purchase_order_id.partner_id', readonly=True)
+    purchase_incoterm_id = fields.Many2one('account.incoterms', string='Purchase Incoterm', related='purchase_order_id.incoterm_id', readonly=True)
+    purchase_insurance_amount = fields.Float("Purchase Insurance", related='purchase_order_id.insurance_amount', readonly=True)
+    purchase_freight_amount = fields.Float("Purchase Freight", related='purchase_order_id.freight_amount', readonly=True)
+    purchase_cost_amount = fields.Float("Purchase Price", related='purchase_order_id.cost_amount', readonly=True)
+    purchase_fob_amount = fields.Float("Purchase FOB", related='purchase_order_id.fob_amount', readonly=True)
+
     insurance_amount = fields.Float("Insurance", readonly=False)
     freight_amount = fields.Float("Freight", readonly=False)
     interest_amount = fields.Float("Interest", readonly=False)
@@ -63,69 +66,66 @@ class ConfirmInvoiceWizard(models.TransientModel):
     
     can_confirm = fields.Boolean(compute='_compute_can_confirm')
     
-    # @api.onchange('sale_invoice_id')
-    # def _onchange_sale_invoice_id(self):
-    #     for rec in self:
-    #         if rec.sale_invoice_id:
-    #             lead = rec.sale_invoice_id.lead_id
-    #             if lead:
-    #                 rec.interest_amount = lead.credit_cost_amount
-    #                 rec.procurement_documentation_amount = lead.procurement_fee_amount
-    #                 rec.cost_amount = lead.sales_price
-    #                 if lead.purchase_order_id:
-    #                     if rec.incoterm_selection == 'cfr':
-    #                         rec.insurance_amount = 0.0
-    #                         rec.freight_amount = rec.purchase_order_id.freight_amount
-    #                     elif rec.incoterm_selection == 'cif':
-    #                         rec.insurance_amount = rec.purchase_order_id.insurance_amount
-    #                         rec.freight_amount = rec.purchase_order_id.freight_amount
-    #                     elif rec.incoterm_selection == 'fob':
-    #                         rec.insurance_amount = 0.0
-    #                         rec.freight_amount = 0.0
+    def action_update_pricing(self):
+        for rec in self:
+            rec._update_pricing()
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': self._name,
+                'res_id': self.id,
+                'view_mode': 'form',
+                'target': 'new',  # stays in wizard/modal
+            }
     
-    @api.depends('incoterm_id')
-    def _compute_incoterm_selection(self):
+    def _update_pricing(self):
         for rec in self:
             incoterm = rec.incoterm_id
             if incoterm:
-                if incoterm == self.env.ref('account.incoterm_CFR'):
-                    rec.incoterm_selection = 'cfr'
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                    rec.freight_amount_zar = rec.purchase_order_id.freight_amount * rec.exchange_rate
-                elif incoterm == self.env.ref('account.incoterm_CIF'):
-                    rec.incoterm_selection = 'cif'
-                    rec.insurance_amount = rec.purchase_order_id.insurance_amount
-                    rec.insurance_amount_zar = rec.purchase_order_id.insurance_amount * rec.exchange_rate
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                    rec.freight_amount_zar = rec.purchase_order_id.freight_amount * rec.exchange_rate
-                elif incoterm == self.env.ref('account.incoterm_FOB'):
-                    rec.incoterm_selection = 'fob'
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
-                elif incoterm == self.env.ref('account.incoterm_DAP'):
-                    rec.incoterm_selection = 'dap'
-                    rec.fob_amount = 0.0
-                    rec.fob_amount_zar = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
-                elif incoterm == self.env.ref('account.incoterm_FCA'):
-                    rec.incoterm_selection = 'fca'
-                    rec.fob_amount = 0.0
-                    rec.fob_amount_zar = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.insurance_amount_zar = 0.0
-                    rec.freight_amount = 0.0
-                    rec.freight_amount_zar = 0.0
+                if rec.supplier_delivery_method == 'sea':
+                    if incoterm == self.env.ref('account.incoterm_CFR'):
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = rec.get_freight_amount()
+                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    elif incoterm == self.env.ref('account.incoterm_CIF'):
+                        rec.insurance_amount = rec.get_insurance_amount()
+                        rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
+                        rec.freight_amount = rec.get_freight_amount()
+                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    elif incoterm == self.env.ref('account.incoterm_FOB'):
+                        rec.insurance_amount = 0.0
+                        rec.insurance_amount_zar = 0.0
+                        rec.freight_amount = 0.0
+                        rec.freight_amount_zar = 0.0
+                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec._compute_sale_values()
+                    else:
+                        raise UserError("This incoterm is not allowed for a Maritime deal.")
                 else:
-                    raise UserError("This incoterm is not allowed for a deal yet.")
+                    raise UserError("This functionality is not yet active for a Road deal.")
+    
+    @api.onchange('cost_amount','freight_amount','insurance_amount','interest_amount')
+    def _compute_sale_values(self):
+        for rec in self:
+            if rec.supplier_delivery_method == 'sea':
+                if rec.is_internal:
+                    procurement = rec.cost_amount - (rec.fob_amount + rec.freight_amount +  rec.insurance_amount + rec.interest_amount)
+                    rec.procurement_documentation_amount = procurement
+                    rec.procurement_documentation_amount_zar = procurement * self.exchange_rate
+                    self.get_fob_amount()
+                else:
+                    fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                    rec.fob_amount = fob
+                    rec.fob_amount_zar = fob * self.exchange_rate
             else:
-                rec.incoterm_selection = False
+                rec.fob_amount = 0.0
+                rec.fob_amount_zar = 0.0
+                rec.procurement_documentation_amount = 0
+                rec.procurement_documentation_amount_zar = 0
 
     @api.depends('currency_id', 'quantity', 'date', 'vessel', 'voyage', 'expected_arrival_date', 'sob_date','invoice_ref','invoice_payment_term_id','payment_due_date')
     def _compute_can_confirm(self):
@@ -163,16 +163,6 @@ class ConfirmInvoiceWizard(models.TransientModel):
                 rec.is_currency_zar = True
             else:
                 rec.is_currency_zar = False
-                
-    # @api.depends('cost_amount', 'insurance_amount', 'freight_amount', 'interest_amount', 'procurement_documentation_amount','exchange_rate')
-    # def compute_fob_amount(self):
-    #     lead = self.lead_id
-    #     if not lead.is_internal:
-    #         self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount)
-    #         self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount)) * self.exchange_rate
-    #     else:
-    #         self.fob_amount = self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)
-    #         self.fob_amount_zar = (self.cost_amount - (self.insurance_amount + self.freight_amount + self.interest_amount + self.procurement_documentation_amount)) * self.exchange_rate
     
     @api.depends('fob_amount','quantity')
     def _compute_fob_unit(self):
@@ -222,12 +212,40 @@ class ConfirmInvoiceWizard(models.TransientModel):
             except ZeroDivisionError:
                 rec.cost_unit_zar = 0
 
+    def get_insurance_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if order.incoterm_selection == 'cif':
+            insurance = order.insurance_amount
+        else:
+            insurance = lead.insurance_premium_amount
+        return insurance
+
+    def get_freight_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if order.incoterm_selection in ['cfr', 'cif']:
+            freight = order.freight_amount
+        else:
+            freight = lead.afrex_freight_amount
+        return freight
+    
+    def get_fob_amount(self):
+        order = self.purchase_order_id
+        lead = self.lead_id
+        if self.is_internal:
+            fob = order.fob_amount
+        else:
+            fob = 0
+        return fob
+
     def action_confirm(self):
         invoice = self.sale_invoice_id
         lead = self.lead_id
         quantity = invoice.qty_delivered
         if not invoice:
             raise UserError(_('No invoice found.'))
+        self._compute_sale_values()
         invoice.invoice_date = self.date
         invoice.action_post()
         invoice.invoice_date = self.date
