@@ -322,8 +322,10 @@
                     </th>
                 </tr>
                 <tr t-if="o.supplier_delivery_method == 'sea'">
-                    <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">CIF Purchase Price</span>
+                    <th style="width:40%; text-align: right;">
+                        <span style="padding-left: 5px;">
+                            <b>CIF Purchase Price</b>
+                        </span>
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD <span class="float-end" style="padding-left: 5px; text-align: right;" t-field="o.purchase_order_cif_amount" t-options="{'widget': 'float', 'precision': 2}"/>
