@@ -50,6 +50,7 @@
             parent="asc_config_menu"
             action="base.action_res_company_form"
             sequence="10"
+            active="False"
     />
 
 </odoo>

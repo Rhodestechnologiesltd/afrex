@@ -52,11 +52,11 @@
                 <field name="lead_id" string="Trade Folder"/>
             </xpath>
             <!--             <xpath expr="//notebook/page/tree/field[@name='product_id']" position="after">-->
-            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']"
-                   position="after">
-                <field name="container_num" string="Container No"/>
-                <field name="seal_num" string="Seal Number"/>
-            </xpath>
+<!--            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']"-->
+<!--                   position="after">-->
+<!--                <field name="container_num" string="Container No" optional="hide"/>-->
+<!--                <field name="seal_num" string="Seal Number" optional="hide"/>-->
+<!--            </xpath>-->
         </field>
     </record>
 

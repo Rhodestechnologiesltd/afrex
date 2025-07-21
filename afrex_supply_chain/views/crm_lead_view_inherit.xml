@@ -618,6 +618,8 @@
                                                readonly="purchase_order_id"/>
                                         <field name="partial_shipment" widget="selection_badge"
                                                readonly="purchase_order_id"/>
+                                        <field name="sale_invoice_packing_list_date"/>
+                                        <field name="sale_invoice_origin_certificate_date"/>
                                     </group>
                                     <group string="Departure">
                                         <field name="expected_sob_date"/>
