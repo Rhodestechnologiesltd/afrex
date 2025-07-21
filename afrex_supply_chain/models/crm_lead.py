@@ -207,6 +207,8 @@ class Lead(models.Model):
     sale_invoice_insurance = fields.Float("Afrex Invoice Insurance")
     sale_invoice_freight = fields.Float("Afrex Invoice Freight")
     is_sale_invoice_incoterm_selection = fields.Selection(related="sale_invoice_id.incoterm_selection")
+    sale_invoice_packing_list_date = fields.Date(related="sale_invoice_id.packing_list_date", string="Packing List Date")
+    sale_invoice_origin_certificate_date = fields.Date(related="sale_invoice_id.origin_certificate_date", string="COO Date")
     sale_order_move_type = fields.Selection(related="sale_invoice_id.move_type")
 
     sale_invoice_state = fields.Selection(related="sale_invoice_id.state")
