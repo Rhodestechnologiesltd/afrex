@@ -15,6 +15,7 @@
                     <field name="currency_id" widget="selection_badge" required="True"/>
                     <field name="incoterm_id" required="True"/>
                     <field name="is_currency_zar" invisible="True"/>
+                    <field name="incoterm_change" invisible="True"/>
                     <field name="exchange_rate" invisible="not is_currency_zar"/>
                     <field name="payment_term_id" required="True"/>
                     <field name="validity_date" required="True"/>
@@ -30,11 +31,21 @@
                     <field name="net_weight"/>
                 </group>
             </group>
-            <group string="USD" invisible="not incoterm_id or supplier_delivery_method != 'sea'">
+            <div class="alert alert-info text-center mt-2 mb-2" role="alert" invisible="not incoterm_change">
+                <div>
+                    <h6>
+                        The incoterm has changed. Please fetch and apply the latest values.
+                    </h6>
+                    <h5>
+                        <button name="action_apply_incoterm" string="Apply" type="object" data-hotkey="a"/>
+                    </h5>
+                </div>
+            </div>
+            <group string="USD" invisible="incoterm_change or not incoterm_id or supplier_delivery_method != 'sea'">
                 <group>
                     <label for="fob_amount" string="FOB"/>
                     <div class="o_row">
-                        <field name="fob_amount"/>
+                        <field name="fob_amount" readonly="not is_internal"/>
                         FOB/MT: <field name="fob_unit" readonly="True"/>
                     </div>
                     <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
@@ -61,14 +72,14 @@
                 </group>
                 <group invisible="not is_internal">
                     <field name="interest_amount"/>
-                    <field name="procurement_documentation_amount"/>
+                    <field name="procurement_documentation_amount" readonly="is_internal"/>
                 </group>
             </group>
-            <group string="ZAR" invisible="not incoterm_id or not is_currency_zar or supplier_delivery_method != 'sea'">
+            <group string="ZAR" invisible="incoterm_change or not incoterm_id or not is_currency_zar or supplier_delivery_method != 'sea'">
                 <group>
                     <label for="fob_amount_zar" string="FOB"/>
                     <div class="o_row">
-                        <field name="fob_amount_zar"/>
+                        <field name="fob_amount_zar" readonly="not is_internal"/>
                         FOB/MT: <field name="fob_unit_zar" readonly="True"/>
                     </div>
                     <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
@@ -95,10 +106,10 @@
                 </group>
                 <group invisible="not is_internal">
                     <field name="interest_amount_zar"/>
-                    <field name="procurement_documentation_amount_zar"/>
+                    <field name="procurement_documentation_amount_zar" readonly="is_internal"/>
                 </group>
             </group>
-            <group string="USD" invisible="not incoterm_id or supplier_delivery_method != 'road'">
+            <group string="USD" invisible="incoterm_change or not incoterm_id or supplier_delivery_method != 'road'">
                 <group>
                     <label for="fca_amount" string="FCA"/>
                     <div class="o_row">
@@ -131,7 +142,7 @@
                     <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
                 </group>
             </group>
-            <group string="ZAR" invisible="not is_currency_zar or not incoterm_id or supplier_delivery_method != 'road'">
+            <group string="ZAR" invisible="incoterm_change or not is_currency_zar or not incoterm_id or supplier_delivery_method != 'road'">
                 <group>
                     <label for="fca_amount_zar" string="FCA" invisible="incoterm_selection != 'dap'"/>
                     <div class="o_row" invisible="incoterm_selection != 'dap'">
@@ -164,7 +175,7 @@
                     <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
                 </group>
             </group>
-            <div class="alert alert-warning text-center mt-2 mb-2" role="alert">
+            <div class="alert alert-warning text-center mt-2 mb-2" role="alert" invisible="incoterm_change or not incoterm_id">
                 <div>
                     <h6>
                         If you confirm, any other offer/quote previously generated for this deal will be cancelled.
@@ -172,7 +183,7 @@
                 </div>
             </div>
             <footer>
-                <button name="generate_sale_order" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                <button name="generate_sale_order" string="Confirm" type="object" invisible="incoterm_change" class="btn-primary" data-hotkey="q"/>
                 <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
             </footer>
           </form>
