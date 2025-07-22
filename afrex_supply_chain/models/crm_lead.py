@@ -37,7 +37,7 @@ class Lead(models.Model):
     supplier_id = fields.Many2one('res.partner', related='purchase_order_id.partner_id', string="Supplier", copy=False)
     origin_country_id = fields.Many2one('res.country', string="Country of Origin", related='purchase_order_id.origin_country_id', store=True)
     
-    sale_country_id = fields.Many2one('res.country', related='partner_id.country_id', string="Country of Delivery", store=True, copy=False)
+    sale_country_id = fields.Many2one('res.country', string="Country of Delivery", store=True, copy=False)
     
     purchase_order_ids = fields.One2many('purchase.order', 'lead_id', string="Purchase Orders")
     purchase_order_count = fields.Integer(string="No. of Purchase Orders",
@@ -277,6 +277,14 @@ class Lead(models.Model):
                 else:
                     fob, freight, insurance, cif = 0.0, 0.0, 0.0, 0.0
                 rec.purchase_order_cif_amount = cif
+    
+    @api.onchange('partner_id')
+    def set_sale_country_id(self):
+        for rec in self:
+            if rec.partner_id and rec.partner_id.country_id:
+                rec.sale_country_id = rec.partner_id.country_id.id
+            else:
+                rec.sale_country_id = False
 
     def generate_payment_request_wizard(self):
         # if self.state not in ['purchase', 'done']:

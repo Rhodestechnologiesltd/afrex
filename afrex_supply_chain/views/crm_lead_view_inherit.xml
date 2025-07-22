@@ -627,6 +627,11 @@
                                             x
                                             <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
                                         </div>
+                                        <label for="container_stuffing" string="Packaging" invisible="breakbulk_container != 'breakbulk'"/>
+                                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                                            <field name="container_stuffing" readonly="purchase_order_id"/>
+                                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                                        </div>
                                         <field name="trans_shipment" widget="selection_badge"
                                                readonly="purchase_order_id"/>
                                         <field name="partial_shipment" widget="selection_badge"

@@ -142,6 +142,11 @@
                             <field name="container_stuffing" readonly="state in ['cancel', 'done', 'purchase']"/>
                             x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
                         </div>
+                        <label for="container_stuffing" string="Packaging" invisible="breakbulk_container != 'breakbulk'"/>
+                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                            <field name="container_stuffing" readonly="state in ['cancel', 'done', 'purchase']"/>
+                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                        </div>
                         <field name="expected_sob_date" readonly="state in ['cancel', 'done', 'purchase']"/>
                         <field name="sob_date" readonly="True"/>
                     </group>
