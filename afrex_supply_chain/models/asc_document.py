@@ -5,7 +5,7 @@ class Document(models.Model):
     _name = 'asc.document'
     _description = 'Shipping Document'
 
-    name = fields.Char(string='Description', required=True)
+    name = fields.Char(string='Description')
     responsible = fields.Selection([('buyer', "Buyer"),
                                     ('supplier', "Supplier")], string="Responsible/Recipient")
     type_id = fields.Many2one('asc.document.type', string="Document Type", required=True)

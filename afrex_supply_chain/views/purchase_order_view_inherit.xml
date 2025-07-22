@@ -442,7 +442,7 @@
                             <field name="purchase_order_id" column_invisible="True"/>
                             <field name="type" column_invisible="True"/>
                             <field name="type_id" readonly="is_provided or (id and type_id)" string="Document"/>
-                            <field name="name" readonly="is_provided" string="Title/Description"/>
+                            <field name="name" readonly="is_provided" string="Comments"/>
                             <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
                             <field name="is_provided" readonly="True" optional="hide"/>
                             <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/>
@@ -458,7 +458,7 @@
                             <field name="purchase_order_id" column_invisible="True"/>
                             <field name="type" column_invisible="True"/>
                             <field name="type_id" readonly="is_provided" string="Document"/>
-                            <field name="name" readonly="is_provided" string="Title/Description"/>
+                            <field name="name" readonly="is_provided" string="Comments"/>
                             <field name="attachment_ids" widget="many2many_binary" readonly="is_provided"/>
                             <field name="is_provided" readonly="True" optional="hide"/>
                             <button name="set_provided" class="float-end btn-success" type="object" icon="fa-lock" help="Mark as Provided" invisible="is_provided"/>

@@ -524,7 +524,7 @@
                                         <field name="lead_id" column_invisible="True"/>
                                         <field name="type" column_invisible="True"/>
                                         <field name="type_id" string="Document"/>
-                                        <field name="name" string="Title/Description"/>
+                                        <field name="name" string="Comments"/>
                                         <field name="responsible" string="From"/>
                                         <field name="attachment_ids" widget="many2many_binary" readonly="True"/>
                                         <field name="is_provided" optional="hide"/>
@@ -538,7 +538,7 @@
                                         <field name="lead_id" column_invisible="True"/>
                                         <field name="type" column_invisible="True"/>
                                         <field name="type_id" string="Document"/>
-                                        <field name="name" string="Title/Description"/>
+                                        <field name="name" string="Comments"/>
                                         <field name="responsible" string="To"/>
                                         <field name="attachment_ids" widget="many2many_binary" readonly="True"/>
                                         <field name="is_provided" optional="hide"/>
