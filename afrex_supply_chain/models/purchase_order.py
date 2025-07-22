@@ -776,9 +776,9 @@ class PurchaseOrder(models.Model):
                         'default_fca_unit': self.fca_unit,
                         'default_freight_unit': self.freight_unit,
                         'default_cost_unit': self.cost_unit,
-                        # 'default_fob_amount': self.fob_amount,
-                        # 'default_freight_amount': self.freight_amount,
-                        # 'default_cost_amount': self.cost_amount,
+                        'default_fob_amount': self.fob_amount,
+                        'default_freight_amount': self.freight_amount,
+                        'default_cost_amount': self.cost_amount,
                         'default_insurance_amount': insurance_amount,
                         }
         }
