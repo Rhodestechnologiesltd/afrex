@@ -84,9 +84,9 @@ class SupplierInvoiceWizard(models.TransientModel):
     def _compute_freight_amount(self):
         for rec in self:
             if rec.breakbulk_container == 'container':
-                rec.freight_amount = rec.fob_unit * rec.quantity
-            elif rec.breakbulk_container == 'breakbulk':
                 rec.freight_unit = rec.freight_amount / rec.quantity
+            elif rec.breakbulk_container == 'breakbulk':
+                rec.freight_amount = rec.freight_unit * rec.quantity
         
     @api.onchange('cost_unit','quantity')
     def _compute_cost_amount(self):
