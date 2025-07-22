@@ -276,6 +276,7 @@ class AccountMove(models.Model):
             if not lead.is_internal:
                 fob = sales_price - (freight + insurance)
             else:
+                fob = rec.fob_amount
                 procurement = sales_price - (fob + freight + insurance + interest)
             action = {
                 'name': 'Commercial Invoice',
