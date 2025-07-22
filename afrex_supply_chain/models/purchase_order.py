@@ -760,7 +760,10 @@ class PurchaseOrder(models.Model):
         if initial_insurance == current_insurance:
             insurance_amount = current_insurance
         else:
-            insurance_amount = initial_insurance - current_insurance
+            if initial_insurance > 0:
+                insurance_amount = initial_insurance - current_insurance
+            else:
+                insurance_amount = current_insurance
         action = {
             'name': 'Supplier Invoice',
             'type': 'ir.actions.act_window',
