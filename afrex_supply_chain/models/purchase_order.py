@@ -242,6 +242,7 @@ class PurchaseOrder(models.Model):
             else:
                 rec.cost_amount = rec.cost_unit * rec.qty_total
             
+# NEEDS TO BE REFACTORED
     @api.depends('invoice_ids')
     def _compute_insurance_amount(self):
         for rec in self:

@@ -15,6 +15,7 @@ class Lead(models.Model):
     afrex_insurance_agent_id = fields.Many2one('res.partner', string="Insurance Agent")
 
     insurance_premium_amount = fields.Float("Insurance Premium")
+    insurance_premium_amount_zar = fields.Float("Insurance Premium in ZAR", compute="compute_insurance_premium_amount_zar", store=True, digits="Prices per Unit")
     insurance_premium_unit = fields.Float("Insurance Premium per MT", compute="compute_insurance_premium_unit", store=True)
 
     afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount", store=True)
@@ -124,6 +125,12 @@ class Lead(models.Model):
         for rec in self:
             roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
             rec.afrex_freight_amount_zar = rec.afrex_freight_amount * roe
+
+    @api.depends('insurance_premium_amount','indicative_exchange_rate','exchange_rate')
+    def compute_insurance_premium_amount_zar(self):
+        for rec in self:
+            roe = rec.exchange_rate if rec.exchange_rate else rec.indicative_exchange_rate
+            rec.insurance_premium_amount_zar = rec.insurance_premium_amount * roe
 
     @api.depends('procurement_fee_amount','indicative_exchange_rate','exchange_rate')
     def compute_procurement_fee_amount_zar(self):
