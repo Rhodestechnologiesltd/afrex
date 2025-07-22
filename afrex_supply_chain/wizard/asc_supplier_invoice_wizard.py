@@ -42,6 +42,26 @@ class SupplierInvoiceWizard(models.TransientModel):
     
     can_confirm = fields.Boolean(compute='_compute_can_confirm')
 
+    @api.depends('incoterm_id')
+    def _compute_incoterm_selection(self):
+        for rec in self:
+            incoterm = rec.incoterm_id
+            if incoterm:
+                if incoterm == self.env.ref('account.incoterm_CFR'):
+                    rec.incoterm_selection = 'cfr'
+                elif incoterm == self.env.ref('account.incoterm_CIF'):
+                    rec.incoterm_selection = 'cif'
+                elif incoterm == self.env.ref('account.incoterm_FOB'):
+                    rec.incoterm_selection = 'fob'
+                elif incoterm == self.env.ref('account.incoterm_DAP'):
+                    rec.incoterm_selection = 'dap'
+                elif incoterm == self.env.ref('account.incoterm_FCA'):
+                    rec.incoterm_selection = 'fca'
+                else:
+                    raise UserError("This incoterm is not allowed for a deal yet.")
+            else:
+                rec.incoterm_selection = False
+
     @api.depends('ref', 'quantity', 'date', 'vessel', 'voyage', 'expected_arrival_date', 'sob_date')
     def _compute_can_confirm(self):
         for rec in self:
