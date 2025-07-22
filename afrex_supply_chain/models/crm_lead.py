@@ -275,7 +275,7 @@ class Lead(models.Model):
                     insurance = rec.insurance_premium_amount
                     cif = cost + freight + insurance
                 else:
-                    fob, freight, insurance, cif = 0.0, 0.0, 0.0
+                    fob, freight, insurance, cif = 0.0, 0.0, 0.0, 0.0
                 rec.purchase_order_cif_amount = cif
 
     def generate_payment_request_wizard(self):
