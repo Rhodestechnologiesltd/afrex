@@ -51,8 +51,8 @@ class AccountMove(models.Model):
                                       store=True)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id")
 
-    sale_country_id = fields.Many2one('res.country', related='partner_id.country_id', string="Country of Delivery",
-                                      store=True)
+    sale_country_id = fields.Many2one('res.country', related='lead_id.sale_country_id', string="Country of Delivery",
+                                      store=True, readonly=False)
 
     shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
     shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')
