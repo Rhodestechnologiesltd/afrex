@@ -36,7 +36,7 @@
                         <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
                         <div class="o_row" invisible="breakbulk_container != 'container'">
                             <field id="freight_amount" name="freight_amount" readonly="incoterm_selection == 'fob'" widget="float" options="{'precision': 2}"/>
-                            Freight/MT: <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            <!-- Freight/MT: <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/> -->
                         </div>
                         <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
                         <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>

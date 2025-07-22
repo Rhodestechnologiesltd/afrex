@@ -34,9 +34,9 @@ class SupplierInvoiceWizard(models.TransientModel):
     freight_unit = fields.Float("Freight/MT", digits="Prices per Unit", tracking=True)
     cost_unit = fields.Float("Cost/MT", digits="Prices per Unit", tracking=True)
     
-    fob_amount = fields.Float("FOB", compute='_compute_fob_amount', tracking=True)
-    freight_amount = fields.Float("Freight", compute='_compute_freight_amount', tracking=True)
-    cost_amount = fields.Float("Cost", compute='_compute_cost_amount', tracking=True)
+    fob_amount = fields.Float("FOB", tracking=True)
+    freight_amount = fields.Float("Freight", tracking=True)
+    cost_amount = fields.Float("Cost", tracking=True)
     
     insurance_amount = fields.Float("Insurance", tracking=True)
     
@@ -80,10 +80,13 @@ class SupplierInvoiceWizard(models.TransientModel):
         for rec in self:
             rec.fob_amount = rec.fob_unit * rec.quantity
         
-    @api.onchange('freight_unit','quantity')
+    # @api.onchange('freight_unit','freight_unit','quantity')
     def _compute_freight_amount(self):
         for rec in self:
-            rec.freight_amount = rec.freight_unit * rec.quantity
+            if rec.breakbulk_container == 'container':
+                rec.freight_unit = rec.freight_amount / rec.quantity
+            elif rec.breakbulk_container == 'breakbulk':
+                rec.freight_amount = rec.freight_unit * rec.quantity
         
     @api.onchange('cost_unit','quantity')
     def _compute_cost_amount(self):
