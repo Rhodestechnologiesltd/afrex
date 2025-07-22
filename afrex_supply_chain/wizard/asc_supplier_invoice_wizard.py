@@ -147,6 +147,7 @@ class SupplierInvoiceWizard(models.TransientModel):
                 'fob_unit': total_fob / purchase.qty_delivered,
                 'freight_unit': total_freight / purchase.qty_delivered,
                 'cost_unit': total_cost / purchase.qty_delivered,
+                'freight_amount': total_freight,
             }
             purchase.write(costing_vals)
         purchase.set_product_qty()
