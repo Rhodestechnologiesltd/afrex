@@ -299,7 +299,7 @@ class Lead(models.Model):
     def compute_sales_price(self):
         for rec in self:
             if rec.is_internal:
-                rec.sales_price = rec.sales_cost + rec.procurement_fee_amount + rec.credit_cost_amount
+                rec.sales_price = rec.total_cost + rec.procurement_fee_amount + rec.credit_cost_amount
             else:
                 temp = rec.initial_sales_price + rec.credit_insurance_amount
                 rec.sales_price_unrounded = temp

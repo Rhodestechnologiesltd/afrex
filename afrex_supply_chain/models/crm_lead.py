@@ -258,20 +258,25 @@ class Lead(models.Model):
             if rec.supplier_delivery_method == 'sea':
                 # Calculate CIF amount based on FOB, Freight, and Insurance
                 if rec.purchase_order_incoterm_selection == 'cif':
-                    fob = rec.purchase_order_fob_amount
-                    freight = rec.purchase_order_freight_amount
-                    insurance = rec.purchase_order_insurance_amount
+                    # fob = rec.purchase_order_fob_amount
+                    # freight = rec.purchase_order_freight_amount
+                    # insurance = rec.purchase_order_insurance_amount
+                    cif = rec.purchase_order_cost_amount
                 elif rec.purchase_order_incoterm_selection == 'cfr':
-                    fob = rec.purchase_order_fob_amount
-                    freight = rec.purchase_order_freight_amount
+                    # fob = rec.purchase_order_fob_amount
+                    # freight = rec.purchase_order_freight_amount
+                    cost = rec.purchase_order_cost_amount
                     insurance = rec.insurance_premium_amount
+                    cif = cost + insurance
                 elif rec.purchase_order_incoterm_selection == 'fob':
-                    fob = rec.purchase_order_fob_amount
+                    # fob = rec.purchase_order_fob_amount
+                    cost = rec.purchase_order_cost_amount
                     freight = rec.afrex_freight_amount
                     insurance = rec.insurance_premium_amount
+                    cif = cost + freight + insurance
                 else:
-                    fob, freight, insurance = 0.0, 0.0, 0.0
-                rec.purchase_order_cif_amount = fob + freight + insurance
+                    fob, freight, insurance, cif = 0.0, 0.0, 0.0
+                rec.purchase_order_cif_amount = cif
 
     def generate_payment_request_wizard(self):
         # if self.state not in ['purchase', 'done']:
