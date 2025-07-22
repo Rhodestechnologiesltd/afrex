@@ -14,6 +14,17 @@
             </xpath>
         </field>
     </record>
+<!--    <record id="asc_crm_lead_tree_view" model="ir.ui.view">-->
+<!--        <field name="name">asc.crm.lead.tree</field>-->
+<!--        <field name="model">crm.lead</field>-->
+<!--        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//tree" position="attributes">-->
+
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+
 
     <record id="asc_quick_create_lead_form" model="ir.ui.view">
         <field name="name">asc.crm.form.quick_create</field>
@@ -25,6 +36,8 @@
                     <group string="Lead/Buyer">
                         <field name="partner_id" domain="[('is_company','=',True)]" string="Customer" required="True"/>
                         <field name="supplier_delivery_method" widget="radio" required="True"/>
+                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"
+                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
                         <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}"
                                domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'"
                                invisible="supplier_delivery_method != 'sea'"/>
@@ -882,7 +895,7 @@
                                                 <th style="width: 40%">
                                                     Insurance Estimate
                                                     <br/>
-<!--                                                    Insurance Premium :<br/>-->
+                                                    <!--                                                    Insurance Premium :<br/>-->
                                                     (USD<field name="insurance_premium_unit"/>/MT)
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
@@ -900,7 +913,7 @@
                                                     Freight (Freight Forwarder)
                                                     <br/>
                                                     Rate:
-                                                    (USD <field name="afrex_freight_rate"/>/MT)
+                                                    (USD<field name="afrex_freight_rate"/>/MT)
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
@@ -935,7 +948,7 @@
                                             <tr invisible="supplier_delivery_method != 'sea'">
                                                 <th style="width: 40%; text-align: right;">
                                                     <field name="product_qty" readonly="True"
-                                                            style="color: white; opacity: 0;"/>CIF Purchase Price
+                                                           style="color: white; opacity: 0;"/>CIF Purchase Price
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
@@ -1645,7 +1658,7 @@
                                                     <th style="width: 40%">
                                                         Insurance Estimate
                                                         <br/>
-<!--                                                        Insurance Premium:<br/> -->
+                                                        <!--                                                        Insurance Premium:<br/> -->
                                                         (USD
                                                         <field name="insurance_premium_unit"/>/MT)
                                                     </th>
@@ -1700,12 +1713,12 @@
                                                 <tr invisible="supplier_delivery_method != 'sea'">
                                                     <th style="width: 40%; text-align: right;">
                                                         <field name="product_qty" readonly="True"
-                                                                style="color: white; opacity: 0;"/>CIF Purchase Price
+                                                               style="color: white; opacity: 0;"/>CIF Purchase Price
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
                                                         <field name="purchase_order_cif_amount" widget="float"
-                                                            options="{'precision': 2}"/>
+                                                               options="{'precision': 2}"/>
                                                     </th>
                                                 </tr>
                                                 <!-- <tr invisible="supplier_delivery_method != 'road'">
