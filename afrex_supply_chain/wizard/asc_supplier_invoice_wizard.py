@@ -54,50 +54,18 @@ class SupplierInvoiceWizard(models.TransientModel):
                 rec.expected_arrival_date,
                 rec.sob_date,
             ])
-            
-    @api.depends('incoterm_id')
-    def _compute_incoterm_selection(self):
-        for rec in self:
-            incoterm = rec.incoterm_id
-            if incoterm:
-                if incoterm == self.env.ref('account.incoterm_CFR'):
-                    rec.incoterm_selection = 'cfr'
-                    rec.insurance_amount = 0.0
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                elif incoterm == self.env.ref('account.incoterm_CIF'):
-                    rec.incoterm_selection = 'cif'
-                    rec.insurance_amount = rec.purchase_order_id.insurance_amount
-                    rec.freight_amount = rec.purchase_order_id.freight_amount
-                elif incoterm == self.env.ref('account.incoterm_FOB'):
-                    rec.incoterm_selection = 'fob'
-                    rec.insurance_amount = 0.0
-                    rec.freight_amount = 0.0
-                elif incoterm == self.env.ref('account.incoterm_DAP'):
-                    rec.incoterm_selection = 'dap'
-                    rec.fob_amount = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.freight_amount = 0.0
-                elif incoterm == self.env.ref('account.incoterm_FCA'):
-                    rec.incoterm_selection = 'fca'
-                    rec.fob_amount = 0.0
-                    rec.insurance_amount = 0.0
-                    rec.freight_amount = 0.0
-                else:
-                    raise UserError("This incoterm is not allowed for a deal yet.")
-            else:
-                rec.incoterm_selection = False
     
-    @api.depends('fob_unit','quantity')
+    @api.onchange('fob_unit','quantity')
     def _compute_fob_amount(self):
         for rec in self:
             rec.fob_amount = rec.fob_unit * rec.quantity
         
-    @api.depends('freight_unit','quantity')
+    @api.onchange('freight_unit','quantity')
     def _compute_freight_amount(self):
         for rec in self:
             rec.freight_amount = rec.freight_unit * rec.quantity
         
-    @api.depends('cost_unit','quantity')
+    @api.onchange('cost_unit','quantity')
     def _compute_cost_amount(self):
         for rec in self:
             rec.cost_amount = rec.cost_unit * rec.quantity
@@ -111,6 +79,10 @@ class SupplierInvoiceWizard(models.TransientModel):
             raise UserError(_("Please select a purchase order."))
         else:
             purchase = self.purchase_order_id
+
+        self._compute_fob_amount()
+        self._compute_freight_amount()
+        self._compute_cost_amount()
 
         invoice_vals = {
             'ref': self.ref,
