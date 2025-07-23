@@ -261,7 +261,7 @@
                         <field name="deal_status_logistics" widget="selection_badge"/>
                         <field name="deal_status_accounting" widget="selection_badge"/>
                         <field name="is_eazzy_filed"/>
-                        <field name="logistics_state" string="Logistics Status"/>
+                        <field name="logistics_state" string="Shipping Status"/>
                         <field name="is_bl_released" readonly="True"/>
                     </group>
                 </group>

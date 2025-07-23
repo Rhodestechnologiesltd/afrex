@@ -255,8 +255,8 @@
                 </div>
             </xpath>
             <xpath expr="//page[@name='invoice_tab']" position="after">
-                <page name="Buyer Documents">
-                    <button name="set_incoming_document_wizard" icon="fa-file-text-o" string="Set Documents to be provided" type="object" class="btn-primary"/>
+                <page name="Supplier Documents">
+                    <button name="set_incoming_document_wizard" icon="fa-file-text-o" string="Set Documents to be provided by Suppliers" type="object" class="btn-primary"/>
                     <separator/>
                     <field name="incoming_doc_ids" context="{'default_type': 'incoming'}">
                         <tree editable="bottom" default_order="name asc" decoration-success="is_provided" decoration-danger="not is_provided">

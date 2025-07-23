@@ -195,7 +195,7 @@ class Lead(models.Model):
                                         ('delayed',"Delayed"),
                                         ('pending',"Pending"),
                                         ('sailing',"Sailing/In Transit"),
-                                        ('planned',"Planned"),], string="Logistics Status", copy=False)
+                                        ('planned',"Planned"),], string="Shipping Status", copy=False)
     
     is_afrex_proforma_raised = fields.Boolean(string="PFI Raised", copy=False)
     afrex_proforma_date = fields.Date(string="PFI Date", copy=False)

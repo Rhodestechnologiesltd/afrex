@@ -21,8 +21,9 @@ class GeneratePurchaseOrderWizard(models.TransientModel):
                                                  ('road', "Road"),
                                                  ('air', "Air")], related='lead_id.supplier_delivery_method', readonly=False)
 
+    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='lead_id.loading_port_id', readonly=False)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id', readonly=False)
-    
+
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.ref('base.USD'), required=True)
     incoterm_id = fields.Many2one('account.incoterms', string="Incoterms", default=lambda self: self.env.ref('account.incoterm_CIF'), required=True)
     incoterm_selection = fields.Selection([('cfr', 'CFR'),

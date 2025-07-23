@@ -45,11 +45,13 @@
                 </group>
                 <group>
                     <field name="incoterm_id" required="True"/>
+                    <field name="loading_port_id" string="Port of loading" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
+                    <field name="loading_port_id" string="Place of loading" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" invisible="supplier_delivery_method != 'road'"/>
                     <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}" domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
                     <field name="discharge_port_id" string="Place of Delivery" context="{'default_type': 'road'}" domain="[('type', '=', 'road')]" invisible="supplier_delivery_method != 'road'"/>
                     <field name="is_switch"/>
-                    <field name="shipment_window_start" required="True" string="Shipment Window" widget="daterange" options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}"/>
-                    <field name="shipment_window_end" required="True" invisible="1"/>
+                    <field name="shipment_window_start" string="Shipment Window" widget="daterange" options="{'end_date_field': 'shipment_window_end', 'always_range': '1'}"/>
+                    <field name="shipment_window_end" invisible="1"/>
                     <field name="product_qty"/>
                 </group>
             </group>
