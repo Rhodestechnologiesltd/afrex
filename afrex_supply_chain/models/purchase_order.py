@@ -37,8 +37,8 @@ class PurchaseOrder(models.Model):
     
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", ondelete='restrict', tracking=True, readonly=False, store=True)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related="lead_id.discharge_port_id", readonly=False)
-    shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
-    shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')
+    shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start', readonly=False)
+    shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end', readonly=False)
     breakbulk_container = fields.Selection([('breakbulk', "Breakbulk"),
                                             ('container', "Container"),],
                                            string="Breakbulk or Container", tracking=True)
@@ -506,7 +506,11 @@ class PurchaseOrder(models.Model):
                         'default_fca_amount': fca,
                         'default_insurance_amount': insurance,
                         'default_interest_amount': interest,
-                        'default_procurement_documentation_amount': procurement,}
+                        'default_procurement_documentation_amount': procurement,
+                        'default_fob_zar': fob,
+                        'default_cif_zar': fob + insurance + freight,
+                        'default_interest_zar': interest,
+                        }
         }
         return action
             

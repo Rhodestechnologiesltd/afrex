@@ -93,6 +93,7 @@
                             <field name="cost_amount"/>
                             FOB/MT: <field name="cost_unit" readonly="True"/>
                         </div>
+                        <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                         <field name="is_internal" invisible="True"/>
                         <div class="o_row" colspan="2">
                             <button name="update_proforma" type="object" string=" Update Proforma Invoice" invisible="invoice_count == 0" class="btn-link mb-1 px-0" icon="fa-refresh" confirm="This will update the costing on the offer."/>

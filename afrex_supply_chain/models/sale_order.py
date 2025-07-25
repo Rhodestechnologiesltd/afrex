@@ -40,8 +40,8 @@ class SaleOrder(models.Model):
     loading_port_id = fields.Many2one('asc.port', "Port of Loading", related="lead_id.loading_port_id", store=True, readonly=False)
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id', readonly=False)
     
-    shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start')
-    shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end')
+    shipment_window_start = fields.Date("Shipment Window Start", related='lead_id.shipment_window_start', readonly=False)
+    shipment_window_end = fields.Date("Shipment Window End", related='lead_id.shipment_window_end', readonly=False)
     
     breakbulk_container = fields.Selection([('breakbulk', "Breakbulk"),
                                             ('container', "Container"),],

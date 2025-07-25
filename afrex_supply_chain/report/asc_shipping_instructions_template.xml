@@ -246,7 +246,7 @@
                             <span style="display: block;">Minimum 14 days free demurrage / detention at destination must be negotiated with the shipping line at the time of booking.</span>
                         </div>
                         <div t-if="o.incoterm_selection == 'fob'">
-                            <span style="display: block;">Shipping Details as confirmed by Best Honor Shipping Co., Ltd</span>
+                            <span style="display: block;">Shipping Details as confirmed by Afrex Limited</span>
                         </div>
                     </td>
                 </tr>

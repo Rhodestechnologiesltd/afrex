@@ -7,7 +7,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">afrex_supply_chain.report_asc_quote_request</field>
         <field name="report_file">afrex_supply_chain.report_asc_quote_request</field>
-        <field name="print_report_name">"Afrex QR [%s]" % object.name</field>
+        <field name="print_report_name">"Afrex QR [%s-%s]" % (object.name, object.partner_id.name)</field>
         <field name="paperformat_id" ref="afrex_supply_chain.asc_paper_format"/>
         <field name="binding_model_id" ref="model_purchase_order" />
         <field name="binding_type">report</field>

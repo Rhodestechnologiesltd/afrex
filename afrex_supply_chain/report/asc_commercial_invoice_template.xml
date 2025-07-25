@@ -617,7 +617,11 @@
                     <t t-if="o.incoterm_selection == 'fob'">
                         <tr>
                             <td colspan="1" style="border:1px solid black; vertical-align: middle;"/>
-                            <th rowspan="2" valign="middle" class="text-center"
+                            <th t-if="o.show_breakdown" rowspan="2" valign="middle" class="text-center"
+                                style="border:1px solid black; vertical-align: middle;">
+                                <span>FOB Price Breakdown</span>
+                            </th>
+                            <th t-else="" valign="middle" class="text-center"
                                 style="border:1px solid black; vertical-align: middle;">
                                 <span>FOB Price Breakdown</span>
                             </th>

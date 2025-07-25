@@ -131,10 +131,15 @@ class GenerateSaleOrderWizard(models.TransientModel):
                     elif incoterm == self.env.ref('account.incoterm_CIF'):
                         rec.incoterm_selection = 'cif'
                         rec.insurance_amount = rec.get_insurance_amount()
-                        rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
                         rec.freight_amount = rec.get_freight_amount()
-                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
                         rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.fob_amount = rec.get_fob_amount()
+
+                        rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
+                        rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
+                        rec.interest_amount_zar = rec.interest_amount * rec.exchange_rate
+                        rec.fob_amount_zar = rec.fob_amount * rec.exchange_rate
+
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_FOB'):
                         rec.incoterm_selection = 'fob'
@@ -196,7 +201,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
             else:
                 rec.is_currency_zar = False
     
-    @api.depends('exchange_rate','currency_id')
+    @api.depends('exchange_rate','currency_id','fob_amount','freight_amount','interest_amount')
     def compute_zar_amount(self):
         for rec in self:
             rec.fob_amount_zar = rec.fob_amount * rec.exchange_rate

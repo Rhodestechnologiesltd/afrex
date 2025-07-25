@@ -14,16 +14,16 @@
             </xpath>
         </field>
     </record>
-<!--    <record id="asc_crm_lead_tree_view" model="ir.ui.view">-->
-<!--        <field name="name">asc.crm.lead.tree</field>-->
-<!--        <field name="model">crm.lead</field>-->
-<!--        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <xpath expr="//tree" position="attributes">-->
+    <!--    <record id="asc_crm_lead_tree_view" model="ir.ui.view">-->
+    <!--        <field name="name">asc.crm.lead.tree</field>-->
+    <!--        <field name="model">crm.lead</field>-->
+    <!--        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//tree" position="attributes">-->
 
-<!--            </xpath>-->
-<!--        </field>-->
-<!--    </record>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
 
 
     <record id="asc_quick_create_lead_form" model="ir.ui.view">
@@ -223,15 +223,15 @@
                         </li>
                         <li>
                             <button name="action_open_purchase_order" string="Purchase Order" icon="fa-shopping-cart"
-                                    type="object" class="btn-mute"/>
+                                    type="object" class="btn-mute" invisible="not purchase_order_id"/>
                         </li>
                         <li>
                             <button name="action_open_sale_order" string="Offer" icon="fa-quote-right" type="object"
-                                    class="btn-mute"/>
+                                    class="btn-mute" invisible="not sale_order_id"/>
                         </li>
                         <li>
                             <button name="action_open_invoice" string="Afrex Invoice" icon="fa-dollar" type="object"
-                                    class="btn-mute"/>
+                                    class="btn-mute" invisible="not sale_order_id or not sale_invoice_id"/>
                         </li>
                     </ul>
                 </div>
@@ -627,10 +627,13 @@
                                             x
                                             <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
                                         </div>
-                                        <label for="container_stuffing" string="Packaging" invisible="breakbulk_container != 'breakbulk'"/>
-                                        <div name="container_stuffing" class="o_row" invisible="breakbulk_container != 'breakbulk'">
+                                        <label for="container_stuffing" string="Packaging"
+                                               invisible="breakbulk_container != 'breakbulk'"/>
+                                        <div name="container_stuffing" class="o_row"
+                                             invisible="breakbulk_container != 'breakbulk'">
                                             <field name="container_stuffing" readonly="purchase_order_id"/>
-                                            x <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
+                                            x
+                                            <field name="packaging_id" options="{'no_open':True}" readonly="True"/>
                                         </div>
                                         <field name="trans_shipment" widget="selection_badge"
                                                readonly="purchase_order_id"/>
@@ -1093,7 +1096,7 @@
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: right; valign: middle;">
                                                     <field name="product_qty" readonly="True"
-                                                           style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                           style="color: white; opacity: 0;"/>Costs [A + B]
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
@@ -1168,6 +1171,20 @@
                                                     ZAR
                                                     <field name="credit_insurance_amount_zar" widget="float"
                                                            options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Costs
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_cost_updated"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
                                                 </th>
                                             </tr>
                                             <tr>
@@ -1262,6 +1279,20 @@
                                                            options="{'precision': 4}"/>
                                                 </th>
                                             </tr>
+                                            <tr invisible="not is_sales_price_override">
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: right; valign: middle;">
+                                                    <field name="product_qty" readonly="True"
+                                                           style="color: white; opacity: 0;"/>Total Costs
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_cost_updated_agreed"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
                                         </table>
                                         <table invisible="not is_internal" style="width: 100%">
                                             <tr invisible="True">
@@ -1282,7 +1313,7 @@
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: right; valign: middle;">
                                                     <field name="product_qty" readonly="True"
-                                                           style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                           style="color: white; opacity: 0;"/>Costs [A + B]
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
@@ -1871,7 +1902,7 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                               style="color: white; opacity: 0;"/>Costs [A + B]
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
@@ -1948,6 +1979,20 @@
                                                         ZAR
                                                         <field name="credit_insurance_amount_zar" widget="float"
                                                                options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="is_sales_price_override">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Costs
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_cost_updated"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
                                                     </th>
                                                 </tr>
                                                 <tr>
@@ -2043,6 +2088,20 @@
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
+                                                <tr invisible="not is_sales_price_override">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: right; valign: middle;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Total Costs
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_cost_updated_agreed"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
                                             </table>
                                             <table invisible="not is_internal" style="width: 100%">
                                                 <tr invisible="True">
@@ -2064,7 +2123,7 @@
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
                                                         <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Costs [A + B]
+                                                               style="color: white; opacity: 0;"/>Costs [A + B]
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
