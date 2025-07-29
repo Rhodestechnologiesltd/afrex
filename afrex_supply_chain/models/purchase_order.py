@@ -507,9 +507,9 @@ class PurchaseOrder(models.Model):
                         'default_insurance_amount': insurance,
                         'default_interest_amount': interest,
                         'default_procurement_documentation_amount': procurement,
-                        'default_fob_zar': fob,
-                        'default_cif_zar': fob + insurance + freight,
-                        'default_interest_zar': interest,
+                        # 'default_fob_zar': fob,
+                        # 'default_cif_zar': fob + insurance + freight,
+                        # 'default_interest_zar': interest,
                         }
         }
         return action

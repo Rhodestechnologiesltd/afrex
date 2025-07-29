@@ -420,8 +420,10 @@
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD
-                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                        <span t-if="is_cif_override" class="float-end" style="padding-left: 5px; text-align: right;"
                               t-field="o.purchase_order_cif_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                        <span t-if="not is_cif_override" class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.manual_purchase_order_cif_amount" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" style="width:30%;"/>
                 </tr>

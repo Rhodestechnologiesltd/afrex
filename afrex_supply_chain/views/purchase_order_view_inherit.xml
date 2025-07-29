@@ -696,6 +696,8 @@
             <xpath expr="//field[@name='date_planned']" position="after">
                 <button name="print_quote_request" icon="fa-print" type="object" help="Print Quote Request"
                         class="btn-mute" invisible="state in ['cancel', 'done', 'purchase']"/>
+                <button name="print_purchase_order" icon="fa-print" type="object" help="Print Quote Request"
+                        class="btn-mute" invisible="state not in ['done', 'purchase']"/>
             </xpath>
         </field>
 

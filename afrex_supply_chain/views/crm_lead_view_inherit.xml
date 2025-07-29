@@ -964,6 +964,33 @@
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
+                                            <tr>
+                                                <th style="width:30%; text-align: right;">
+                                                    Override CIF Purchase Price
+                                                    <field name="is_cif_override" widget="boolean_toggle"/>
+                                                </th>
+                                                <th style="width: 40%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+<!--                                            <t t-if="is_cif_override">-->
+                                                <tr invisible="not is_cif_override or supplier_delivery_method != 'sea'">
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <field name="product_qty" readonly="True"
+                                                               style="color: white; opacity: 0;"/>Manual CIF Purchase
+                                                        Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="manual_purchase_order_cif_amount" widget="float"
+                                                               options="{'precision': 2}"/>
+                                                    </th>
+                                                </tr>
+<!--                                            </t>-->
+
                                             <tr invisible="supplier_delivery_method != 'road'">
                                                 <th style="width: 40%">
                                                     DAP Purchase Price
@@ -1696,7 +1723,7 @@
                                                         <br/>
                                                         <!--                                                        Insurance Premium:<br/> -->
                                                         (USD
-                                                        <field name="insurance_premium_unit"/>/MT)
+                                                         <field name="insurance_premium_unit"/>/MT)
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
@@ -1757,6 +1784,33 @@
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                 </tr>
+                                                <tr>
+                                                    <th style="width:30%; text-align: right;">
+                                                        Override CIF Purchase Price
+                                                        <field name="is_cif_override" widget="boolean_toggle"/>
+                                                    </th>
+                                                    <th style="width: 40%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+<!--                                                <t t-if="is_cif_override">-->
+                                                    <tr invisible="not is_cif_override or supplier_delivery_method != 'sea'">
+                                                        <th style="width: 40%; text-align: right;">
+                                                            <field name="product_qty" readonly="True"
+                                                                   style="color: white; opacity: 0;"/>Manual CIF
+                                                            Purchase Price
+                                                        </th>
+                                                        <th style="width:30%; text-align: right;">
+                                                            USD
+                                                            <field name="manual_purchase_order_cif_amount"
+                                                                   widget="float"
+                                                                   options="{'precision': 2}"/>
+                                                        </th>
+                                                    </tr>
+<!--                                                </t>-->
                                                 <!-- <tr invisible="supplier_delivery_method != 'road'">
                                                     <th style="width: 40%">
                                                         Purchase Price
