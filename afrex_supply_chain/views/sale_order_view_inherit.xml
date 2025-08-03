@@ -155,6 +155,7 @@
             </xpath>
             <xpath expr="//group[@name='partner_details']" position="inside">
                 <field name="discharge_port_id" string="Port of Discharge" invisible="supplier_delivery_method != 'sea'"/>
+                <field name="currency_id" widget="selection_badge" force_save="1" readonly="state != 'draft'"/>
                 <field name="discharge_port_id" string="Place of Delivery" invisible="supplier_delivery_method != 'road'"/>
                 <field name="consignee_id"/>
                 <field name="supplier_id" string="Supplier"/>

@@ -245,50 +245,203 @@ class SaleOrder(models.Model):
                 invoice.cost_unit = self.cost_unit
         else:
             raise UserError("No invoice found for this sale order.")
-    
+
     def generate_proforma_wizard(self):
         if self.is_invoice_generated:
             raise UserError("Proforma invoice has already been generated.")
+
         lead = self.lead_id
-        if lead.is_internal:
-            if lead.cover_report_amount:
-                roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
-                if not roe:
-                    raise UserError("Cover Report Amount is set but the exchange rate is not set.")
-                try:
-                    sales_price = lead.cover_report_amount / roe
-                except ZeroDivisionError:
-                    sales_price = self.cost_amount
-                procurement_documentation_amount = sales_price - (self.fob_amount + self.freight_amount + self.insurance_amount + self.interest_amount)
+        currency = self.currency_id
+        exchange_rate = self.exchange_rate or self.indicative_exchange_rate
+
+        if not exchange_rate or exchange_rate == 0.0:
+            raise UserError("Exchange rate is missing or zero.")
+
+        is_usd = currency == self.env.ref('base.USD')
+        is_zar = currency == self.env.ref('base.ZAR')
+
+
+        fob = self.fob_amount
+        freight = self.freight_amount
+        insurance = self.insurance_amount
+        interest = self.interest_amount
+        fca = self.fca_amount
+        road = self.road_transportation_amount
+        logistics = self.logistics_service_amount
+
+        if is_usd:
+
+            if lead.is_internal and lead.cover_report_amount:
+                roe = lead.exchange_rate or lead.indicative_exchange_rate or exchange_rate
+                if not roe or roe == 0:
+                    raise UserError("Exchange rate not set or zero.")
+                cost_usd = lead.cover_report_amount / roe
+                procurement_doc_usd = abs(cost_usd - (fob + freight + insurance + interest))
             else:
-                sales_price = self.cost_amount
-                procurement_documentation_amount = self.procurement_documentation_amount
+                cost_usd = self.cost_amount
+                procurement_doc_usd = abs(self.procurement_documentation_amount)
+
+
+            fob_zar = fob * exchange_rate
+            freight_zar = freight * exchange_rate
+            insurance_zar = insurance * exchange_rate
+            interest_zar = interest * exchange_rate
+            fca_zar = fca * exchange_rate
+            road_zar = road * exchange_rate
+            logistics_zar = logistics * exchange_rate
+            cost_zar = cost_usd * exchange_rate
+            procurement_doc_zar = procurement_doc_usd * exchange_rate
+
+            context = {
+                'default_lead_id': lead.id,
+                'default_sale_order_id': self.id,
+                'default_incoterm_id': self.incoterm_id.id,
+                'default_currency_id': currency.id,
+                'default_exchange_rate': exchange_rate,
+
+
+                'default_fob_amount': fob,
+                'default_freight_amount': freight,
+                'default_insurance_amount': insurance,
+                'default_interest_amount': interest,
+                'default_fca_amount': fca,
+                'default_road_transportation_amount': road,
+                'default_logistics_service_amount': logistics,
+                'default_cost_amount': cost_usd,
+                'default_procurement_documentation_amount': procurement_doc_usd,
+
+
+                'default_fob_amount_zar': fob_zar,
+                'default_freight_amount_zar': freight_zar,
+                'default_insurance_amount_zar': insurance_zar,
+                'default_interest_amount_zar': interest_zar,
+                'default_fca_amount_zar': fca_zar,
+                'default_road_transportation_amount_zar': road_zar,
+                'default_logistics_service_amount_zar': logistics_zar,
+                'default_cost_amount_zar': cost_zar,
+                'default_procurement_documentation_amount_zar': procurement_doc_zar,
+            }
+
+        elif is_zar:
+
+            if lead.is_internal and lead.cover_report_amount:
+                roe = lead.exchange_rate or lead.indicative_exchange_rate or exchange_rate
+                if not roe or roe == 0:
+                    raise UserError("Exchange rate not set or zero.")
+                cost_zar = lead.cover_report_amount
+                procurement_doc_zar = abs(cost_zar - (fob + freight + insurance + interest))
+                cost_usd = cost_zar / roe
+                procurement_doc_usd = procurement_doc_zar / roe
+            else:
+                cost_zar = self.cost_amount
+                procurement_doc_zar = abs(self.procurement_documentation_amount)
+                cost_usd = cost_zar / exchange_rate
+                procurement_doc_usd = procurement_doc_zar / exchange_rate
+
+
+            fob_usd = fob / exchange_rate
+            freight_usd = freight / exchange_rate
+            insurance_usd = insurance / exchange_rate
+            interest_usd = interest / exchange_rate
+            fca_usd = fca / exchange_rate
+            road_usd = road / exchange_rate
+            logistics_usd = logistics / exchange_rate
+
+            context = {
+                'default_lead_id': lead.id,
+                'default_sale_order_id': self.id,
+                'default_incoterm_id': self.incoterm_id.id,
+                'default_currency_id': currency.id,
+                'default_exchange_rate': exchange_rate,
+
+
+                'default_fob_amount_zar': fob,
+                'default_freight_amount_zar': freight,
+                'default_insurance_amount_zar': insurance,
+                'default_interest_amount_zar': interest,
+                'default_fca_amount_zar': fca,
+                'default_road_transportation_amount_zar': road,
+                'default_logistics_service_amount_zar': logistics,
+                'default_cost_amount_zar': cost_zar,
+                'default_procurement_documentation_amount_zar': procurement_doc_zar,
+
+
+                'default_fob_amount': fob_usd,
+                'default_freight_amount': freight_usd,
+                'default_insurance_amount': insurance_usd,
+                'default_interest_amount': interest_usd,
+                'default_fca_amount': fca_usd,
+                'default_road_transportation_amount': road_usd,
+                'default_logistics_service_amount': logistics_usd,
+                'default_cost_amount': cost_usd,
+                'default_procurement_documentation_amount': procurement_doc_usd,
+            }
+
         else:
-            sales_price = self.cost_amount
-            procurement_documentation_amount = self.procurement_documentation_amount
-        action = {
+            raise UserError("Only USD and ZAR currencies are supported for proforma generation.")
+
+        return {
             'name': 'Generate Proforma Invoice',
             'type': 'ir.actions.act_window',
-            'view_type': 'form',
             'view_mode': 'form',
+            'view_type': 'form',
             'res_model': 'asc.generate.proforma',
             'target': 'new',
-            'context': {'default_lead_id': self.lead_id.id,
-                        'default_sale_order_id': self.id,
-                        'default_incoterm_id': self.incoterm_id.id,
-                        'default_currency_id': self.currency_id.id,
-                        'default_exchange_rate': self.exchange_rate or self.indicative_exchange_rate,
-                        'default_fob_amount': self.fob_amount,
-                        'default_freight_amount': self.freight_amount,
-                        'default_insurance_amount': self.insurance_amount,
-                        'default_interest_amount': self.interest_amount,
-                        'default_procurement_documentation_amount': procurement_documentation_amount if self.procurement_documentation_amount else 0,
-                        'default_fca_amount': self.fca_amount,
-                        'default_road_transportation_amount': self.road_transportation_amount,
-                        'default_logistics_service_amount': self.logistics_service_amount,
-                        'default_cost_amount': sales_price,}
+            'context': context,
         }
-        return action
+
+    # def generate_proforma_wizard(self):
+    #     if self.is_invoice_generated:
+    #         raise UserError("Proforma invoice has already been generated.")
+    #     lead = self.lead_id
+    #     if lead.is_internal:
+    #         if lead.cover_report_amount:
+    #             roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+    #             if not roe:
+    #                 raise UserError("Cover Report Amount is set but the exchange rate is not set.")
+    #             try:
+    #                 sales_price = lead.cover_report_amount / roe
+    #             except ZeroDivisionError:
+    #                 sales_price = self.cost_amount
+    #             # procurement_documentation_amount = sales_price - (self.fob_amount + self.freight_amount + self.insurance_amount + self.interest_amount)
+    #             procurement_documentation_amount = abs(
+    #                 sales_price - (
+    #                         self.fob_amount +
+    #                         self.freight_amount +
+    #                         self.insurance_amount +
+    #                         self.interest_amount
+    #                 )
+    #             )
+    #         else:
+    #             sales_price = self.cost_amount
+    #             procurement_documentation_amount = abs(self.procurement_documentation_amount)
+    #     else:
+    #         sales_price = self.cost_amount
+    #         procurement_documentation_amount = abs(self.procurement_documentation_amount)
+    #
+    #     action = {
+    #         'name': 'Generate Proforma Invoice',
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': 'asc.generate.proforma',
+    #         'target': 'new',
+    #         'context': {'default_lead_id': self.lead_id.id,
+    #                     'default_sale_order_id': self.id,
+    #                     'default_incoterm_id': self.incoterm_id.id,
+    #                     'default_currency_id': self.currency_id.id,
+    #                     'default_exchange_rate': self.exchange_rate or self.indicative_exchange_rate,
+    #                     'default_fob_amount': self.fob_amount,
+    #                     'default_freight_amount': self.freight_amount,
+    #                     'default_insurance_amount': self.insurance_amount,
+    #                     'default_interest_amount': self.interest_amount,
+    #                     'default_procurement_documentation_amount': procurement_documentation_amount,
+    #                     'default_fca_amount': self.fca_amount,
+    #                     'default_road_transportation_amount': self.road_transportation_amount,
+    #                     'default_logistics_service_amount': self.logistics_service_amount,
+    #                     'default_cost_amount': sales_price,}
+    #     }
+    #     return action
     
     def generate_commercial_invoice(self):
         generated_invoices = self.env['account.move']
@@ -311,8 +464,14 @@ class SaleOrder(models.Model):
                 'view_id': self.env.ref('account.view_move_form').id,
                 'context': {},
                 'target': 'new'
-            }   
-    
+            }
+
+    @api.model
+    def default_get(self, fields):
+        res = super().default_get(fields)
+        if 'procurement_documentation_amount' in res:
+            res['procurement_documentation_amount'] = abs(res['procurement_documentation_amount'])
+        return res
     def print_quotation(self):
         return self.env.ref('afrex_supply_chain.action_report_asc_quotation').report_action(self)
     

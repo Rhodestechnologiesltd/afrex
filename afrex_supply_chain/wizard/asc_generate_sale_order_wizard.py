@@ -139,7 +139,12 @@ class GenerateSaleOrderWizard(models.TransientModel):
                         rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
                         rec.interest_amount_zar = rec.interest_amount * rec.exchange_rate
                         rec.fob_amount_zar = rec.fob_amount * rec.exchange_rate
+                        rec.cost_amount_zar = rec.cost_amount * rec.exchange_rate
+                        rec.cost_unit = rec.cost_amount / rec.qty_total
+                        rec.cost_unit_zar = rec.cost_unit * rec.exchange_rate
 
+                        # rec._compute_cost_unit()
+                        # rec._compute_cost_unit_zar()
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_FOB'):
                         rec.incoterm_selection = 'fob'
@@ -388,9 +393,20 @@ class GenerateSaleOrderWizard(models.TransientModel):
             lead.sale_order_id = False
         
         pricelist = self.env['product.pricelist'].search([('currency_id', '=', self.currency_id.id)], limit=1)
-        
+        if not pricelist:
+            # Create or assign a dummy ZAR pricelist if missing
+            pricelist = self.env['product.pricelist'].create({
+                'name': 'Auto ZAR Pricelist',
+                'currency_id': self.currency_id.id,
+                'company_id': self.env.company.id,
+                'item_ids': [],
+            })
+        # zar_currency = self.env.ref('base.ZAR')
+        # zar_currency = self.env.ref('base.ZAR')
+
         if self.currency_id == self.env.ref('base.ZAR'):
             fob_amount = self.fob_amount_zar
+            currency_id = self.env.ref('base.ZAR')
             freight_amount = self.freight_amount_zar
             cost_amount = self.cost_amount_zar
             insurance_amount = self.insurance_amount_zar
@@ -402,6 +418,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
             fob_unit = self.fob_unit_zar
             freight_unit = self.freight_unit_zar
             cost_unit = self.cost_unit_zar
+
         else:
             fob_amount = self.fob_amount 
             freight_amount = self.freight_amount
@@ -415,7 +432,8 @@ class GenerateSaleOrderWizard(models.TransientModel):
             fob_unit = self.fob_unit
             freight_unit = self.freight_unit
             cost_unit = self.cost_unit
-            
+            currency_id = self.currency_id
+
         if self.supplier_delivery_method != 'sea':
             fob_amount = 0.0
             freight_amount = 0.0
@@ -449,6 +467,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
             'is_indicative': self.is_indicative,
             'validity_date': self.validity_date,
             'payment_term_id': self.payment_term_id.id,
+            'currency_id': currency_id.id,
             'breakbulk_container': self.breakbulk_container,
             'container_type_id': self.container_type_id.id,
             'container_count': self.container_count,
@@ -458,6 +477,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
             'fob_amount': fob_amount,
             'freight_amount': freight_amount,
             'cost_amount': cost_amount,
+            'cost_unit': cost_unit,
             'insurance_amount': insurance_amount,
             'fca_amount': fca_amount,
             'road_transportation_amount': road_transportation_amount,
@@ -473,10 +493,11 @@ class GenerateSaleOrderWizard(models.TransientModel):
             'product_combination_id': order.product_combination_id.id,
             'product_id': order.product_combination_id.product_id.product_variant_id.id,
             'product_uom_qty': self.qty_total,
-            'price_unit': self.cost_unit,
+            'price_unit': cost_unit,
             'tax_id': False,
             'order_id': order.id,
-            'lead_id': lead.id
+            'lead_id': lead.id,
+            'currency_id': currency_id.id,
         }
         order_line = order.env['sale.order.line'].sudo().create(line_vals)
         return {

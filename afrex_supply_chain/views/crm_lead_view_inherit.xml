@@ -912,7 +912,7 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     ZAR
-                                                    <field name="insurance_premium_unit_zar" widget="float"
+                                                    <field name="insurance_premium_amount_zar" widget="float"
                                                            options="{'precision': 4}"/>
                                                 </th>
                                             </tr>
@@ -1732,7 +1732,7 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         ZAR
-                                                        <field name="insurance_premium_unit_zar" widget="float"
+                                                        <field name="insurance_premium_amount_zar" widget="float"
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>

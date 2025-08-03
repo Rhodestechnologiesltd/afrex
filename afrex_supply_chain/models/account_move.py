@@ -259,25 +259,67 @@ class AccountMove(models.Model):
             lead = rec.lead_id
             if not lead.purchase_order_id:
                 raise UserError("No Purchase Order or Supplier CI found for this deal.")
-            insurance = rec.insurance_amount
-            freight = rec.freight_amount
-            interest = self.interest_amount
-            procurement = self.procurement_documentation_amount
-            if lead.cover_report_amount:
-                sales_price = lead.cover_report_amount
-            else:
-                sales_price = rec.cost_amount
+            currency = rec.currency_id
+            exchange_rate = self.lead_id.exchange_rate or self.lead_id.indicative_exchange_rate
+            is_usd = currency == self.env.ref('base.USD')
+            is_zar = currency == self.env.ref('base.ZAR')
+
+            # fob = self.fob_amount
+
+            # fca = self.fca_amount
+            # road = self.road_transportation_amount
+            # logistics = self.logistics_service_amount
+
             if rec.currency_id == self.env.ref('base.ZAR'):
                 roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+                freight_zar = self.freight_amount
+                insurance_zar = self.insurance_amount
+                interest_zar = self.interest_amount
+                procurement_doc_zar = self.procurement_documentation_amount
+
+                if lead.cover_report_amount:
+                    sales_price_zar = lead.cover_report_amount
+                else:
+                    sales_price_zar = rec.cost_amount
+
+                if not lead.is_internal:
+                    fob_zar = sales_price_zar - (freight_zar + insurance_zar)
+                else:
+                    fob_zar = rec.fob_amount
+                    procurement_doc_zar = sales_price_zar - (fob_zar + freight_zar + insurance_zar + interest_zar)
+
+                sales_price = sales_price_zar / exchange_rate
+                fob = fob_zar / exchange_rate
+                freight = freight_zar / exchange_rate
+                insurance = insurance_zar / exchange_rate
+                interest = interest_zar / exchange_rate
+                procurement = procurement_doc_zar / exchange_rate
+            if rec.currency_id == self.env.ref('base.USD'):
+                freight = self.freight_amount
+                insurance = self.insurance_amount
+                interest = self.interest_amount
+                procurement = self.procurement_documentation_amount
+                roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+                sales_price = rec.cost_amount
                 try:
                     sales_price = sales_price / roe
                 except ZeroDivisionError:
                     raise UserError("Exchange rate is zero, cannot convert sales price.")
-            if not lead.is_internal:
-                fob = sales_price - (freight + insurance)
-            else:
-                fob = rec.fob_amount
-                procurement = sales_price - (fob + freight + insurance + interest)
+                if not lead.is_internal:
+                    fob = sales_price - (freight + insurance)
+                else:
+                    fob = rec.fob_amount
+                    procurement = sales_price - (fob + freight + insurance + interest)
+
+                    fob_zar = fob * exchange_rate
+                    freight_zar = freight * exchange_rate
+                    insurance_zar = insurance * exchange_rate
+                    interest_zar = interest * exchange_rate
+                    # fca_zar = fca * exchange_rate
+                    # road_zar = road * exchange_rate
+                    # logistics_zar = logistics * exchange_rate
+                    # cost_zar = cost_usd * exchange_rate
+                    procurement_doc_zar = procurement * exchange_rate
             action = {
                 'name': 'Commercial Invoice',
                 'type': 'ir.actions.act_window',
@@ -289,15 +331,70 @@ class AccountMove(models.Model):
                             'default_date': rec.invoice_date,
                             'default_currency_id': rec.currency_id.id,
                             'default_insurance_amount': insurance,
+                            'default_insurance_amount_zar': insurance_zar,
                             'default_freight_amount': freight,
+                            'default_freight_amount_zar': freight_zar,
                             'default_interest_amount': interest,
+                            'default_interest_amount_zar': interest_zar,
                             'default_procurement_documentation_amount': procurement,
+                            'default_procurement_documentation_amount_zar': procurement_doc_zar,
                             'default_cost_amount': sales_price,
-                            'default_fob_amount': fob,}
+                            'default_cost_amount_zar': sales_price_zar,
+                            'default_fob_amount': fob,
+                            'default_fob_amount_zar': fob_zar,
+                            }
             }
             return action
         else:
             raise UserError("No proforma invoice found.")
+
+    # def asc_confirm_invoice(self):
+    #     for rec in self:
+    #         if rec.move_type == 'out_invoice':
+    #             if rec.purchase_order_id.invoice_status != 'invoiced':
+    #                 raise UserError("Please ensure Supplier CI is recorded first.")
+    #         lead = rec.lead_id
+    #         if not lead.purchase_order_id:
+    #             raise UserError("No Purchase Order or Supplier CI found for this deal.")
+    #         insurance = rec.insurance_amount
+    #         freight = rec.freight_amount
+    #         interest = self.interest_amount
+    #         procurement = self.procurement_documentation_amount
+    #         if lead.cover_report_amount:
+    #             sales_price = lead.cover_report_amount
+    #         else:
+    #             sales_price = rec.cost_amount
+    #         if rec.currency_id == self.env.ref('base.ZAR'):
+    #             roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
+    #             try:
+    #                 sales_price = sales_price / roe
+    #             except ZeroDivisionError:
+    #                 raise UserError("Exchange rate is zero, cannot convert sales price.")
+    #         if not lead.is_internal:
+    #             fob = sales_price - (freight + insurance)
+    #         else:
+    #             fob = rec.fob_amount
+    #             procurement = sales_price - (fob + freight + insurance + interest)
+    #         action = {
+    #             'name': 'Commercial Invoice',
+    #             'type': 'ir.actions.act_window',
+    #             'view_type': 'form',
+    #             'view_mode': 'form',
+    #             'res_model': 'asc.confirm.invoice',
+    #             'target': 'new',
+    #             'context': {'default_sale_invoice_id': rec.id,
+    #                         'default_date': rec.invoice_date,
+    #                         'default_currency_id': rec.currency_id.id,
+    #                         'default_insurance_amount': insurance,
+    #                         'default_freight_amount': freight,
+    #                         'default_interest_amount': interest,
+    #                         'default_procurement_documentation_amount': procurement,
+    #                         'default_cost_amount': sales_price,
+    #                         'default_fob_amount': fob,}
+    #         }
+    #         return action
+    #     else:
+    #         raise UserError("No proforma invoice found.")
 
     def set_incoming_document_wizard(self):
         action = {
