@@ -10,7 +10,7 @@
             <xpath expr="//field[@name='currency_id']" position="after">
                 <field name="incoterm_implementation_date"/>
                 <field name="incoterm_implementation_year"/>
-
+                <field name="display_partner_child"/>
             </xpath>
             <xpath expr="//field[@name='color']" position="after">
                 <field name="seal" widget="image" class="oe_avatar"/>

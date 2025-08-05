@@ -26,11 +26,11 @@
                             <field name="logistics_service_unit"/>
                         </setting> -->
                     </block>
-                    <!-- <block title="Documents" name="asc_document_container">
+                    <block title="Documents" name="asc_document_container">
                         <setting>
                             <field name="display_partner_child"/>
                         </setting>
-                    </block> -->
+                    </block>
                     <block title="Default Documents (Maritime)" name="asc_document_container_sea">
                         <setting>
                             <field name="sea_purchase_incoming_doc_ids" widget="many2many_tags"/>
@@ -81,7 +81,7 @@
         <field name="context">{'module': 'afrex_supply_chain'}</field>
     </record>
 
-<!--    <field name="groups_id" eval="[(4, ref('afrex_supply_chain.group_afrex_settings_only'))]"/>-->
+    <!--    <field name="groups_id" eval="[(4, ref('afrex_supply_chain.group_afrex_settings_only'))]"/>-->
     <!--    <menuitem-->
     <!--        id="menu_settings"-->
     <!--        name="Settings"-->

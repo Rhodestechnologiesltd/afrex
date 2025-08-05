@@ -35,10 +35,13 @@ class ResCompany(models.Model):
     road_sale_invoice_incoming_doc_ids = fields.Many2many('asc.document.type', 'rel_company_sale_invoice_incoming_doc_road', string="Default Documents to be provided by Buyer for Maritime Shipment for Road Transportation")
     road_sale_invoice_outgoing_doc_ids = fields.Many2many('asc.document.type', 'rel_company_sale_invoice_outgoing_doc_road', string="Default Documents to be submitted by Afrex to Buyer for Maritime Shipment for Road Transportation")
     
-    # display_partner_child = fields.Boolean("Display Contact Persons", help="If enabled, the contact persons of partners will be displayed in the PDFs as defined in the Contacts database. To be used after cleaning up the address text of all contacts.")
+    display_partner_child = fields.Boolean("Display Contact Persons", help="If enabled, the contact persons of partners will be displayed in the PDFs as defined in the Contacts database. To be used after cleaning up the address text of all contacts.")
     # x_display_partner_child = fields.Boolean("Display Contact Persons", help="If enabled, the contact persons of partners will be displayed in the PDFs as defined in the Contacts database. To be used after cleaning up the address text of all contacts.")
 
     @api.depends('incoterm_implementation_date')
     def _compute_incoterm_implementation_year(self):
-        if self.incoterm_implementation_date:
-            self.incoterm_implementation_year = str(self.incoterm_implementation_date.year)
+        for rec in self:
+            if rec.incoterm_implementation_date:
+                rec.incoterm_implementation_year = str(rec.incoterm_implementation_date.year)
+            else:
+                rec.incoterm_implementation_year = False
