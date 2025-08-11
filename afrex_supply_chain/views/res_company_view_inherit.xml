@@ -15,24 +15,24 @@
             <xpath expr="//field[@name='color']" position="after">
                 <field name="seal" widget="image" class="oe_avatar"/>
             </xpath>
-            <xpath expr="//notebook/page[@name='general_info']" position="before">
-                <page string="Default Documents">
-                    <group>
-                        <group string="Default Documents (Maritime)">
-                            <field name="sea_purchase_incoming_doc_ids" widget="many2many_tags"/>
-                            <field name="sea_purchase_outgoing_doc_ids" widget="many2many_tags"/>
-                            <field name="sea_sale_invoice_incoming_doc_ids" widget="many2many_tags"/>
-                            <field name="sea_sale_invoice_outgoing_doc_ids" widget="many2many_tags"/>
-                        </group>
-                        <group string="Default Documents (Road)">
-                            <field name="road_purchase_incoming_doc_ids" widget="many2many_tags"/>
-                            <field name="road_purchase_outgoing_doc_ids" widget="many2many_tags"/>
-                            <field name="road_sale_invoice_incoming_doc_ids" widget="many2many_tags"/>
-                            <field name="road_sale_invoice_outgoing_doc_ids" widget="many2many_tags"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
+<!--            <xpath expr="//notebook/page[@name='general_info']" position="before">-->
+<!--                <page string="Default Documents">-->
+<!--                    <group>-->
+<!--                        <group string="Default Documents (Maritime)">-->
+<!--                            <field name="sea_purchase_incoming_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="sea_purchase_outgoing_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="sea_sale_invoice_incoming_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="sea_sale_invoice_outgoing_doc_ids" widget="many2many_tags"/>-->
+<!--                        </group>-->
+<!--                        <group string="Default Documents (Road)">-->
+<!--                            <field name="road_purchase_incoming_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="road_purchase_outgoing_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="road_sale_invoice_incoming_doc_ids" widget="many2many_tags"/>-->
+<!--                            <field name="road_sale_invoice_outgoing_doc_ids" widget="many2many_tags"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                </page>-->
+<!--            </xpath>-->
         </field>
     </record>
 <!--    <record id="asc_action_company_form_view" model="ir.actions.act_window">-->

@@ -52,7 +52,7 @@
         "report/address_layout_inherit.xml",
         "report/asc_paper_format.xml",
         "report/asc_report.xml",
-        # "views/res_company_view_inherit.xml",
+        "views/res_company_view_inherit.xml",
         "views/res_config_settings_view_inherit.xml",
         "views/res_partner_view_inherit.xml",
         "views/res_bank_view_inherit.xml",

@@ -168,7 +168,7 @@
                     <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
                         <li>
                             <button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate"
-                                    type="object" class="btn-mute"/>
+                                    type="object" class="btn-mute" invisible="not is_rfq_generated"/>
                         </li>
                         <li>
                             <button name="print_quotation" icon="fa-dollar" string="Quote / Offer" type="object"
