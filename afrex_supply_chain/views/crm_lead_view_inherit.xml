@@ -14,16 +14,47 @@
             </xpath>
         </field>
     </record>
-    <!--    <record id="asc_crm_lead_tree_view" model="ir.ui.view">-->
-    <!--        <field name="name">asc.crm.lead.tree</field>-->
-    <!--        <field name="model">crm.lead</field>-->
-    <!--        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>-->
-    <!--        <field name="arch" type="xml">-->
-    <!--            <xpath expr="//tree" position="attributes">-->
+    <record id="asc_crm_lead_tree_view_inherit" model="ir.ui.view">
+        <field name="name">asc.crm.lead.tree_inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
 
-    <!--            </xpath>-->
-    <!--        </field>-->
-    <!--    </record>-->
+
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contact_name']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//button[@name='314']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='424']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="sale_purchase_order_num" string="Buyer PO No." optional="show"/>
+                <field name="product_id" string="Product" optional="show"/>
+                <field name="product_qty" string="Product qty" optional="show"/>
+                <field name="loading_port_id" string="Port/Place of Loading" optional="show"/>
+                <field name="discharge_port_id" string="Port/Place of Discharge" optional="show"/>
+                <field name="expected_shipment_date" string="Expected Shipment Date" optional="show"/>
+                <field name="booking_num" string="Booking or BL No." optional="show"/>
+                <field name="vessel" string="Vessel" optional="hide"/>
+                <field name="voyage" string="Voyage" optional="hide"/>
+                <field name="expected_arrival_date" string="Expected Arrival Date" optional="hide"/>
+                <field name="logistics_state" string="Logistics Status" optional="hide"/>
+            </xpath>
+
+        </field>
+    </record>
 
 
     <record id="asc_quick_create_lead_form" model="ir.ui.view">
