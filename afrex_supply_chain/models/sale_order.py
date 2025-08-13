@@ -254,8 +254,8 @@ class SaleOrder(models.Model):
         currency = self.currency_id
         exchange_rate = self.exchange_rate or self.indicative_exchange_rate
 
-        if not exchange_rate or exchange_rate == 0.0:
-            raise UserError("Exchange rate is missing or zero.")
+        # if not exchange_rate or exchange_rate == 0.0:
+        #     raise UserError("Exchange rate is missing or zero.")
 
         is_usd = currency == self.env.ref('base.USD')
         is_zar = currency == self.env.ref('base.ZAR')

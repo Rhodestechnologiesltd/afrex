@@ -96,7 +96,7 @@
                             </td>
                         </tr>
                     </table>
-                    <table class="table-sm table-borderless mb-2 mx-0" style="font-size: 12px; width: 100%; border: 0px solid white;">
+                    <table class="table-sm table-borderless mb-2 mx-0" style="width: 100%; border: 0px solid white;">
                         <tr t-if="o.name">
                             <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference:</th>
                             <th style="width:35%; text-align: left;"><span t-field="o.name"/></th>

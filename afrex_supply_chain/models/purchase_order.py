@@ -137,7 +137,7 @@ class PurchaseOrder(models.Model):
 
     expected_sob_date = fields.Date("Expected Shipped on Board Date", related='lead_id.expected_sob_date',
                                     readonly=False)
-    sob_date = fields.Date("Shipped on Board Date", related='lead_id.sob_date')
+    sob_date = fields.Date("Shipped on Board Date", related='lead_id.sob_date', readonly=False)
 
     is_selected = fields.Boolean("Selected for deal")
 
@@ -574,11 +574,19 @@ class PurchaseOrder(models.Model):
         self.name = seq
 
         if self.incoterm_selection == 'fob':
-            self.fob_unit = self.cost_unit
-            self.fob_amount = self.cost_amount
-            self.freight_unit = 0.0
-            self.freight_amount = 0.0
-            self.insurance_amount = 0.0
+            # if self.insurance_amount == 0.0 or self.freight_amount == 0.0:
+            #     self.insurance_amount = lead.insurance_premium_amount
+            #     # self.insurance_amount = lead.insurance_premium_amount
+            #     self.freight_amount = lead.afrex_freight_amount
+            #     self.freight_unit = lead.afrex_freight_amount / self.qty_total
+            #     self.fob_amount = self.cost_amount - self.insurance_amount - self.freight_amount
+            #     self.fob_unit = self.fob_amount / self.qty_total
+            #     # self.fob_unit =  self.insurance_amount + self.freight_amount
+            # else:
+            #     pass
+            # self.fob_unit = self.fob_amount / self.qty_total
+            # self.fob_unit = self.cost_unit
+            # self.insurance_amount = 0.0
             self.fca_unit = 0.0
             self.fca_amount = 0.0
             self.road_transportation_unit = 0.0

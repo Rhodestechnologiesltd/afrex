@@ -356,7 +356,7 @@
                             <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="insurance_amount"
-                               readonly="incoterm_selection != 'cif' or state not in ['draft', 'sent']" widget="float"
+                               readonly="incoterm_selection not in ['cif', 'fob'] or state not in ['draft', 'sent']" widget="float"
                                options="{'precision': 2}"/>
                         <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
                         <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
@@ -369,7 +369,7 @@
                         <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
                         <div class="o_row" invisible="breakbulk_container != 'container'">
                             <field id="freight_amount" name="freight_amount"
-                                   readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']"
+                                   readonly="state not in ['draft', 'sent']"
                                    widget="float" options="{'precision': 2}"/>
                             Freight/MT:
                             <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
@@ -453,12 +453,12 @@
                             <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="insurance_amount"
-                               readonly="incoterm_selection != 'cif' or state not in ['draft', 'sent']" widget="float"
+                               readonly="incoterm_selection not in ['cif' , 'fob'] or state not in ['draft', 'sent']" widget="float"
                                options="{'precision': 2}"/>
                         <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
                         <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
                             <field name="freight_unit"
-                                   readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']"
+                                   readonly="state not in ['draft', 'sent']"
                                    widget="float" options="{'precision': 2}"/>
                             Total:
                             <field name="freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
