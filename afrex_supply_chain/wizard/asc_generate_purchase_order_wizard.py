@@ -21,7 +21,8 @@ class GeneratePurchaseOrderWizard(models.TransientModel):
                                                  ('road', "Road"),
                                                  ('air', "Air")], related='lead_id.supplier_delivery_method', readonly=False)
 
-    loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='lead_id.loading_port_id', readonly=False)
+    # loading_port_id = fields.Many2one('asc.port', "Port of Loading", related='lead_id.loading_port_id', readonly=False)
+    load_port_id = fields.Many2one('asc.port', "Port of Loading")
     discharge_port_id = fields.Many2one('asc.port', "Port of Discharge", related='lead_id.discharge_port_id', readonly=False)
 
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.ref('base.USD'), required=True)
@@ -104,6 +105,7 @@ class GeneratePurchaseOrderWizard(models.TransientModel):
                     'second_consignee_id': second_consignee.id,
                     'product_combination_id': lead.product_combination_id.id,
                     'origin': origin,
+                    'loading_port_id': self.load_port_id.id,
                     'discharge_port_id': self.discharge_port_id.id,
                     'origin_country_id': supplier.country_id.id,
                     'currency_id': self.currency_id.id,
