@@ -263,7 +263,12 @@ class AccountMove(models.Model):
             exchange_rate = self.lead_id.exchange_rate or self.lead_id.indicative_exchange_rate
             is_usd = currency == self.env.ref('base.USD')
             is_zar = currency == self.env.ref('base.ZAR')
-
+            insurance = insurance_zar = 0.0
+            freight = freight_zar = 0.0
+            interest = interest_zar = 0.0
+            procurement = procurement_doc_zar = 0.0
+            sales_price = sales_price_zar = 0.0
+            fob = fob_zar = 0.0
             # fob = self.fob_amount
 
             # fca = self.fca_amount
@@ -300,15 +305,11 @@ class AccountMove(models.Model):
                 interest = self.interest_amount
                 procurement = self.procurement_documentation_amount
                 roe = lead.exchange_rate if lead.exchange_rate else lead.indicative_exchange_rate
-                if not roe or roe == 0.0:
-                    sales_price = rec.cost_amount
-                else:
-                    sales_price = rec.cost_amount / roe
-                # sales_price = rec.cost_amount
-                # try:
-                #     sales_price = sales_price / roe
-                # except ZeroDivisionError:
-                #     raise UserError("Exchange rate is zero, cannot convert sales price.")
+                sales_price = rec.cost_amount
+                try:
+                    sales_price = sales_price / roe
+                except ZeroDivisionError:
+                    raise UserError("Exchange rate is zero, cannot convert sales price.")
                 if not lead.is_internal:
                     fob = sales_price - (freight + insurance)
                 else:
