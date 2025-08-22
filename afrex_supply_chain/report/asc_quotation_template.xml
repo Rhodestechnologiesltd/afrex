@@ -1036,12 +1036,12 @@
                 </table>
                 <div style="font-size: 12px; width: 35%; margin-top: 0%; margin-bottom: 0%; margin-right: 5%; padding-bottom: 0px;">
                     <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)"
-                         style="margin-top: 50px; padding-left: 20px; max-height: 110px;" alt="Company Seal"/>
+                            style="margin-top: 50px; padding-left: 20px; max-height: 110px;" alt="Company Seal"/>
                     <br/>
                     <br/>
                     <br/>
-                    <span style="padding-left: 150px;" t-if="o.date_order">Date:</span>
-                    <span t-if="o.date_order" t-esc="o.date_order.strftime('%d-%B-%Y')"/>
+                    <span style="margin-top:20px; padding-left: 100px;" t-if="o.date_order">Date:</span>
+                        <span t-if="o.date_order" t-esc="o.date_order.strftime('%d-%B-%Y')"/>
                 </div>
             </div>
         </t>

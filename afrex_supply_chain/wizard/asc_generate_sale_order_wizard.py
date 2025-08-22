@@ -235,9 +235,16 @@ class GenerateSaleOrderWizard(models.TransientModel):
                     rec.procurement_documentation_amount_zar = procurement * self.exchange_rate
                     self.get_fob_amount()
                 else:
-                    fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
-                    rec.fob_amount = fob
-                    rec.fob_amount_zar = fob * self.exchange_rate
+                    # fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                    # rec.fob_amount = fob
+                    # rec.fob_amount_zar = fob * self.exchange_rate
+                    if rec.fob_amount and rec.fob_amount != 0.0:
+                        fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                        rec.fob_amount = fob
+                        rec.fob_amount_zar = fob * rec.exchange_rate
+                    else:
+                        rec.fob_amount = 0.0
+                        rec.fob_amount_zar = 0.0
             else:
                 rec.fob_amount = 0.0
                 rec.fob_amount_zar = 0.0

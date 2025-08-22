@@ -34,10 +34,10 @@
             <div class="alert alert-info text-center mt-2 mb-2" role="alert" invisible="not incoterm_change">
                 <div>
                     <h6>
-                        The incoterm has changed. Please fetch and apply the latest values.
+                         Please verify all the details before validating.
                     </h6>
                     <h5>
-                        <button name="action_apply_incoterm" string="Apply" type="object" data-hotkey="a"/>
+                        <button name="action_apply_incoterm" string="Validate" type="object" data-hotkey="a"/>
                     </h5>
                 </div>
             </div>

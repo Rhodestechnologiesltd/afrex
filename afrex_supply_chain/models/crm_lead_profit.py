@@ -57,6 +57,8 @@ class Lead(models.Model):
 
     sales_cost = fields.Float(string="sales_cost", compute='compute_sales_cost', store=True)
     other_cost = fields.Float(string="other_cost", compute='compute_other_cost', store=True)
+    other_cost_updated = fields.Float(string="other_cost", compute='compute_other_cost_updated', store=True)
+    other_cost_agreed = fields.Float(string="other_cost", compute='compute_other_cost_agreed', store=True)
     total_cost = fields.Float(string="total_cost", compute='compute_total_cost', store=True)
     total_cost_updated = fields.Float(string="total_cost", compute='compute_total_cost_updated', store=True)
     total_cost_updated_agreed = fields.Float(string="total_cost", compute='compute_total_cost_updated_agreed',
@@ -306,6 +308,22 @@ class Lead(models.Model):
     def compute_total_cost(self):
         for rec in self:
             rec.total_cost = rec.sales_cost + rec.other_cost
+
+    @api.depends('other_cost', 'credit_insurance_amount')
+    def compute_other_cost_updated(self):
+        for rec in self:
+            if rec.credit_insurance_amount:
+                rec.other_cost_updated = rec.other_cost + rec.credit_insurance_amount
+            else:
+                rec.other_cost_updated = rec.other_cost
+
+    @api.depends('other_cost', 'agreed_credit_insurance_amount')
+    def compute_other_cost_agreed(self):
+        for rec in self:
+            if rec.agreed_credit_insurance_amount:
+                rec.other_cost_agreed = rec.other_cost + rec.agreed_credit_insurance_amount
+            else:
+                rec.other_cost_agreed = rec.other_cost
 
     @api.depends('total_cost', 'credit_insurance_amount')
     def compute_total_cost_updated(self):
