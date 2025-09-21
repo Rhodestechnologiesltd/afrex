@@ -45,20 +45,21 @@
                         <field name="purchase_fob_amount" string="FOB" readonly="True"/>
                         <field name="purchase_freight_amount" string="Freight" readonly="True"/>
                         <field name="purchase_insurance_amount" string="Insurance" readonly="True"/>
+                        <field name="is_click" invisible="True"/>
                     </group>
                 </group>
                 <hr/>
                 <div class="alert alert-info text-center" role="alert">
                     <div>
                         <h6>
-                            To update and overwrite costing below based on the final Supplier Costing and Profit Estimate values, click on "Update".
+                            Verify all details and click on "Update".
                         </h6>
                         <h5>
                             <button name="action_update_pricing" string="Update" type="object" data-hotkey="a"/>
                         </h5>
                     </div>
                 </div>
-                <group string="USD">
+                <group string="USD" invisible="not is_click">
                     <group>
                         <label for="fob_amount" string="FOB"/>
                         <div class="o_row">
@@ -92,7 +93,7 @@
                         <field name="procurement_documentation_amount"/>
                     </group>
                 </group>
-                <group string="ZAR" invisible="not is_currency_zar">
+                <group string="ZAR" invisible="not is_currency_zar or not is_click">
                     <group>
                         <label for="fob_amount_zar" string="FOB"/>
                         <div class="o_row">

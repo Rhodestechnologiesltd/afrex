@@ -37,8 +37,8 @@ class UpdateSaleOrderWizard(models.TransientModel):
     initial_freight_unit = fields.Float("Freight/MT", related='sale_order_id.freight_unit', digits="Prices per Unit")
     initial_cost_unit = fields.Float("Cost/MT", related='sale_order_id.cost_unit', digits="Prices per Unit")
     
-    fob_amount = fields.Float("FOB", compute="_compute_fob_amount", store=True)
-    freight_amount = fields.Float("Freight")
+    fob_amount = fields.Float("FOB", compute="_compute_fob_amount", store=True, digits="Prices per Unit")
+    freight_amount = fields.Float("Freight", compute="_compute_freight_amount", store=True, digits="Prices per Unit")
     cost_amount = fields.Float("Cost")
     insurance_amount = fields.Float("Insurance")
     interest_amount = fields.Float("Interest")
@@ -145,6 +145,11 @@ class UpdateSaleOrderWizard(models.TransientModel):
             except ZeroDivisionError:
                 rec.fob_unit = 0
             
+    @api.depends('freight_amount','qty_total')
+    def _compute_freight_amount(self):
+        for rec in self:
+            rec.freight_amount = self.purchase_order_id.freight_amount
+
     @api.depends('freight_amount','qty_total')
     def _compute_freight_unit(self):
         for rec in self:

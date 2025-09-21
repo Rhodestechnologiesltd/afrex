@@ -73,7 +73,7 @@ class PurchaseOrder(models.Model):
     freight_unit = fields.Float("Freight/MT", digits="Prices per Unit", tracking=True)
     cost_unit = fields.Float("Cost/MT", digits="Prices per Unit", tracking=True)
 
-    fob_amount = fields.Float("FOB", compute="_compute_fob_amount", store=True, readonly=False,
+    fob_amount = fields.Float("FOB", compute="_compute_fob_amount", inverse="_inverse_fob_amount", store=True, readonly=False,
                               digits="Prices per Unit")
     freight_amount = fields.Float("Freight", readonly=False, digits="Prices per Unit")
     cost_amount = fields.Float("Cost", compute="_compute_cost_amount", store=True, readonly=False,
@@ -140,6 +140,8 @@ class PurchaseOrder(models.Model):
     sob_date = fields.Date("Shipped on Board Date", related='lead_id.sob_date', readonly=False)
 
     is_selected = fields.Boolean("Selected for deal")
+
+    is_close_readonly = fields.Boolean(default=False)
 
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
@@ -213,6 +215,15 @@ class PurchaseOrder(models.Model):
             else:
                 rec.fob_amount = rec.fob_unit * rec.qty_total
 
+    @api.depends('fob_unit', 'qty_total', 'qty_delivered')
+    def _inverse_fob_amount(self):
+        for rec in self:
+            if rec.qty_delivered > 0:
+                if rec.qty_delivered:
+                    rec.fob_unit = rec.fob_amount / rec.qty_delivered
+            else:
+                if rec.qty_total:
+                    rec.fob_unit = rec.fob_amount / rec.qty_total
     @api.depends('fca_unit', 'qty_total', 'qty_delivered')
     def _compute_fca_amount(self):
         for rec in self:
@@ -418,6 +429,139 @@ class PurchaseOrder(models.Model):
             'target': 'new'
         }
 
+    # update proforma
+    def action_apply_proforma(self):
+        self.ensure_one()
+
+        sale_invoice_id = self.sale_invoice_id
+        sale_order_id = self.sale_order_id
+        lead = self.lead_id
+        base_qty = self.qty_delivered if self.qty_delivered > 0 else self.qty_total
+        if not base_qty:
+            raise UserError("No valid quantity found (received or total).")
+        if not sale_invoice_id and sale_order_id:
+            raise UserError("No Saleorder/invoice found for this sale order.")
+
+        if sale_invoice_id.state != 'draft':
+            raise UserError("Invoice must be in draft state to update values.")
+
+        # Get currencies
+        currency_usd = self.env.ref('base.USD')
+        currency_zar = self.env.ref('base.ZAR')
+
+        # Update qty
+        sale_invoice_id.qty_delivered = base_qty
+        lead.sudo().compute_sales_price()
+        self.env.cr.commit()
+
+        # Common values
+        sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        sales_price = sales_price_unit * base_qty
+        exchange_rate = lead.indicative_exchange_rate or 1.0
+
+        insurance_amount = self.insurance_amount
+        interest_amount = lead.credit_cost_total
+        freight_amount = self.freight_amount
+
+        # Calculate FOB and procurement documentation
+        if not lead.is_internal:
+            pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
+            fob = sales_price - (insurance_amount + freight_amount)
+        else:
+            fob = self.fob_amount
+            pro_doc_amount = sales_price - (
+                    insurance_amount + freight_amount + interest_amount + sale_invoice_id.procurement_documentation_amount)
+        # If invoice currency is ZAR → convert values
+        if sale_invoice_id.currency_id == currency_zar:
+            insurance_amount *= exchange_rate
+            interest_amount *= exchange_rate
+            freight_amount *= exchange_rate
+            pro_doc_amount *= exchange_rate
+            fob *= exchange_rate
+            sales_price *= exchange_rate
+            sales_price_unit *= exchange_rate
+
+        # Set invoice values
+        sale_invoice_id.insurance_amount = insurance_amount
+        sale_invoice_id.interest_amount = interest_amount
+        sale_invoice_id.freight_amount = freight_amount
+        sale_invoice_id.cost_amount = sales_price_unit * base_qty
+        sale_invoice_id.cost_unit = sales_price_unit
+        sale_invoice_id.fob_amount = fob
+        sale_invoice_id.procurement_documentation_amount = pro_doc_amount
+
+        # sale_order.write(new_vals)
+        for line in sale_invoice_id.invoice_line_ids:
+            line.quantity = base_qty
+            line.price_unit = sales_price_unit
+        sale_invoice_id.message_post(body=_("Insurance, Freight and Fob values are updated."))
+
+    def action_apply_commercial(self):
+        self.ensure_one()
+
+        sale_invoice_id = self.sale_invoice_id
+        sale_order_id = self.sale_order_id
+        lead = self.lead_id
+        base_qty = self.qty_delivered if self.qty_delivered > 0 else self.qty_total
+        if not base_qty:
+            raise UserError("No valid quantity found (received or total).")
+        if not sale_invoice_id and sale_order_id:
+            raise UserError("No Saleorder/invoice found for this sale order.")
+
+        if sale_invoice_id.state != 'posted':
+            raise UserError("Invoice must be in Commercial state to update values.")
+
+        # Get currencies
+        currency_usd = self.env.ref('base.USD')
+        currency_zar = self.env.ref('base.ZAR')
+
+        # Update qty
+        sale_invoice_id.qty_delivered = base_qty
+        lead.sudo().compute_sales_price()
+        self.env.cr.commit()
+
+        # Common values
+        sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        sales_price = sales_price_unit * base_qty
+        exchange_rate = lead.indicative_exchange_rate or 1.0
+
+        insurance_amount = self.insurance_amount
+        interest_amount = lead.credit_cost_total
+        freight_amount = self.freight_amount
+
+        # Calculate FOB and procurement documentation
+        if not lead.is_internal:
+            pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
+            fob = sales_price - (insurance_amount + freight_amount)
+        else:
+            fob = self.fob_amount
+            pro_doc_amount = sales_price - (
+                    insurance_amount + freight_amount + interest_amount + sale_invoice_id.procurement_documentation_amount)
+        # If invoice currency is ZAR → convert values
+        if sale_invoice_id.currency_id == currency_zar:
+            insurance_amount *= exchange_rate
+            interest_amount *= exchange_rate
+            freight_amount *= exchange_rate
+            pro_doc_amount *= exchange_rate
+            fob *= exchange_rate
+            sales_price *= exchange_rate
+            sales_price_unit *= exchange_rate
+
+        # Set invoice values
+        sale_invoice_id.insurance_amount = insurance_amount
+        sale_invoice_id.interest_amount = interest_amount
+        sale_invoice_id.freight_amount = freight_amount
+        sale_invoice_id.cost_amount = sales_price_unit * base_qty
+        sale_invoice_id.cost_unit = sales_price_unit
+        sale_invoice_id.fob_amount = fob
+        sale_invoice_id.procurement_documentation_amount = pro_doc_amount
+
+        # sale_order.write(new_vals)
+        for line in sale_invoice_id.invoice_line_ids:
+            line.quantity = base_qty
+            line.price_unit = sales_price_unit
+        sale_invoice_id.message_post(body=_("Insurance, Freight and Fob values are updated"))
+
     def update_sales_order(self):
         self.ensure_one()
         self.action_set_select()
@@ -426,12 +570,15 @@ class PurchaseOrder(models.Model):
         if not sale_order:
             raise UserError("No offer found.")
         else:
+            base_qty = self.qty_delivered if self.qty_delivered > 0 else self.qty_total
+            if not base_qty:
+                raise UserError("No valid quantity found (received or total).")
             lead.sudo().compute_sales_price()
             self.env.cr.commit()
             insurance = self.insurance_amount
             freight = self.freight_amount
             fca = self.fca_amount
-            interest = lead.credit_cost_amount
+            interest = lead.credit_cost_total
             procurement = lead.procurement_fee_amount
             if lead.is_sales_price_override:
                 sales_price = lead.agreed_sales_price
@@ -452,10 +599,10 @@ class PurchaseOrder(models.Model):
                 interest = interest * exchange_rate
                 procurement = procurement * exchange_rate
                 sales_price = sales_price * exchange_rate
-            freight_unit = freight / self.qty_total
-            fca_unit = fca / self.qty_total
-            fob_unit = fob / self.qty_total
-            cost_unit = sales_price / self.qty_total
+            freight_unit = freight / base_qty
+            fca_unit = fca / base_qty
+            fob_unit = fob / base_qty
+            cost_unit = sales_price / base_qty
             new_vals = {
                 'qty_total': self.qty_total,
                 'freight_amount': freight,
@@ -488,7 +635,7 @@ class PurchaseOrder(models.Model):
         insurance = self.insurance_amount
         freight = self.freight_amount
         fca = self.fca_amount
-        interest = lead.credit_cost_amount
+        interest = lead.credit_cost_total
         sales_price = lead.agreed_sales_price if lead.is_sales_price_override else lead.sales_price
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
@@ -511,9 +658,9 @@ class PurchaseOrder(models.Model):
             fob = sales_price - (insurance + freight + interest + procurement)
 
 
-        freight_unit = freight / self.qty_total
-        fob_unit = fob / self.qty_total
-        cost_unit = sales_price / self.qty_total
+        # freight_unit = freight / self.qty_total
+        # fob_unit = fob / self.qty_total
+        # cost_unit = sales_price / self.qty_total
 
 
         context = {
@@ -725,7 +872,7 @@ class PurchaseOrder(models.Model):
             road_transportation = 0
             logistics_service = 0
 
-        interest = lead.credit_cost_amount
+        interest = lead.credit_cost_total
 
         if lead.is_sales_price_override:
             sales_price = lead.agreed_sales_price
@@ -828,6 +975,15 @@ class PurchaseOrder(models.Model):
                         'default_freight_amount': self.freight_amount,
                         'default_cost_amount': self.cost_amount,
                         'default_insurance_amount': insurance_amount,
+                        'default_old_fob_unit': self.fob_unit,
+                        'default_old_fca_unit': self.fca_unit,
+                        'default_old_freight_unit': self.freight_unit,
+                        'default_old_cost_unit': self.cost_unit,
+                        'default_old_fob_amount': self.fob_amount,
+                        'default_old_freight_amount': self.freight_amount,
+                        'default_old_cost_amount': self.cost_amount,
+                        'default_old_insurance_amount': insurance_amount,
+                        'default_currency_id': self.currency_id.id,
                         }
         }
         return action

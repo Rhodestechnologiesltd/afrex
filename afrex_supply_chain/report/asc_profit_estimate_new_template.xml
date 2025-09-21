@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="row mb-2" style="margin-left: 2%; margin-right: 2%;">
-                <table class="table-borderless" style="width: 50%; font-size:11px;">
+                <table class="table-borderless" style="width: 50%; font-size:10px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Date:</span>
@@ -44,7 +44,7 @@
                         </td>
                     </tr>
                 </table>
-                <table class="table-borderless" style="width: 50%; font-size:11px;">
+                <table class="table-borderless" style="width: 50%; font-size:10px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Goods:</span>
@@ -65,7 +65,7 @@
                 </table>
             </div>
             <div class="row mb-3" style="margin-left: 2%; margin-right: 2%;">
-                <table class="table-borderless" style="width: 50%; font-size:11px;">
+                <table class="table-borderless" style="width: 50%; font-size:10px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Supplier:</span>
@@ -123,8 +123,9 @@
                             <span style="padding-left: 5px;" t-field="o.loading_port_id.name"/>
                         </td>
                     </tr>
+
                 </table>
-                <table class="table-borderless" style="width: 50%; font-size:11px;">
+                <table class="table-borderless" style="width: 50%; font-size:10px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Buyer:</span>
@@ -223,9 +224,12 @@
                         </td>
                     </tr>
                 </table>
+
             </div>
+
+
             <table t-if="o.is_internal and o.indicative_exchange_rate and not o.exchange_rate"
-                   class="table-borderless mb-2" style="width: 96%; font-size:11px; margin-left: 2%; margin-right: 2%;">
+                   class="table-borderless mb-2" style="width: 96%; font-size:10px; margin-left: 2%; margin-right: 2%;">
                 <tr class="text-start">
                     <th style="width: 30%;">
                         <span style="padding-left: 5px;">*Indicative Rate of Exchange (ROE) USDZAR:</span>
@@ -243,7 +247,7 @@
                 </tr>
             </table>
             <table t-if="o.is_internal and o.exchange_rate" class="table-borderless mb-2"
-                   style="width: 96%; font-size:11px; margin-left: 2%; margin-right: 2%;">
+                   style="width: 96%; font-size:10px; margin-left: 2%; margin-right: 2%;">
                 <tr class="text-start">
                     <th style="width: 30%;">
                         <span style="padding-left: 5px;">*Booked Rate of Exchange (ROE) USDZAR:</span>
@@ -254,12 +258,76 @@
                 </tr>
             </table>
             <table class="table-sm table-bordered mt-4"
-                   style="width: 96%; font-size:11px; border: 1px solid black; margin-left: 2%; margin-right: 2%;">
+                   style="width: 96%; font-size:10px; border: 1px solid black; margin-left: 2%; margin-right: 2%;">
+                <tr class="text-start" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                        <th t-if="not o.is_internal" colspan="2" class="text-start" style="width: 50%; font-size:12px;">
+                            <span style="padding-left: 5px;">Trade Finance Through SGT - Credit Terms:
+                                <span t-field="o.credit_days"/>
+                                Days from Statement
+                            </span>
+                        </th>
+                    <th t-if="o.is_internal" colspan="3" class="text-start" style="width: 50%; font-size:12px;">
+                            <span style="padding-left: 5px;">Trade Finance Through SGT - Credit Terms:
+                                <span t-field="o.credit_days"/>
+                                Days from Statement
+                            </span>
+                        </th>
+                    </tr>
+                    <tr class="text-start">
+                        <th class="text-start" style="width: 30%">
+                            <span style="padding-left: 5px;">Nominal Rate (SOFR + 2.75%)
+                            </span>
+                        </th>
+                        <th class="text-start">
+                            <span t-esc="'{:.4f}%'.format((o.total_sofr or 0) * 100)"/>
+                        </th>
+                        <th t-if="o.is_internal" style="width:30%;"/>
+                    </tr>
+                    <tr class="text-start">
+                        <th class="text-start" style="width: 30%">
+                            <span style="padding-left: 5px;">Effective Rate
+                            </span>
+                        </th>
+                        <th class="text-start">
+                            <span t-esc="'{:.4f}%'.format((o.eff_rate or 0) * 100)"/>
+                        </th>
+                        <th t-if="o.is_internal" style="width:30%;"/>
+                    </tr>
+                    <tr class="text-start">
+                        <th class="text-start" style="width: 30%">
+                            <span style="padding-left: 5px;">Day Rate
+                            </span>
+                        </th>
+                        <th class="text-start">
+                            <span t-esc="'{:.4f}%'.format((o.day_rate or 0) * 100)"/>
+                        </th>
+                        <th t-if="o.is_internal" style="width:30%;"/>
+                    </tr>
+                    <tr class="text-start">
+                        <th class="text-start" style="width: 30%">
+                            <span style="padding-left: 5px;">Planned Payment Date
+                            </span>
+                        </th>
+                        <th class="text-start">
+                            <span t-esc="o.expected_payment_date.strftime('%d-%B-%Y')"/>
+                        </th>
+                        <th t-if="o.is_internal" style="width:30%;"/>
+                    </tr>
+                    <tr class="text-start">
+                        <th class="text-start" style="width: 30%">
+                            <span style="padding-left: 5px;">Month End Date
+                            </span>
+                        </th>
+                        <th class="text-start">
+                            <span t-esc="o.month_end.strftime('%d-%B-%Y')"/>
+                        </th>
+                        <th t-if="o.is_internal" style="width:30%;"/>
+                    </tr>
                 <tr style="border-bottom: 1px solid black; border-top: 1px solid black;">
                     <th t-if="not o.is_internal" colspan="2" class="text-start" style="font-size:12px;">
                         Pricing
                     </th>
-                    <th t-if="o.is_internal" colspan="3" class="text-start" style="font-size:12px;">
+                    <th t-if="o.is_internal" colspan="3" class="text-start" style="font-size:12px; font-weight:bold;">
                         Pricing
                     </th>
                 </tr>
@@ -447,9 +515,9 @@
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD
-                        <span t-if="is_cif_override" class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.purchase_order_cif_amount" t-options="{'widget': 'float', 'precision': 2}"/>
                         <span t-if="not is_cif_override" class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.purchase_order_cif_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                        <span t-if="is_cif_override" class="float-end" style="padding-left: 5px; text-align: right;"
                               t-field="o.manual_purchase_order_cif_amount"
                               t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
@@ -566,18 +634,74 @@
                         <th t-if="o.is_internal" style="width:30%;"/>
                     </tr>
                 </t>
-                <tr t-if="not o.is_internal">
+                <!--                Credit cost Commission amount and bank charges-->
+                <tr>
                     <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Credit Cost</span>
-                        <span t-esc="'{:.2f}%'.format((o.credit_cost_rate or 0) * 100)"/>
-                        per annum over
-                        <span t-field="o.credit_cost_month"/>
-                        months
+                        <span style="padding-left: 5px;">Commission -</span>
+                        <span t-esc="'{:.2f}%'.format((o.commission_amount or 0) * 100)"/>
+                        against CIF Purchase Price
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD
                         <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.credit_cost_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                              t-field="o.total_commission_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                        <span/>
+                    </th>
+                </tr>
+
+                <tr>
+                    <th class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">Bank Charges USD <span t-field="o.bank_charges_amount"/> per Transaction</span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.total_bank_charges_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                        <span/>
+                    </th>
+                </tr>
+                <!--                updated credit cost-->
+                <tr t-if="not o.is_internal">
+                    <th class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost from Payment date to Month end</span>
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.credit_cost_to_month_end" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                        ZAR
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.credit_cost_amount_month_end_zar"
+                              t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                </tr>
+                <tr t-if="not o.is_internal">
+                    <th t-if="o.credit_days == 120" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/> Days
+                        (Bill of Lading + 90
+                        days)
+                    </th>
+                    <th t-elif="o.credit_days == 180" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/> Days
+                        (Berthing + 120 days)
+                    </th>
+                    <th t-else="" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/>
+                        Days
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.total_credit_cost" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                         ZAR
@@ -585,21 +709,17 @@
                               t-field="o.credit_cost_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
-                <tr t-if="not o.is_internal and not o.is_sales_price_override">
-                    <th t-if="o.is_sales_price_override" class="text-start" style="width:40%;">
+                <!--                updated credit insurance amount-->
+                <tr>
+                    <th class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">Credit Insurance Cost</span>
                         <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/>
-                        against calculated Selling Price
-                    </th>
-                    <th t-else="" class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Credit Insurance Cost</span>
-                        <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/>
-                        against CIF Selling Price
+                        against CIF Purchase Price
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD
                         <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.credit_insurance_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                              t-field="o.credit_insurance_amount_new" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                         ZAR
@@ -608,7 +728,49 @@
                               t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
-                <tr t-if="o.is_internal">
+                <!--                <tr t-if="not o.is_internal">-->
+                <!--                    <th class="text-start" style="width:40%;">-->
+                <!--                        <span style="padding-left: 5px;">Credit Cost</span>-->
+                <!--                        <span t-esc="'{:.2f}%'.format((o.credit_cost_rate or 0) * 100)"/>-->
+                <!--                        per annum over-->
+                <!--                        <span t-field="o.credit_cost_month"/>-->
+                <!--                        months-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_cost_amount" t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        ZAR-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_cost_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                </tr>-->
+                <!--                <tr t-if="not o.is_internal and not o.is_sales_price_override">-->
+                <!--                    <th t-if="o.is_sales_price_override" class="text-start" style="width:40%;">-->
+                <!--                        <span style="padding-left: 5px;">Credit Insurance Cost</span>-->
+                <!--                        <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/>-->
+                <!--                        against calculated Selling Price-->
+                <!--                    </th>-->
+                <!--                    <th t-else="" class="text-start" style="width:40%;">-->
+                <!--                        <span style="padding-left: 5px;">Credit Insurance Cost</span>-->
+                <!--                        <span t-esc="'{:.2f}%'.format((o.credit_insurance_rate or 0) * 100)"/>-->
+                <!--                        against CIF Selling Price-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_insurance_amount" t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        ZAR-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_insurance_amount_zar"-->
+                <!--                              t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                </tr>-->
+                <tr>
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
                             <b>Other Costs [B]</b>
@@ -623,7 +785,7 @@
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                     </th>
                 </tr>
-                <tr t-if="o.is_internal">
+                <tr>
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
                             <b>Total Costs [A + B]</b>
@@ -632,95 +794,95 @@
                     <th class="text-start" style="width:30%;">
                         USD
                         <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.total_cost_updated"
+                              t-field="o.total_cost"
                               t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                     </th>
                 </tr>
-                <tr t-if="not o.is_internal and not o.is_sales_price_override">
-                    <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
-                            <b>Other Costs [B]</b>
-                        </span>
-                    </th>
-                    <th class="text-start" style="width:30%;">
-                        USD
-                        <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.other_cost_updated"
-                              t-options="{'widget': 'float', 'precision': 2}"/>
-                    </th>
-                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                    </th>
-                </tr>
-                <tr t-if="not o.is_internal and not o.is_sales_price_override">
-                    <th style="width:40%; text-align: right;">
-                        <span style="padding-left: 5px;">
-                            <b>Total Costs [A + B]</b>
-                        </span>
-                    </th>
-                    <th class="text-start" style="width:30%;">
-                        USD
-                        <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.total_cost_updated"
-                              t-options="{'widget': 'float', 'precision': 2}"/>
-                    </th>
-                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                    </th>
-                </tr>
-                <tr t-if="not o.is_internal and o.is_sales_price_override">
-                    <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Credit Insurance Cost</span>
-                        <span t-esc="'{:.2f}%'.format((o.agreed_credit_insurance_rate or 0) * 100)"/>
-                        against Agreed Sales Value
-                    </th>
-                    <th class="text-start" style="width:30%;">
-                        USD
-                        <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.agreed_credit_insurance_amount"
-                              t-options="{'widget': 'float', 'precision': 2}"/>
-                    </th>
-                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                        ZAR
-                        <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.agreed_credit_insurance_amount_zar"
-                              t-options="{'widget': 'float', 'precision': 2}"/>
-                    </th>
-                </tr>
+                <!--                <tr t-if="not o.is_internal and not o.is_sales_price_override">-->
+                <!--                    <th style="width:40%; text-align: right;">-->
+                <!--                        <span style="padding-left: 5px;">-->
+                <!--                            <b>Other Costs [B]</b>-->
+                <!--                        </span>-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.other_cost_updated"-->
+                <!--                              t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                    </th>-->
+                <!--                </tr>-->
+                <!--                <tr t-if="not o.is_internal and not o.is_sales_price_override">-->
+                <!--                    <th style="width:40%; text-align: right;">-->
+                <!--                        <span style="padding-left: 5px;">-->
+                <!--                            <b>Total Costs [A + B]</b>-->
+                <!--                        </span>-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.total_cost_updated"-->
+                <!--                              t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                    </th>-->
+                <!--                </tr>-->
+                <!--                <tr t-if="not o.is_internal and o.is_sales_price_override">-->
+                <!--                    <th class="text-start" style="width:40%;">-->
+                <!--                        <span style="padding-left: 5px;">Credit Insurance Cost</span>-->
+                <!--                        <span t-esc="'{:.2f}%'.format((o.agreed_credit_insurance_rate or 0) * 100)"/>-->
+                <!--                        against Agreed Sales Value-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.agreed_credit_insurance_amount"-->
+                <!--                              t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        ZAR-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.agreed_credit_insurance_amount_zar"-->
+                <!--                              t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                </tr>-->
 
-                <t t-if="o.is_sales_price_override">
-                    <tr t-if="not o.is_internal">
-                        <th style="width:40%; text-align: right;">
-                            <span style="padding-left: 5px;">
-                                <b>Other Costs [B]</b>
-                            </span>
-                        </th>
-                        <th class="text-start" style="width:30%;">
-                            USD
-                            <span class="float-end" style="padding-left: 5px; text-align: right;"
-                                  t-field="o.other_cost_agreed"
-                                  t-options="{'widget': 'float', 'precision': 2}"/>
-                        </th>
-                        <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                        </th>
-                    </tr>
-                    <tr t-if="not o.is_internal">
-                        <th style="width:40%; text-align: right;">
-                            <span style="padding-left: 5px;">
-                                <b>Total Costs [A + B]</b>
-                            </span>
-                        </th>
-                        <th class="text-start" style="width:30%;">
-                            USD
-                            <span class="float-end" style="padding-left: 5px; text-align: right;"
-                                  t-field="o.total_cost_updated_agreed"
-                                  t-options="{'widget': 'float', 'precision': 2}"/>
-                        </th>
-                        <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                        </th>
-                    </tr>
-                </t>
-                <tr t-if="not o.is_internal">
+                <!--                <t t-if="o.is_sales_price_override">-->
+                <!--                    <tr t-if="not o.is_internal">-->
+                <!--                        <th style="width:40%; text-align: right;">-->
+                <!--                            <span style="padding-left: 5px;">-->
+                <!--                                <b>Other Costs [B]</b>-->
+                <!--                            </span>-->
+                <!--                        </th>-->
+                <!--                        <th class="text-start" style="width:30%;">-->
+                <!--                            USD-->
+                <!--                            <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                                  t-field="o.other_cost_agreed"-->
+                <!--                                  t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                        </th>-->
+                <!--                        <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        </th>-->
+                <!--                    </tr>-->
+                <!--                    <tr t-if="not o.is_internal">-->
+                <!--                        <th style="width:40%; text-align: right;">-->
+                <!--                            <span style="padding-left: 5px;">-->
+                <!--                                <b>Total Costs [A + B]</b>-->
+                <!--                            </span>-->
+                <!--                        </th>-->
+                <!--                        <th class="text-start" style="width:30%;">-->
+                <!--                            USD-->
+                <!--                            <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                                  t-field="o.total_cost_updated_agreed"-->
+                <!--                                  t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                        </th>-->
+                <!--                        <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        </th>-->
+                <!--                    </tr>-->
+                <!--                </t>-->
+                <tr>
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
                             <b>Total Cost / MT</b>
@@ -742,42 +904,42 @@
                         <span style="height:0px;"/>
                     </th>
                 </tr>
-                <t t-if="is_sales_price_override">
-                    <tr t-if="not o.is_internal">
-                        <th style="width:40%; text-align: right;">
-                            <span style="padding-left: 5px;">
-                                <b>Sales Price / MT excl. Credit Insurance Cost</b>
-                            </span>
-                        </th>
-                        <th class="text-start" style="width:30%;">
-                            USD
-                            <span class="float-end" style="padding-left: 5px; text-align: right;"
-                                  t-field="o.initial_sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>
-                        </th>
-                        <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                        </th>
-                    </tr>
-                    <tr t-if="not o.is_internal">
-                        <th style="width:40%; text-align: right;">
-                            <span style="padding-left: 5px;">
-                                <b>Sales Value excl. Credit Insurance Cost</b>
-                            </span>
-                        </th>
-                        <th class="text-start" style="width:30%;">
-                            USD
-                            <span class="float-end" style="padding-left: 5px; text-align: right;"
-                                  t-field="o.initial_sales_price" t-options="{'widget': 'float', 'precision': 2}"/>
-                        </th>
-                        <th t-if="o.is_internal" class="text-start" style="width:30%;">
-                        </th>
-                    </tr>
+                <t t-if="not o.is_sales_price_override">
+<!--                    <tr t-if="not o.is_internal">-->
+<!--                        <th style="width:40%; text-align: right;">-->
+<!--                            <span style="padding-left: 5px;">-->
+<!--                                <b>Sales Price / MT</b>-->
+<!--                            </span>-->
+<!--                        </th>-->
+<!--                        <th class="text-start" style="width:30%;">-->
+<!--                            USD-->
+<!--                            <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+<!--                                  t-field="o.initial_sales_price_unit" t-options="{'widget': 'float', 'precision': 2}"/>-->
+<!--                        </th>-->
+<!--                        <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+<!--                        </th>-->
+<!--                    </tr>-->
+<!--                    <tr t-if="not o.is_internal">-->
+<!--                        <th style="width:40%; text-align: right;">-->
+<!--                            <span style="padding-left: 5px;">-->
+<!--                                <b>Sales Value</b>-->
+<!--                            </span>-->
+<!--                        </th>-->
+<!--                        <th class="text-start" style="width:30%;">-->
+<!--                            USD-->
+<!--                            <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+<!--                                  t-field="o.initial_sales_price" t-options="{'widget': 'float', 'precision': 2}"/>-->
+<!--                        </th>-->
+<!--                        <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+<!--                        </th>-->
+<!--                    </tr>-->
                     <tr t-if="not o.is_internal">
                         <th style="width:40%; text-align: right;">
                             <span t-if="o.is_sales_price_override" style="padding-left: 5px;">
-                                <b>Calculated Sales Price / MT incl. Credit Insurance Cost</b>
+                                <b>Calculated Sales Price / MT</b>
                             </span>
                             <span t-else="" style="padding-left: 5px;">
-                                <b>Sales Price / MT incl. Credit Insurance Cost</b>
+                                <b>Sales Price / MT</b>
                             </span>
                         </th>
                         <th class="text-start" style="width:30%;">
@@ -809,7 +971,7 @@
                 <tr t-if="not o.is_internal and o.is_sales_price_override">
                     <th style="width:40%; text-align: right;">
                         <span style="padding-left: 5px;">
-                            <b>Agreed Sales Price / MT incl. Credit Insurance Cost</b>
+                            <b>Agreed Sales Price / MT</b>
                         </span>
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -851,18 +1013,63 @@
                               t-field="o.procurement_fee_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                 </tr>
+                <!--                <tr t-if="o.is_internal">-->
+                <!--                    <th class="text-start" style="width:40%;">-->
+                <!--                        <span style="padding-left: 5px;">Credit Cost</span>-->
+                <!--                        <span t-esc="'{:.2f}%'.format((o.credit_cost_rate or 0) * 100)"/>-->
+                <!--                        over-->
+                <!--                        <span t-field="o.credit_cost_month"/>-->
+                <!--                        months-->
+                <!--                    </th>-->
+                <!--                    <th class="text-start" style="width:30%;">-->
+                <!--                        USD-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_cost_amount" t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                    <th t-if="o.is_internal" class="text-start" style="width:30%;">-->
+                <!--                        ZAR-->
+                <!--                        <span class="float-end" style="padding-left: 5px; text-align: right;"-->
+                <!--                              t-field="o.credit_cost_amount_zar" t-options="{'widget': 'float', 'precision': 2}"/>-->
+                <!--                    </th>-->
+                <!--                </tr>-->
                 <tr t-if="o.is_internal">
                     <th class="text-start" style="width:40%;">
-                        <span style="padding-left: 5px;">Credit Cost</span>
-                        <span t-esc="'{:.2f}%'.format((o.credit_cost_rate or 0) * 100)"/>
-                        over
-                        <span t-field="o.credit_cost_month"/>
-                        months
+                        <span style="padding-left: 5px;">SGT Credit Cost from Payment date to Month end</span>
+
                     </th>
                     <th class="text-start" style="width:30%;">
                         USD
                         <span class="float-end" style="padding-left: 5px; text-align: right;"
-                              t-field="o.credit_cost_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                              t-field="o.credit_cost_to_month_end" t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                    <th t-if="o.is_internal" class="text-start" style="width:30%;">
+                        ZAR
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.credit_cost_amount_month_end_zar"
+                              t-options="{'widget': 'float', 'precision': 2}"/>
+                    </th>
+                </tr>
+                <tr t-if="o.is_internal">
+                    <th t-if="o.credit_days == 120" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/> Days
+                        (Bill of Lading + 90
+                        days)
+                    </th>
+                    <th t-elif="o.credit_days == 180" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/> Days
+                        (Berthing + 120 days)
+                    </th>
+                    <th t-else="" class="text-start" style="width:40%;">
+                        <span style="padding-left: 5px;">SGT Credit Cost for</span>
+                        <span t-field="o.credit_days"/>
+                        Days
+                    </th>
+                    <th class="text-start" style="width:30%;">
+                        USD
+                        <span class="float-end" style="padding-left: 5px; text-align: right;"
+                              t-field="o.total_credit_cost" t-options="{'widget': 'float', 'precision': 2}"/>
                     </th>
                     <th t-if="o.is_internal" class="text-start" style="width:30%;">
                         ZAR
@@ -1025,7 +1232,7 @@
             </table>
             <div class="row mt-2" style="margin-left: 2%; margin-right: 2%;">
                 <table class="table table-sm table-borderless"
-                       style="width: 45%; font-size:14px; margin-top: 90px; margin-right: 10%;">
+                       style="width: 45%; font-size:14px; margin-top: 75px; margin-right: 10%;">
                     <tr class="text-center">
                         <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
                             <span style="padding-left: 5px;"></span>
@@ -1042,7 +1249,7 @@
                         </td>
                     </tr>
                 </table>
-                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 90px;">
+                <table class="table table-sm table-borderless" style="width: 45%; font-size:14px; margin-top: 75px;">
                     <tr class="text-center">
                         <td style="text-align: center; border-bottom: 1px dotted black; padding-bottom: 2px;">
                             <span style="padding-left: 5px;"></span>

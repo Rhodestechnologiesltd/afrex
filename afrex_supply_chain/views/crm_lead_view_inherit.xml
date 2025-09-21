@@ -67,8 +67,8 @@
                     <group string="Lead/Buyer">
                         <field name="partner_id" domain="[('is_company','=',True)]" string="Customer" required="True"/>
                         <field name="supplier_delivery_method" widget="radio" required="True"/>
-                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"
-                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>
+<!--                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"-->
+<!--                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>-->
                         <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}"
                                domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'"
                                invisible="supplier_delivery_method != 'sea'"/>
@@ -126,16 +126,20 @@
             <xpath expr="//button[@name='action_schedule_meeting']" position="attributes">
                 <attribute name="invisible">True</attribute>
             </xpath>
-            <!-- <xpath expr="//header" position="inside">
-                <div class="dropdown" id="print_dropdown">
-                    <button class="btn dropdown-toggle" name="button_print_dropdown" style="color:white; background:#B04949;" type="button" id="button_print_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-print"></i> Print
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
-                        <li><button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate" type="object" class="btn-mute"/></li>
-                    </ul>
-                </div>
-            </xpath> -->
+            <xpath expr="//header" position="inside">
+                <button name="action_mark_done" icon="fa-check" string="Close Deal"
+                        type="object" class="btn-danger"
+                        confirm="Note: This action will finalize the deal, and you will not be able to update any values after clicking this button."
+                        invisible="not sale_invoice_id_post"/>
+                <!--                <div class="dropdown" id="print_dropdown">-->
+                <!--                    <button class="btn dropdown-toggle" name="button_print_dropdown" style="color:white; background:#B04949;" type="button" id="button_print_dropdown" data-bs-toggle="dropdown" aria-expanded="false">-->
+                <!--                        <i class="fa fa-print"></i> Print-->
+                <!--                    </button>-->
+                <!--                    <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">-->
+                <!--                        <li><button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate" type="object" class="btn-mute"/></li>-->
+                <!--                    </ul>-->
+                <!--                </div>-->
+            </xpath>
             <xpath expr="//button[@name='action_show_potential_duplicates']" position="replace">
                 <div class="dropdown" id="action_dropdown" style="margin-left: 10px;">
                     <button class="btn dropdown-toggle" name="button_action_dropdown"
@@ -267,6 +271,16 @@
                     </ul>
                 </div>
             </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <widget name="web_ribbon" title="Closed" bg_color="text-bg-danger" invisible="not is_done"/>
+                <!--                <h6 class="alert alert-danger text-center" invisible="not is_done">-->
+                <!--                    Closed-->
+                <!--                </h6>-->
+            </xpath>
+
+<!--            <xpath expr="//form" position="attributes">-->
+<!--                <attribute name="edit">{is_done}</attribute>-->
+<!--            </xpath>-->
             <xpath expr="//div[hasclass('oe_title')]" position="after">
                 <field name="description" placeholder="Notes and Remarks..." options="{'collaborative': true}"/>
                 <group colspan="4">
@@ -814,12 +828,14 @@
                                                invisible="supplier_delivery_method != 'road'"/>
                                         <field name="name" string="Trade Folder" readonly="True"/>
                                         <field name="is_switch"/>
+
                                     </group>
                                     <group invisible="supplier_delivery_method != 'sea'">
                                         <field name="expected_sob_date"/>
                                         <field name="sob_date" readonly="True"/>
                                     </group>
                                 </group>
+
                                 <group invisible="not is_internal">
                                     <group>
                                         <field name="indicative_exchange_rate"/>
@@ -831,6 +847,30 @@
                                 <div>
                                     <div>
                                         <table style="width:100%">
+                                            <tr style="margin-bottom:2em;">
+                                                <th colspan="3" class="alert alert-info text-center"
+                                                    style="padding-top:1em; border-radius:15px;"
+                                                    invisible="not is_change">
+                                                    <field name="is_change" invisible="True"/>
+                                                    <field name="is_click" invisible="True"/>
+                                                    <field name="is_done" invisible="True"/>
+                                                    <field name="sale_invoice_id_post" invisible="True"/>
+                                                    <h6>
+                                                        You have changed the values on the profit estimate.
+                                                        Please click 'Apply' to update the Afrex offer/
+                                                        Proforma.
+                                                        <br/>
+                                                        <br/>
+                                                        <button name="action_apply" string="Apply" type="object"
+                                                                class="btn-primary mx-2"
+                                                                style="color:white; background:#B04949;"
+                                                                invisible="not is_change"/>
+                                                    </h6>
+                                                </th>
+                                            </tr>
+                                            <tr colspan="3" style="padding-top:2em;">
+                                                <th colspan="3" style="padding-top:2em;">&#160;</th>
+                                            </tr>
                                             <tr colspan="3"
                                                 style="border-bottom: 1px solid black; border-top: 1px solid black;">
                                                 <th>
@@ -855,7 +895,7 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="purchase_order_cost_unit" style="text-align: right;"
-                                                           widget="float" options="{'precision': 2}"/>
+                                                           widget="float" readonly="True" options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;"/>
                                             </tr>
@@ -892,7 +932,7 @@
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="purchase_order_freight_amount" widget="float"
-                                                           options="{'precision': 2}"/>
+                                                           readonly="is_done" options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;" invisible="not is_internal">
                                                     ZAR
@@ -906,7 +946,8 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="purchase_order_insurance_amount" widget="float"
+                                                    <field name="purchase_order_insurance_amount" readonly="is_done"
+                                                           widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;" invisible="not is_internal">
@@ -921,7 +962,8 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="purchase_order_fob_amount" widget="float"
+                                                    <field name="purchase_order_fob_amount" readonly="is_done"
+                                                           widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;" invisible="not is_internal">
@@ -939,7 +981,7 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="insurance_premium_amount"/>
+                                                    <field name="insurance_premium_amount" readonly="is_done"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     ZAR
@@ -956,7 +998,7 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="afrex_freight_amount" widget="float"
+                                                    <field name="afrex_freight_amount" readonly="is_done" widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;" invisible="not is_internal">
@@ -991,7 +1033,8 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="purchase_order_cif_amount" widget="float"
+                                                    <field name="purchase_order_cif_amount" readonly="True"
+                                                           widget="float"
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
@@ -1096,27 +1139,230 @@
                                             <field name="amount" sum="Total" widget="monetary"/>
                                         </tree>
                                     </field>
+                                    <hr/>
                                     <div>
-                                        <table style="width: 100%">
-                                            <tr invisible="is_internal">
-                                                <th style="width: 40%">
-                                                    Credit Cost
-                                                    <br/>
-                                                    <field name="credit_cost_rate" widget="percentage"/>
-                                                    per Annum against CIF over
-                                                    <field name="credit_cost_month"/>
-                                                    months
+                                        <table style="width: 100%" invisible="is_internal">
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    Planned Payment Date
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="expected_payment_date"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    Month end Date
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="month_end"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    SGT Credit Days from Statement
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="credit_days"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    6 Month SOFR
+                                                    <field name="sofr_rate" widget="percentage"/>
+                                                    +
+                                                    <field name="sofr_margin" widget="percentage"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="total_sofr" widget="percentage"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Effective Rate
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="eff_rate" widget="percentage"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Day Rate
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="day_rate" widget="percentage"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Commission
+                                                    <field name="commission_amount"
+                                                           widget="percentage" readonly="False"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="credit_cost_amount"/>
+                                                    <field name="total_commission_amount"/>
                                                 </th>
-                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Bank Charges USD
+                                                    <field name="bank_charges_amount" readonly="False"/>
+                                                    per Transaction ×
+                                                    <br/>
+                                                    <field name="no_of_transaction"/>
+                                                    Transactions
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_bank_charges_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    SGT Credit Cost from Payment date to Month end
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_cost_to_month_end"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Capital at Statement (Opening)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="capital_at_statement"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="credit_days == 0">
+                                                <t invisible="credit_days == 120">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                        (Bill of Lading + 90
+                                                        days)
+                                                    </th>
+                                                </t>
+                                                <t invisible="credit_days == 180">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                        (Berthing + 120 days)
+                                                    </th>
+                                                </t>
+                                                <t invisible="credit_days in [180, 120]">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                    </th>
+                                                </t>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_credit_cost"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                        </table>
+                                        <hr/>
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <th style="width: 40%">
+                                                    Credit Insurance Cost
+                                                    <br/>
+                                                    <field name="credit_insurance_rate" widget="percentage"/>
+                                                    against CIF Purchase Price
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_insurance_amount_new"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;" invisible="is_internal">
+                                                    <span/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;"
+                                                    invisible="not is_internal">
                                                     ZAR
-                                                    <field name="credit_cost_amount_zar" widget="float"
+                                                    <field name="credit_insurance_amount_zar" widget="float"
                                                            options="{'precision': 4}"/>
                                                 </th>
                                             </tr>
+                                        </table>
+                                        <hr/>
+                                        <table style="width: 100%">
+                                            <!--                                            <tr invisible="is_internal">-->
+                                            <!--                                                <th style="width: 40%">-->
+                                            <!--                                                    Credit Cost-->
+                                            <!--                                                    <br/>-->
+                                            <!--                                                    <field name="credit_cost_rate" widget="percentage"/>-->
+                                            <!--                                                    per Annum against CIF over-->
+                                            <!--                                                    <field name="credit_cost_month"/>-->
+                                            <!--                                                    months-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="credit_cost_amount"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;" invisible="not is_internal">-->
+                                            <!--                                                    ZAR-->
+                                            <!--                                                    <field name="credit_cost_amount_zar" widget="float"-->
+                                            <!--                                                           options="{'precision': 4}"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                             <tr>
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: right; valign: middle;">
@@ -1214,37 +1460,37 @@
                                                     <span/>
                                                 </th>
                                             </tr>
-                                            <tr>
-                                                <th style="width: 40%">
-                                                    Credit Insurance Cost
-                                                    <br/>
-                                                    <field name="credit_insurance_rate" widget="percentage"/>
-                                                    against CIF Selling Price
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    USD
-                                                    <field name="credit_insurance_amount"/>
-                                                </th>
-                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
-                                                    ZAR
-                                                    <field name="credit_insurance_amount_zar" widget="float"
-                                                           options="{'precision': 4}"/>
-                                                </th>
-                                            </tr>
-                                            <tr invisible="is_sales_price_override">
-                                                <th valign='middle'
-                                                    style="width: 40%; text-align: right; valign: middle;">
-                                                    <field name="product_qty" readonly="True"
-                                                           style="color: white; opacity: 0;"/>Total Costs
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    USD
-                                                    <field name="total_cost_updated"/>
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    <span/>
-                                                </th>
-                                            </tr>
+                                            <!--                                            <tr>-->
+                                            <!--                                                <th style="width: 40%">-->
+                                            <!--                                                    Credit Insurance Cost-->
+                                            <!--                                                    <br/>-->
+                                            <!--                                                    <field name="credit_insurance_rate" widget="percentage"/>-->
+                                            <!--                                                    against CIF Selling Price-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="credit_insurance_amount"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;" invisible="not is_internal">-->
+                                            <!--                                                    ZAR-->
+                                            <!--                                                    <field name="credit_insurance_amount_zar" widget="float"-->
+                                            <!--                                                           options="{'precision': 4}"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
+                                            <!--                                            <tr invisible="is_sales_price_override">-->
+                                            <!--                                                <th valign='middle'-->
+                                            <!--                                                    style="width: 40%; text-align: right; valign: middle;">-->
+                                            <!--                                                    <field name="product_qty" readonly="True"-->
+                                            <!--                                                           style="color: white; opacity: 0;"/>Total Costs-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="total_cost_updated"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                             <tr>
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: right; valign: middle;">
@@ -1320,37 +1566,37 @@
                                                     <span/>
                                                 </th>
                                             </tr>
-                                            <tr invisible="not is_sales_price_override">
-                                                <th style="width: 40%">
-                                                    Credit Insurance Cost
-                                                    <br/>
-                                                    <field name="agreed_credit_insurance_rate" widget="percentage"/>
-                                                    against Agreed Sales Price
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    USD
-                                                    <field name="agreed_credit_insurance_amount"/>
-                                                </th>
-                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
-                                                    ZAR
-                                                    <field name="agreed_credit_insurance_amount_zar" widget="float"
-                                                           options="{'precision': 4}"/>
-                                                </th>
-                                            </tr>
-                                            <tr invisible="not is_sales_price_override">
-                                                <th valign='middle'
-                                                    style="width: 40%; text-align: right; valign: middle;">
-                                                    <field name="product_qty" readonly="True"
-                                                           style="color: white; opacity: 0;"/>Total Costs
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    USD
-                                                    <field name="total_cost_updated_agreed"/>
-                                                </th>
-                                                <th style="width:30%; text-align: right;">
-                                                    <span/>
-                                                </th>
-                                            </tr>
+                                            <!--                                            <tr invisible="not is_sales_price_override">-->
+                                            <!--                                                <th style="width: 40%">-->
+                                            <!--                                                    Credit Insurance Cost-->
+                                            <!--                                                    <br/>-->
+                                            <!--                                                    <field name="agreed_credit_insurance_rate" widget="percentage"/>-->
+                                            <!--                                                    against Agreed Sales Price-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="agreed_credit_insurance_amount"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;" invisible="not is_internal">-->
+                                            <!--                                                    ZAR-->
+                                            <!--                                                    <field name="agreed_credit_insurance_amount_zar" widget="float"-->
+                                            <!--                                                           options="{'precision': 4}"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
+                                            <!--                                            <tr invisible="not is_sales_price_override">-->
+                                            <!--                                                <th valign='middle'-->
+                                            <!--                                                    style="width: 40%; text-align: right; valign: middle;">-->
+                                            <!--                                                    <field name="product_qty" readonly="True"-->
+                                            <!--                                                           style="color: white; opacity: 0;"/>Total Costs-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="total_cost_updated_agreed"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                         </table>
                                         <table invisible="not is_internal" style="width: 100%">
                                             <tr invisible="True">
@@ -1401,26 +1647,207 @@
                                                 </th>
                                             </tr>
                                             <tr>
-                                                <th style="width: 40%">
-                                                    Credit Cost
-                                                    <br/>
-                                                    <field name="credit_cost_rate" widget="percentage"/>
-                                                    per Annum against CIF
-                                                    <br/>
-                                                    over
-                                                    <field name="credit_cost_month"/>
-                                                    months [D]
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    Planned Payment Date
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="expected_payment_date"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    Month end Date
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="month_end"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
+                                                    SGT Credit Days from Statement
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="credit_days"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    6 Month SOFR
+                                                    <field name="sofr_rate" widget="percentage"/>
+                                                    +
+                                                    <field name="sofr_margin" widget="percentage"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="total_sofr" widget="percentage"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Effective Rate
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="eff_rate" widget="percentage"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Day Rate
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="day_rate" widget="percentage"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Commission
+                                                    <field name="commission_amount"
+                                                           widget="percentage"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="credit_cost_amount"/>
+                                                    <field name="total_commission_amount"/>
                                                 </th>
-                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Bank Charges USD
+                                                    <field name="bank_charges_amount" readonly="False"/>
+                                                    per Transaction ×
+                                                    <br/>
+                                                    <field name="no_of_transaction"/>
+                                                    Transactions
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_bank_charges_amount"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    SGT Credit Cost from Payment date to Month end
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="credit_cost_to_month_end"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;"
+                                                    invisible="not is_internal">
+                                                    ZAR
+                                                    <field name="credit_cost_amount_month_end_zar" widget="float"
+                                                           options="{'precision': 4}"/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    Capital at Statement (Opening)
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="capital_at_statement"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr invisible="credit_days == 0">
+                                                <t invisible="credit_days == 120">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                        (Bill of Lading + 90
+                                                        days)
+                                                    </th>
+                                                </t>
+                                                <t invisible="credit_days == 180">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                        (Berthing + 120 days)
+                                                    </th>
+                                                </t>
+                                                <t invisible="credit_days in [180, 120]">
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days
+                                                    </th>
+                                                </t>
+                                                <th style="width:30%; text-align: right;">
+                                                    USD
+                                                    <field name="total_credit_cost"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;"
+                                                    invisible="not is_internal">
                                                     ZAR
                                                     <field name="credit_cost_amount_zar" widget="float"
                                                            options="{'precision': 4}"/>
                                                 </th>
                                             </tr>
+                                            <!--                                            <tr invisible="1">-->
+                                            <!--                                                <th style="width: 40%">-->
+                                            <!--                                                    Credit Cost-->
+                                            <!--                                                    <br/>-->
+                                            <!--                                                    <field name="credit_cost_rate" widget="percentage"/>-->
+                                            <!--                                                    per Annum against CIF-->
+                                            <!--                                                    <br/>-->
+                                            <!--                                                    over-->
+                                            <!--                                                    <field name="credit_cost_month"/>-->
+                                            <!--                                                    months [D]-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    USD-->
+                                            <!--                                                    <field name="credit_cost_amount"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;" invisible="not is_internal">-->
+                                            <!--                                                    ZAR-->
+                                            <!--                                                    <field name="credit_cost_amount_zar" widget="float"-->
+                                            <!--                                                           options="{'precision': 4}"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                             <tr>
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: right; valign: middle;">
@@ -1659,6 +2086,8 @@
                                             <field name="sob_date" readonly="True"/>
                                         </group>
                                     </group>
+
+
                                     <group invisible="not is_internal">
                                         <group>
                                             <field name="indicative_exchange_rate"/>
@@ -1695,6 +2124,7 @@
                                                         USD
                                                         <field name="purchase_order_cost_unit"
                                                                style="text-align: right;" widget="float"
+                                                               readonly="True"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"/>
@@ -1715,13 +2145,15 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_freight_amount" widget="float"
+                                                        <field name="purchase_order_freight_amount" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
                                                         ZAR
-                                                        <field name="purchase_order_freight_amount_zar" widget="float"
+                                                        <field name="purchase_order_freight_amount_zar" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
@@ -1731,13 +2163,15 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_insurance_amount" widget="float"
+                                                        <field name="purchase_order_insurance_amount" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
                                                         ZAR
-                                                        <field name="purchase_order_insurance_amount_zar" widget="float"
+                                                        <field name="purchase_order_insurance_amount_zar"
+                                                               readonly="False" widget="float"
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
@@ -1747,13 +2181,15 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_fob_amount" widget="float"
+                                                        <field name="purchase_order_fob_amount" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
                                                         ZAR
-                                                        <field name="purchase_order_fob_amount_zar" widget="float"
+                                                        <field name="purchase_order_fob_amount_zar" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
@@ -1767,7 +2203,7 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="insurance_premium_amount"/>
+                                                        <field name="insurance_premium_amount" readonly="True"/>
 
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
@@ -1784,13 +2220,15 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="afrex_freight_amount" widget="float"
+                                                        <field name="afrex_freight_amount" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
                                                         ZAR
-                                                        <field name="afrex_freight_amount_zar" widget="float"
+                                                        <field name="afrex_freight_amount_zar" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
@@ -1820,7 +2258,8 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="purchase_order_cif_amount" widget="float"
+                                                        <field name="purchase_order_cif_amount" readonly="True"
+                                                               widget="float"
                                                                options="{'precision': 2}"/>
                                                     </th>
                                                 </tr>
@@ -1936,20 +2375,180 @@
                                                 <field name="amount" sum="Total" widget="monetary"/>
                                             </tree>
                                         </field>
+                                        <hr/>
                                         <div>
-                                            <table style="width: 100%">
-                                                <tr invisible="is_internal">
-                                                    <th style="width: 40%">
-                                                        Credit Cost
-                                                        <br/>
-                                                        <field name="credit_cost_rate" widget="percentage"/>
-                                                        per Annum against CIF over
-                                                        <field name="credit_cost_month"/>
-                                                        months
+                                            <table style="width: 100%" invisible="is_internal">
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Planned Payment Date
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="expected_payment_date"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Month end Date
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="month_end"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        SGT Credit Days from Statement
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="credit_days"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        6 Month SOFR
+                                                        <field name="sofr_rate" widget="percentage"/>
+                                                        +
+                                                        <field name="sofr_margin" widget="percentage"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="total_sofr" widget="percentage"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Effective Rate
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="eff_rate" widget="percentage"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Day Rate
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="day_rate" widget="percentage"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Commission
+                                                        <field name="commission_amount"
+                                                               widget="percentage"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="credit_cost_amount"/>
+                                                        <field name="total_commission_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Bank Charges USD
+                                                        <field name="bank_charges_amount" readonly="False"/>
+                                                        per Transaction ×
+                                                        <br/>
+                                                        <field name="no_of_transaction"/>
+                                                        Transactions
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_bank_charges_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost from Payment date to Month end
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_cost_to_month_end"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Capital at Statement (Opening)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="capital_at_statement"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="credit_days == 0">
+                                                    <t invisible="credit_days == 120">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                            (Bill of Lading + 90
+                                                            days)
+                                                        </th>
+                                                    </t>
+                                                    <t invisible="credit_days == 180">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                            (Berthing + 120 days)
+                                                        </th>
+                                                    </t>
+                                                    <t invisible="credit_days in [180, 120]">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                        </th>
+                                                    </t>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_credit_cost"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
@@ -1958,6 +2557,50 @@
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
+                                            </table>
+                                            <hr/>
+                                            <table style="width: 100%">
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        Credit Insurance Cost
+                                                        <br/>
+                                                        <field name="credit_insurance_rate" widget="percentage"/>
+                                                        against CIF Purchase Price
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_insurance_amount_new"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="credit_insurance_amount_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                            </table>
+                                            <hr/>
+                                            <table style="width: 100%">
+                                                <!--                                                <tr invisible="is_internal">-->
+                                                <!--                                                    <th style="width: 40%">-->
+                                                <!--                                                        Credit Cost-->
+                                                <!--                                                        <br/>-->
+                                                <!--                                                        <field name="credit_cost_rate" widget="percentage"/>-->
+                                                <!--                                                        per Annum against CIF over-->
+                                                <!--                                                        <field name="credit_cost_month"/>-->
+                                                <!--                                                        months-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="credit_cost_amount"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;"-->
+                                                <!--                                                        invisible="not is_internal">-->
+                                                <!--                                                        ZAR-->
+                                                <!--                                                        <field name="credit_cost_amount_zar" widget="float"-->
+                                                <!--                                                               options="{'precision': 4}"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
@@ -2057,38 +2700,38 @@
                                                         <span/>
                                                     </th>
                                                 </tr>
-                                                <tr>
-                                                    <th style="width: 40%">
-                                                        Credit Insurance Cost
-                                                        <br/>
-                                                        <field name="credit_insurance_rate" widget="percentage"/>
-                                                        against CIF Selling Price
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        USD
-                                                        <field name="credit_insurance_amount"/>
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;"
-                                                        invisible="not is_internal">
-                                                        ZAR
-                                                        <field name="credit_insurance_amount_zar" widget="float"
-                                                               options="{'precision': 4}"/>
-                                                    </th>
-                                                </tr>
-                                                <tr invisible="is_sales_price_override">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: right; valign: middle;">
-                                                        <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Costs
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        USD
-                                                        <field name="total_cost_updated"/>
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        <span/>
-                                                    </th>
-                                                </tr>
+                                                <!--                                                <tr>-->
+                                                <!--                                                    <th style="width: 40%">-->
+                                                <!--                                                        Credit Insurance Cost-->
+                                                <!--                                                        <br/>-->
+                                                <!--                                                        <field name="credit_insurance_rate" widget="percentage"/>-->
+                                                <!--                                                        against CIF Selling Price-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="credit_insurance_amount"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;"-->
+                                                <!--                                                        invisible="not is_internal">-->
+                                                <!--                                                        ZAR-->
+                                                <!--                                                        <field name="credit_insurance_amount_zar" widget="float"-->
+                                                <!--                                                               options="{'precision': 4}"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
+                                                <!--                                                <tr invisible="is_sales_price_override">-->
+                                                <!--                                                    <th valign='middle'-->
+                                                <!--                                                        style="width: 40%; text-align: right; valign: middle;">-->
+                                                <!--                                                        <field name="product_qty" readonly="True"-->
+                                                <!--                                                               style="color: white; opacity: 0;"/>Total Costs-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="total_cost_updated"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        <span/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">
@@ -2164,38 +2807,38 @@
                                                         <span/>
                                                     </th>
                                                 </tr>
-                                                <tr invisible="not is_sales_price_override">
-                                                    <th style="width: 40%">
-                                                        Credit Insurance Cost
-                                                        <br/>
-                                                        <field name="agreed_credit_insurance_rate" widget="percentage"/>
-                                                        against Agreed Sales Price
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        USD
-                                                        <field name="agreed_credit_insurance_amount"/>
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;"
-                                                        invisible="not is_internal">
-                                                        ZAR
-                                                        <field name="agreed_credit_insurance_amount_zar" widget="float"
-                                                               options="{'precision': 4}"/>
-                                                    </th>
-                                                </tr>
-                                                <tr invisible="not is_sales_price_override">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: right; valign: middle;">
-                                                        <field name="product_qty" readonly="True"
-                                                               style="color: white; opacity: 0;"/>Total Costs
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        USD
-                                                        <field name="total_cost_updated_agreed"/>
-                                                    </th>
-                                                    <th style="width:30%; text-align: right;">
-                                                        <span/>
-                                                    </th>
-                                                </tr>
+                                                <!--                                                <tr invisible="not is_sales_price_override">-->
+                                                <!--                                                    <th style="width: 40%">-->
+                                                <!--                                                        Credit Insurance Cost-->
+                                                <!--                                                        <br/>-->
+                                                <!--                                                        <field name="agreed_credit_insurance_rate" widget="percentage"/>-->
+                                                <!--                                                        against Agreed Sales Price-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="agreed_credit_insurance_amount"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;"-->
+                                                <!--                                                        invisible="not is_internal">-->
+                                                <!--                                                        ZAR-->
+                                                <!--                                                        <field name="agreed_credit_insurance_amount_zar" widget="float"-->
+                                                <!--                                                               options="{'precision': 4}"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
+                                                <!--                                                <tr invisible="not is_sales_price_override">-->
+                                                <!--                                                    <th valign='middle'-->
+                                                <!--                                                        style="width: 40%; text-align: right; valign: middle;">-->
+                                                <!--                                                        <field name="product_qty" readonly="True"-->
+                                                <!--                                                               style="color: white; opacity: 0;"/>Total Costs-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="total_cost_updated_agreed"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        <span/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
                                             </table>
                                             <table invisible="not is_internal" style="width: 100%">
                                                 <tr invisible="True">
@@ -2248,19 +2891,177 @@
                                                     </th>
                                                 </tr>
                                                 <tr>
-                                                    <th style="width: 40%">
-                                                        Credit Cost
-                                                        <br/>
-                                                        <field name="credit_cost_rate" widget="percentage"/>
-                                                        per Annum against CIF
-                                                        <br/>
-                                                        over
-                                                        <field name="credit_cost_month"/>
-                                                        months [D]
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Planned Payment Date
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="expected_payment_date"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Month end Date
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="month_end"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        SGT Credit Days from Statement
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="credit_days"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        6 Month SOFR
+                                                        <field name="sofr_rate" widget="percentage"/>
+                                                        +
+                                                        <field name="sofr_margin" widget="percentage"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="total_sofr" widget="percentage"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Effective Rate
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="eff_rate" widget="percentage"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Day Rate
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="day_rate" widget="percentage"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Commission
+                                                        <field name="commission_amount" widget="percentage"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="credit_cost_amount"/>
+                                                        <field name="total_commission_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Bank Charges USD
+                                                        <field name="bank_charges_amount" readonly="False"/>
+                                                        per Transaction ×
+                                                        <br/>
+                                                        <field name="no_of_transaction"/>
+                                                        Transactions
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_bank_charges_amount"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost from Payment date to Month end
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="credit_cost_to_month_end"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
+                                                        ZAR
+                                                        <field name="credit_cost_amount_month_end_zar" widget="float"
+                                                               options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        Capital at Statement (Opening)
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="capital_at_statement"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
+                                                <tr invisible="credit_days == 0">
+                                                    <t invisible="credit_days == 120">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                            (Bill of Lading + 90
+                                                            days)
+                                                        </th>
+                                                    </t>
+                                                    <t invisible="credit_days == 180">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                            (Berthing + 120 days)
+                                                        </th>
+                                                    </t>
+                                                    <t invisible="credit_days in [180, 120]">
+                                                        <th valign='middle'
+                                                            style="width: 40%; text-align: left; valign: middle;">
+                                                            SGT Credit Cost for
+                                                            <field name="credit_days" readonly="True"/>
+                                                            days
+                                                        </th>
+                                                    </t>
+                                                    <th style="width:30%; text-align: right;">
+                                                        USD
+                                                        <field name="total_credit_cost"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
@@ -2269,6 +3070,28 @@
                                                                options="{'precision': 4}"/>
                                                     </th>
                                                 </tr>
+                                                <!--                                                <tr invisible="1">-->
+                                                <!--                                                    <th style="width: 40%">-->
+                                                <!--                                                        Credit Cost-->
+                                                <!--                                                        <br/>-->
+                                                <!--                                                        <field name="credit_cost_rate" widget="percentage"/>-->
+                                                <!--                                                        per Annum against CIF-->
+                                                <!--                                                        <br/>-->
+                                                <!--                                                        over-->
+                                                <!--                                                        <field name="credit_cost_month"/>-->
+                                                <!--                                                        months [D]-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        USD-->
+                                                <!--                                                        <field name="credit_cost_amount"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;"-->
+                                                <!--                                                        invisible="not is_internal">-->
+                                                <!--                                                        ZAR-->
+                                                <!--                                                        <field name="credit_cost_amount_zar" widget="float"-->
+                                                <!--                                                               options="{'precision': 4}"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: right; valign: middle;">

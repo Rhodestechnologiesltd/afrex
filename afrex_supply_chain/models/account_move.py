@@ -308,14 +308,22 @@ class AccountMove(models.Model):
                 if roe and roe != 0.0:
                     sales_price = rec.cost_amount / roe
                 else:
-                    sales_price = rec.cost_amount
+                   if rec.qty_delivered:
+                    sales_price = rec.invoice_line_ids.price_unit * rec.qty_delivered
+                   else:
+                    sales_price = rec.invoice_line_ids.price_unit * rec.qty_total
                 # sales_price = rec.cost_amount
                 # try:
                 #     sales_price = sales_price / roe
                 # except ZeroDivisionError:
                 #     raise UserError("Exchange rate is zero, cannot convert sales price.")
+                # if not lead.is_internal:
+                #     fob = sales_price - (freight + insurance)
                 if not lead.is_internal:
-                    fob = sales_price - (freight + insurance)
+                    if rec.fob_amount == 0.0:
+                        fob = rec.fob_amount
+                    else:
+                        fob = sales_price - (freight + insurance)
                 else:
                     fob = rec.fob_amount
                     procurement = sales_price - (fob + freight + insurance + interest)

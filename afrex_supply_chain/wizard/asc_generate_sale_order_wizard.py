@@ -126,13 +126,13 @@ class GenerateSaleOrderWizard(models.TransientModel):
                         rec.insurance_amount_zar = 0.0
                         rec.freight_amount = rec.get_freight_amount()
                         rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_CIF'):
                         rec.incoterm_selection = 'cif'
                         rec.insurance_amount = rec.get_insurance_amount()
                         rec.freight_amount = rec.get_freight_amount()
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec.fob_amount = rec.get_fob_amount()
 
                         rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
@@ -152,7 +152,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
                         rec.insurance_amount_zar = 0.0
                         rec.freight_amount = 0.0
                         rec.freight_amount_zar = 0.0
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec._compute_sale_values()
                     else:
                         raise UserError("This incoterm is not allowed for a Maritime deal.")
@@ -383,7 +383,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
         if self.is_internal:
             fob = order.fob_amount
         else:
-            fob = 0
+            fob = order.fob_amount
         return fob
     
     def generate_sale_order(self):

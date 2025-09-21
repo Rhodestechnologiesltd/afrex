@@ -65,7 +65,8 @@ class ConfirmInvoiceWizard(models.TransientModel):
     cost_unit_zar = fields.Float("Cost/MT in ZAR", compute="_compute_cost_unit_zar", store=True, digits="Prices per Unit")
     
     can_confirm = fields.Boolean(compute='_compute_can_confirm')
-    
+    is_click = fields.Boolean(default=False)
+
     def action_update_pricing(self):
         for rec in self:
             rec._update_pricing()
@@ -80,6 +81,7 @@ class ConfirmInvoiceWizard(models.TransientModel):
     def _update_pricing(self):
         for rec in self:
             incoterm = rec.incoterm_id
+            rec.is_click = True
             if incoterm:
                 if rec.supplier_delivery_method == 'sea':
                     if incoterm == self.env.ref('account.incoterm_CFR'):
@@ -87,21 +89,21 @@ class ConfirmInvoiceWizard(models.TransientModel):
                         rec.insurance_amount_zar = 0.0
                         rec.freight_amount = rec.get_freight_amount()
                         rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_CIF'):
                         rec.insurance_amount = rec.get_insurance_amount()
                         rec.insurance_amount_zar = rec.get_insurance_amount() * rec.exchange_rate
                         rec.freight_amount = rec.get_freight_amount()
                         rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_FOB'):
                         rec.insurance_amount = 0.0
                         rec.insurance_amount_zar = 0.0
                         rec.freight_amount = 0.0
                         rec.freight_amount_zar = 0.0
-                        rec.interest_amount = rec.lead_id.credit_cost_amount
+                        rec.interest_amount = rec.lead_id.credit_cost_total
                         rec._compute_sale_values()
                     else:
                         raise UserError("This incoterm is not allowed for a Maritime deal.")

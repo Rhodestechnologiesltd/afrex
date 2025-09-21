@@ -67,13 +67,13 @@ class SaleOrder(models.Model):
     freight_unit = fields.Float("Freight/MT", compute="_compute_freight_unit", store=True, digits="Prices per Unit", tracking=True)
     cost_unit = fields.Float("Cost/MT", compute="_compute_cost_unit", store=True, digits="Prices per Unit", tracking=True)
     
-    fob_amount = fields.Float("FOB", tracking=True)
-    freight_amount = fields.Float("Freight", tracking=True)
-    cost_amount = fields.Float("Cost", tracking=True)
+    fob_amount = fields.Float("FOB", tracking=True, digits="Prices per Unit")
+    freight_amount = fields.Float("Freight", tracking=True, digits="Prices per Unit")
+    cost_amount = fields.Float("Cost", tracking=True, digits="Prices per Unit")
     
-    insurance_amount = fields.Float("Insurance", tracking=True)
+    insurance_amount = fields.Float("Insurance", tracking=True, digits="Prices per Unit")
     
-    fca_amount = fields.Float("FCA", tracking=True)
+    fca_amount = fields.Float("FCA", tracking=True, digits="Prices per Unit")
     road_transportation_amount = fields.Float(string="Road Transportation and Clearance", tracking=True)
     logistics_service_amount = fields.Float(string="Logistics Service fee", tracking=True)
         

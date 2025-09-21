@@ -50,14 +50,14 @@ class Lead(models.Model):
     purchase_order_terms_id = fields.Many2one('account.payment.term', related="purchase_order_id.payment_term_id", string="PO Payment Terms")
     purchase_order_incoterm_id = fields.Many2one('account.incoterms', related="purchase_order_id.incoterm_id", store=True, copy=False)
     purchase_order_incoterm_selection = fields.Selection(related="purchase_order_id.incoterm_selection")
-    purchase_order_fob_amount = fields.Float("Afrex PO FOB", related="purchase_order_id.fob_amount")
-    purchase_order_fob_unit = fields.Float("Afrex PO FOB Unit", related="purchase_order_id.fob_unit")
-    purchase_order_fca_amount = fields.Float("Afrex PO FCA", related="purchase_order_id.fca_amount")
-    purchase_order_fca_unit = fields.Float("Afrex PO FCA Unit", related="purchase_order_id.fca_unit")
-    purchase_order_insurance_amount = fields.Float("Afrex PO Insurance", related="purchase_order_id.insurance_amount")
-    purchase_order_freight_amount = fields.Float("Afrex PO Freight", related="purchase_order_id.freight_amount")
-    purchase_order_cost_amount = fields.Float("Afrex PO Cost", related="purchase_order_id.cost_amount")
-    purchase_order_cost_unit = fields.Float("Afrex PO Cost Unit", related="purchase_order_id.cost_unit")
+    purchase_order_fob_amount = fields.Float("Afrex PO FOB", related="purchase_order_id.fob_amount", store=True, readonly=False)
+    purchase_order_fob_unit = fields.Float("Afrex PO FOB Unit", related="purchase_order_id.fob_unit", store=True, readonly=False)
+    purchase_order_fca_amount = fields.Float("Afrex PO FCA", related="purchase_order_id.fca_amount", store=True,)
+    purchase_order_fca_unit = fields.Float("Afrex PO FCA Unit", related="purchase_order_id.fca_unit", store=True,)
+    purchase_order_insurance_amount = fields.Float("Afrex PO Insurance", related="purchase_order_id.insurance_amount", readonly=False, store=True,)
+    purchase_order_freight_amount = fields.Float("Afrex PO Freight", related="purchase_order_id.freight_amount", readonly=False, store=True,)
+    purchase_order_cost_amount = fields.Float("Afrex PO Cost", related="purchase_order_id.cost_amount", store=True,)
+    purchase_order_cost_unit = fields.Float("Afrex PO Cost Unit", related="purchase_order_id.cost_unit", store=True,)
     purchase_order_qty_delivered = fields.Float(string="MT Received", related="purchase_order_id.qty_delivered", tracking=True, digits="Prices per Unit")
     purchase_order_is_invoiced = fields.Boolean("Purchase Order Invoiced", related="purchase_order_id.is_invoiced", copy=False)
     purchase_order_state = fields.Selection(related='purchase_order_id.state', string="Purchase Order Status", copy=False)
@@ -209,8 +209,8 @@ class Lead(models.Model):
     sale_invoice_insurance = fields.Float("Afrex Invoice Insurance")
     sale_invoice_freight = fields.Float("Afrex Invoice Freight")
     is_sale_invoice_incoterm_selection = fields.Selection(related="sale_invoice_id.incoterm_selection")
-    sale_invoice_packing_list_date = fields.Date(related="sale_invoice_id.packing_list_date", string="Packing List Date")
-    sale_invoice_origin_certificate_date = fields.Date(related="sale_invoice_id.origin_certificate_date", string="COO Date")
+    sale_invoice_packing_list_date = fields.Date(related="sale_invoice_id.packing_list_date", string="Packing List Date", readonly=False)
+    sale_invoice_origin_certificate_date = fields.Date(related="sale_invoice_id.origin_certificate_date", string="COO Date", readonly=False)
     sale_order_move_type = fields.Selection(related="sale_invoice_id.move_type")
 
     sale_invoice_state = fields.Selection(related="sale_invoice_id.state")
@@ -252,7 +252,7 @@ class Lead(models.Model):
     outgoing_doc_ids = fields.One2many('asc.document', 'lead_id', domain=[('type','=', 'outgoing')], string="Documents to be provided")
     incoming_doc_ids = fields.One2many('asc.document', 'lead_id', domain=[('type','=', 'incoming')], string="Documents to receive")
 
-    @api.depends('purchase_order_fob_amount', 'purchase_order_freight_amount', 'purchase_order_insurance_amount', 'afrex_freight_amount', 'insurance_premium_amount')
+    @api.depends('purchase_order_fob_amount', 'purchase_order_cost_amount', 'purchase_order_freight_amount', 'purchase_order_insurance_amount', 'afrex_freight_amount', 'insurance_premium_amount')
     def _compute_purchase_order_cif_amount(self):
         for rec in self:
             if rec.supplier_delivery_method == 'sea':

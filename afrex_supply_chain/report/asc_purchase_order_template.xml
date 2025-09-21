@@ -97,11 +97,37 @@
                                     </strong>
                                 </td>
                             </tr>
-                            <!-- <tr>
-                                <td>
-                                    <span t-field="o.company_id.partner_id.address_text"/>
-                                </td>
-                            </tr> -->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Suite 420, 4th Floor, Barkly Wharf Building</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Caudan Waterfront, Port Louis</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Mauritius</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Email: DL-AfrexSupplier@supergrp.com</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Tel: +230 271 1176</span>-->
+<!--                                    <span style="padding-left: 10px;">Fax: +230 211 8959</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td style="text-align: start; padding: 0;">-->
+<!--                                    <span>Website: www.supergrp.com</span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
                         </table>
                     </div>
                     <div class="col-6 text-end mb-2">

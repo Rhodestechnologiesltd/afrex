@@ -32,7 +32,7 @@
                         <li>
                             <button name="update_sales_order_wizard" icon="fa-refresh" string="Update Offer"
                                     type="object" class="btn-mute"
-                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
+                                    invisible="True"/>
                         </li>
                         <li class="border-top">
                             <button name="button_confirm" icon="fa-check-square-o" string="Confirm Afrex PO"
@@ -209,6 +209,7 @@
                     <field name="payment_term_id" readonly="state not in ['draft', 'sent']"/>
                     <field name="validity" string="Validity" readonly="state not in ['draft', 'sent']"/>
                     <field name="is_switch" readonly="state not in ['draft', 'sent']"/>
+                    <field name="is_close_readonly" invisible="1"/>
                 </group>
             </xpath>
             <xpath expr="//notebook" position="before">
@@ -467,7 +468,7 @@
                         <div class="o_row" invisible="breakbulk_container != 'container'">
                             <field id="freight_amount" name="freight_amount"
                                    readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']"
-                                   widget="float" options="{'precision': 2}"/>
+                                   widget="float" options="{'precision': 4}"/>
                             Freight/MT:
                             <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
@@ -485,7 +486,7 @@
                             <button name="update_sales_order_wizard" type="object" string=" Update Offer"
                                     class="btn-link mb-1 px-0" icon="fa-refresh"
                                     confirm="This will update the costing on the offer."
-                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
+                                    invisible="True"/>
                         </div>
                     </group>
                     <group string="Confirmed Supplier Costing">
@@ -554,12 +555,12 @@
                             <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
-                        <div class="o_row" colspan="2">
-                            <button name="update_sales_order_wizard" type="object" string=" Update Offer"
-                                    class="btn-link mb-1 px-0" icon="fa-refresh"
-                                    confirm="This will update the costing on the offer."
-                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>
-                        </div>
+<!--                        <div class="o_row" colspan="2">-->
+<!--                            <button name="update_sales_order_wizard" type="object" string=" Update Offer"-->
+<!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
+<!--                                    confirm="This will update the costing on the offer."-->
+<!--                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>-->
+<!--                        </div>-->
                     </group>
                     <group string="Confirmed Supplier Costing">
                         <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
