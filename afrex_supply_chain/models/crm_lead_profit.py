@@ -24,7 +24,7 @@ class Lead(models.Model):
     insurance_premium_unit = fields.Float("Insurance Premium per MT", compute="compute_insurance_premium_unit",
                                           store=True)
 
-    afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount", store=True)
+    afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount", inverse="inverse_afrex_freight_amount", store=True)
     afrex_freight_rate = fields.Float("Freight Rate / MT")
 
     procurement_agent_id = fields.Many2one('res.partner', string="Procurement Agent")
@@ -162,7 +162,8 @@ class Lead(models.Model):
     is_done = fields.Boolean(default=False)
     sale_invoice_id_post = fields.Boolean(compute='compute_invoice_status', store=True, )
 
-    @api.depends('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount', 'afrex_freight_amount', 'purchase_order_freight_amount')
+    @api.depends('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
+                 'afrex_freight_amount', 'purchase_order_freight_amount')
     def _compute_can_change(self):
         for rec in self:
             rec.is_change = (
@@ -173,7 +174,8 @@ class Lead(models.Model):
                     or rec.afrex_freight_amount != rec._origin.afrex_freight_amount
             )
 
-    @api.onchange('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount', 'afrex_freight_amount', 'purchase_order_freight_amount')
+    @api.onchange('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
+                  'afrex_freight_amount', 'purchase_order_freight_amount')
     def _onchange_amounts(self):
         if not self._origin.id:  # record not saved yet
             return
@@ -213,17 +215,17 @@ class Lead(models.Model):
             if sale_invoice_id.state == 'draft':
                 self.purchase_order_id.action_apply_proforma()
                 self.message_post(
-                    body=_("Insurance, Freight, and FOB values updated in the Afrex Proforma."))
+                    body=_("Values updated in the Afrex Proforma."))
             elif sale_invoice_id.state == 'posted':
                 self.purchase_order_id.action_apply_commercial()
                 self.message_post(
-                    body=_("Insurance, Freight, and FOB values updated in the Afrex Commercial."))
+                    body=_("Values updated in the Afrex Commercial."))
             else:
                 raise UserError("Invoice must be in Proforma or commercial state to update values.")
         elif sale_order_id:
             self.purchase_order_id.update_sales_order()
             self.message_post(
-                body=_("Insurance, Freight, and FOB values updated in the Afrex Offer."))
+                body=_("Values updated in the Afrex Offer."))
 
     # credit insurance amount based on CIF
     @api.depends('credit_insurance_rate', 'manual_purchase_order_cif_amount', 'purchase_order_cif_amount')
@@ -393,6 +395,11 @@ class Lead(models.Model):
         for rec in self:
             rec.afrex_freight_amount = rec.product_qty * (1 + (rec.packaging_weight / 1000)) * rec.afrex_freight_rate
 
+    def inverse_afrex_freight_amount(self):
+        for rec in self:
+            if rec.product_qty and rec.packaging_weight:
+                divisor = rec.product_qty * (1 + (rec.packaging_weight / 1000))
+                rec.afrex_freight_rate = rec.afrex_freight_amount / divisor
     @api.depends('purchase_order_fca_amount', 'road_transportation_amount', 'logistics_service_amount')
     def _compute_dap_amount(self):
         for rec in self:
@@ -602,19 +609,22 @@ class Lead(models.Model):
                 # Insurance
                 if 'insurance_premium_amount' in vals:
                     update_vals['insurance_amount'] = vals['insurance_premium_amount']
-                    if lead.purchase_order_qty_delivered > 0:
-                        update_vals['insurance_unit'] = vals[
-                                                            'insurance_premium_amount'] / lead.purchase_order_qty_delivered
-                    elif lead.product_qty > 0:
-                        update_vals['insurance_unit'] = vals['insurance_premium_amount'] / lead.product_qty
+                elif 'purchase_order_insurance_amount' in vals:
+                    update_vals['insurance_amount'] = vals['purchase_order_insurance_amount']
 
                 # Freight
-                if 'freight_amount' in vals:
-                    update_vals['afrex_freight_amount'] = vals['freight_amount']
+                if 'afrex_freight_amount' in vals:
+                    update_vals['freight_amount'] = vals['afrex_freight_amount']
                     if lead.purchase_order_qty_delivered > 0:
-                        update_vals['freight_unit'] = vals['freight_amount'] / lead.purchase_order_qty_delivered
+                        update_vals['freight_unit'] = vals['afrex_freight_amount'] / lead.purchase_order_qty_delivered
                     elif lead.product_qty > 0:
-                        update_vals['freight_unit'] = vals['freight_amount'] / lead.product_qty
+                        update_vals['freight_unit'] = vals['afrex_freight_amount'] / lead.product_qty
+                elif 'purchase_order_freight_amount' in vals:
+                    update_vals['freight_amount'] = vals['purchase_order_freight_amount']
+                    if lead.purchase_order_qty_delivered > 0:
+                        update_vals['freight_unit'] = vals['purchase_order_freight_amount'] / lead.purchase_order_qty_delivered
+                    elif lead.product_qty > 0:
+                        update_vals['freight_unit'] = vals['purchase_order_freight_amount'] / lead.product_qty
 
                 # Finally, push changes into purchase order
                 if update_vals:

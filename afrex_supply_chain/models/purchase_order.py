@@ -459,7 +459,10 @@ class PurchaseOrder(models.Model):
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
-        insurance_amount = self.insurance_amount
+        if sale_invoice_id.invoice_incoterm_id in ['cfr', 'fob']:
+            insurance_amount = 0.0
+        else:
+            insurance_amount = self.insurance_amount
         interest_amount = lead.credit_cost_total
         freight_amount = self.freight_amount
 
@@ -525,7 +528,10 @@ class PurchaseOrder(models.Model):
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
-        insurance_amount = self.insurance_amount
+        if sale_invoice_id.invoice_incoterm_id in ['cfr', 'fob']:
+            insurance_amount = 0.0
+        else:
+            insurance_amount = self.insurance_amount
         interest_amount = lead.credit_cost_total
         freight_amount = self.freight_amount
 
@@ -658,9 +664,9 @@ class PurchaseOrder(models.Model):
             fob = sales_price - (insurance + freight + interest + procurement)
 
 
-        # freight_unit = freight / self.qty_total
-        # fob_unit = fob / self.qty_total
-        # cost_unit = sales_price / self.qty_total
+        freight_unit = freight / self.qty_total
+        fob_unit = fob / self.qty_total
+        cost_unit = sales_price / self.qty_total
 
 
         context = {
@@ -721,18 +727,10 @@ class PurchaseOrder(models.Model):
         self.name = seq
 
         if self.incoterm_selection == 'fob':
-            # if self.insurance_amount == 0.0 or self.freight_amount == 0.0:
-            #     self.insurance_amount = lead.insurance_premium_amount
-            #     # self.insurance_amount = lead.insurance_premium_amount
-            #     self.freight_amount = lead.afrex_freight_amount
-            #     self.freight_unit = lead.afrex_freight_amount / self.qty_total
-            #     self.fob_amount = self.cost_amount - self.insurance_amount - self.freight_amount
-            #     self.fob_unit = self.fob_amount / self.qty_total
-            #     # self.fob_unit =  self.insurance_amount + self.freight_amount
-            # else:
-            #     pass
-            # self.fob_unit = self.fob_amount / self.qty_total
             # self.fob_unit = self.cost_unit
+            # self.fob_amount = self.cost_amount
+            # self.freight_unit = 0.0
+            # self.freight_amount = 0.0
             # self.insurance_amount = 0.0
             self.fca_unit = 0.0
             self.fca_amount = 0.0

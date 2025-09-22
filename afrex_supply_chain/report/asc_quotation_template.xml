@@ -638,7 +638,7 @@
                     <t t-if="o.incoterm_selection == 'fob'">
                         <tr>
                             <td colspan="1" style="border:1px solid black; vertical-align: middle;"/>
-                            <th t-if="o.show_breakdown" rowspan="2" valign="middle" class="text-center"
+                            <th t-if="o.show_breakdown" valign="middle" class="text-center"
                                 style="border:1px solid black; vertical-align: middle;">
                                 <span>FOB Price Breakdown</span>
                             </th>
@@ -647,7 +647,7 @@
                                 <span>FOB Price Breakdown</span>
                             </th>
                             <th t-if="not o.is_internal" colspan="2"
-                                style="border:1px solid black; padding: 0; margin: 0;">
+                                style="border:1px solid black; padding: 0; margin: 0; vertical-align: middle;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
                                         <div style="display: table-cell; padding: 2px 0; width: 100%;">
@@ -675,7 +675,7 @@
                                     </div>
                                 </div>
                             </th>
-                            <td colspan="1" valign="middle" style="border:1px solid black; padding: 0; margin: 0;">
+                            <td colspan="1" valign="middle" style="border:1px solid black; padding: 0; margin: 0; vertical-align: middle;">
                                 <div t-if="not o.is_internal"
                                      style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">

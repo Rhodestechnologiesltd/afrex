@@ -983,7 +983,7 @@
                                                     USD
                                                     <field name="insurance_premium_amount" readonly="is_done"/>
                                                 </th>
-                                                <th style="width:30%; text-align: right;">
+                                                <th style="width:30%; text-align: right;" invisible="not is_internal">
                                                     ZAR
                                                     <field name="insurance_premium_amount_zar" widget="float"
                                                            options="{'precision': 4}"/>
@@ -998,8 +998,8 @@
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
-                                                    <field name="afrex_freight_amount" readonly="is_done" widget="float"
-                                                           options="{'precision': 2}"/>
+                                                    <field name="afrex_freight_amount" readonly="True" widget="float"
+                                                           options="{'precision': 4}"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;" invisible="not is_internal">
                                                     ZAR
@@ -2203,10 +2203,10 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         USD
-                                                        <field name="insurance_premium_amount" readonly="True"/>
+                                                        <field name="insurance_premium_amount" readonly="False"/>
 
                                                     </th>
-                                                    <th style="width:30%; text-align: right;">
+                                                    <th style="width:30%; text-align: right;" invisible="not is_internal">
                                                         ZAR
                                                         <field name="insurance_premium_amount_zar" widget="float"
                                                                options="{'precision': 4}"/>
@@ -2222,7 +2222,7 @@
                                                         USD
                                                         <field name="afrex_freight_amount" readonly="True"
                                                                widget="float"
-                                                               options="{'precision': 2}"/>
+                                                               options="{'precision': 4}"/>
                                                     </th>
                                                     <th style="width:30%; text-align: right;"
                                                         invisible="not is_internal">
