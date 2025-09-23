@@ -67,8 +67,8 @@
                     <group string="Lead/Buyer">
                         <field name="partner_id" domain="[('is_company','=',True)]" string="Customer" required="True"/>
                         <field name="supplier_delivery_method" widget="radio" required="True"/>
-<!--                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"-->
-<!--                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>-->
+                        <!--                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"-->
+                        <!--                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>-->
                         <field name="discharge_port_id" string="Port of Discharge" context="{'default_type': 'sea'}"
                                domain="[('type', '=', 'sea')]" required="supplier_delivery_method == 'sea'"
                                invisible="supplier_delivery_method != 'sea'"/>
@@ -278,9 +278,9 @@
                 <!--                </h6>-->
             </xpath>
 
-<!--            <xpath expr="//form" position="attributes">-->
-<!--                <attribute name="edit">{is_done}</attribute>-->
-<!--            </xpath>-->
+            <!--            <xpath expr="//form" position="attributes">-->
+            <!--                <attribute name="edit">{is_done}</attribute>-->
+            <!--            </xpath>-->
             <xpath expr="//div[hasclass('oe_title')]" position="after">
                 <field name="description" placeholder="Notes and Remarks..." options="{'collaborative': true}"/>
                 <group colspan="4">
@@ -864,6 +864,7 @@
                                                         <button name="action_apply" string="Apply" type="object"
                                                                 class="btn-primary mx-2"
                                                                 style="color:white; background:#B04949;"
+                                                                confirm="⚠️ Please check the Values before applying&#10;&#10;NOTE:- If CIF purchase prices are do not tally, Please Use Override CIF purchase price to update CIF Purchase Price&#10;&#10;Do you want to continue?"
                                                                 invisible="not is_change"/>
                                                     </h6>
                                                 </th>
@@ -2206,7 +2207,8 @@
                                                         <field name="insurance_premium_amount" readonly="False"/>
 
                                                     </th>
-                                                    <th style="width:30%; text-align: right;" invisible="not is_internal">
+                                                    <th style="width:30%; text-align: right;"
+                                                        invisible="not is_internal">
                                                         ZAR
                                                         <field name="insurance_premium_amount_zar" widget="float"
                                                                options="{'precision': 4}"/>

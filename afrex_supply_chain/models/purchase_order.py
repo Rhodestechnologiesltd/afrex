@@ -464,8 +464,11 @@ class PurchaseOrder(models.Model):
         else:
             insurance_amount = self.insurance_amount
         interest_amount = lead.credit_cost_total
-        freight_amount = self.freight_amount
-
+        # freight_amount = self.freight_amount
+        if sale_invoice_id.invoice_incoterm_id in ['fob']:
+            freight_amount = 0
+        else:
+            freight_amount = self.freight_amount
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
             pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
@@ -533,7 +536,10 @@ class PurchaseOrder(models.Model):
         else:
             insurance_amount = self.insurance_amount
         interest_amount = lead.credit_cost_total
-        freight_amount = self.freight_amount
+        if sale_invoice_id.invoice_incoterm_id in ['fob']:
+            freight_amount = 0
+        else:
+            freight_amount = self.freight_amount
 
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
@@ -592,6 +598,9 @@ class PurchaseOrder(models.Model):
                 sales_price = lead.sales_price
             if sale_order.incoterm_selection in ['cfr', 'fob']:
                 insurance = 0.0
+            if sale_order.incoterm_selection in ['fob']:
+                freight = 0.0
+
             if not lead.is_internal:
                 fob = sales_price - (insurance + freight)
             else:

@@ -175,7 +175,7 @@ class Lead(models.Model):
             )
 
     @api.onchange('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
-                  'afrex_freight_amount', 'purchase_order_freight_amount')
+                  'afrex_freight_amount', 'purchase_order_freight_amount','is_cif_override', 'manual_purchase_order_cif_amount')
     def _onchange_amounts(self):
         if not self._origin.id:  # record not saved yet
             return
@@ -185,7 +185,8 @@ class Lead(models.Model):
                     rec.purchase_order_insurance_amount != rec._origin.purchase_order_insurance_amount
                     or rec.purchase_order_fob_amount != rec._origin.purchase_order_fob_amount
                     or rec.purchase_order_freight_amount != rec._origin.purchase_order_freight_amount
-                    or rec.afrex_freight_amount != rec._origin.afrex_freight_amount):
+                    or rec.afrex_freight_amount != rec._origin.afrex_freight_amount or
+                    rec.is_cif_override or rec.manual_purchase_order_cif_amount != rec._origin.manual_purchase_order_cif_amount):
                 rec.is_change = True
             else:
                 rec.is_change = False
@@ -607,19 +608,19 @@ class Lead(models.Model):
                         update_vals['fob_unit'] = vals['purchase_order_fob_amount'] / lead.product_qty
 
                 # Insurance
-                if 'insurance_premium_amount' in vals:
-                    update_vals['insurance_amount'] = vals['insurance_premium_amount']
-                elif 'purchase_order_insurance_amount' in vals:
+                if 'purchase_order_insurance_amount' in vals:
                     update_vals['insurance_amount'] = vals['purchase_order_insurance_amount']
+                # elif 'insurance_premium_amount' in vals:
+                #     update_vals['insurance_amount'] = vals['insurance_premium_amount']
 
                 # Freight
-                if 'afrex_freight_amount' in vals:
-                    update_vals['freight_amount'] = vals['afrex_freight_amount']
-                    if lead.purchase_order_qty_delivered > 0:
-                        update_vals['freight_unit'] = vals['afrex_freight_amount'] / lead.purchase_order_qty_delivered
-                    elif lead.product_qty > 0:
-                        update_vals['freight_unit'] = vals['afrex_freight_amount'] / lead.product_qty
-                elif 'purchase_order_freight_amount' in vals:
+                # if 'afrex_freight_rate' in vals:
+                #     update_vals['freight_unit'] = vals['afrex_freight_rate']
+                #     if lead.purchase_order_qty_delivered > 0:
+                #         update_vals['freight_unit'] = vals['afrex_freight_rate'] * lead.purchase_order_qty_delivered
+                #     elif lead.product_qty > 0:
+                #         update_vals['freight_unit'] = vals['afrex_freight_rate'] * lead.product_qty
+                if 'purchase_order_freight_amount' in vals:
                     update_vals['freight_amount'] = vals['purchase_order_freight_amount']
                     if lead.purchase_order_qty_delivered > 0:
                         update_vals['freight_unit'] = vals['purchase_order_freight_amount'] / lead.purchase_order_qty_delivered
