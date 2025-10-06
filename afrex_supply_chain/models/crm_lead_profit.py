@@ -196,14 +196,14 @@ class Lead(models.Model):
                     rec.is_cif_override or rec.manual_purchase_order_cif_amount != rec._origin.manual_purchase_order_cif_amount):
                 rec.is_change = True
                 rec.is_adjusted = True
-                if rec.purchase_order_incoterm_selection == 'cif':
-                    rec.validate_cif_amount()
-                elif rec.purchase_order_incoterm_selection == 'cfr':
-                    rec.validate_cfr_amount()
-                elif rec.purchase_order_incoterm_selection == 'fob':
-                    rec.validate_fob_amount()
-                else:
-                    pass
+                # if rec.purchase_order_incoterm_selection == 'cif':
+                #     rec.validate_cif_amount()
+                # elif rec.purchase_order_incoterm_selection == 'cfr':
+                #     rec.validate_cfr_amount()
+                # elif rec.purchase_order_incoterm_selection == 'fob':
+                #     rec.validate_fob_amount()
+                # else:
+                #     pass
 
             else:
                 rec.is_change = False
