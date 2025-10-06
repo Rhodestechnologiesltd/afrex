@@ -45,33 +45,36 @@
                 <group>
                     <label for="fob_amount" string="FOB"/>
                     <div class="o_row">
-                        <field name="fob_amount" readonly="not is_internal"/>
+<!--                        <field name="fob_amount" readonly="not is_internal"/>-->
+                        <field name="fob_amount" readonly="True"/>
                         FOB/MT: <field name="fob_unit" readonly="True"/>
                     </div>
-                    <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>
+<!--                    <field name="insurance_amount" readonly="incoterm_selection != 'cif'"/>-->
+                    <field name="insurance_amount" readonly="True"/>
                     <label for="freight_amount" string="Freight"/>
                     <div class="o_row">
-                        <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>
+<!--                        <field name="freight_amount" readonly="incoterm_selection == 'fob'"/>-->
+                        <field name="freight_amount" readonly="True"/>
                         Freight/MT: <field name="freight_unit" readonly="True"/>
                     </div>
                     <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
                     <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
                     <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
                     <div class="o_row" invisible="incoterm_selection != 'cif'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         CIF/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                     <div class="o_row" invisible="incoterm_selection != 'cfr'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         CFR/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                     <div class="o_row" invisible="incoterm_selection != 'fob'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         FOB/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                 </group>
                 <group invisible="not is_internal">
-                    <field name="interest_amount"/>
+                    <field name="interest_amount" readonly="True"/>
                     <field name="procurement_documentation_amount" readonly="is_internal"/>
                 </group>
             </group>
@@ -82,10 +85,12 @@
                         <field name="fob_amount_zar" readonly="not is_internal"/>
                         FOB/MT: <field name="fob_unit_zar" readonly="True"/>
                     </div>
-                    <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>
+<!--                    <field name="insurance_amount_zar" readonly="incoterm_selection != 'cif'"/>-->
+                    <field name="insurance_amount_zar" readonly="True"/>
                     <label for="freight_amount_zar" string="Freight"/>
                     <div class="o_row">
-                        <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>
+<!--                        <field name="freight_amount_zar" readonly="incoterm_selection == 'fob'"/>-->
+                        <field name="freight_amount_zar" readonly="True"/>
                         Freight/MT: <field name="freight_unit_zar" readonly="True"/>
                     </div>
                     <label for="cost_amount_zar" string="CIF" invisible="incoterm_selection != 'cif'"/>
@@ -100,12 +105,12 @@
                         CFR/MT: <field name="cost_unit_zar" readonly="True"/>
                     </div>
                     <div class="o_row" invisible="incoterm_selection != 'fob'">
-                        <field name="cost_amount_zar"/>
+                        <field name="cost_amount_zar" readonly="True"/>
                         CFR/MT: <field name="cost_unit_zar" readonly="True"/>
                     </div>
                 </group>
                 <group invisible="not is_internal">
-                    <field name="interest_amount_zar"/>
+                    <field name="interest_amount_zar" readonly="True"/>
                     <field name="procurement_documentation_amount_zar" readonly="is_internal"/>
                 </group>
             </group>
@@ -128,7 +133,7 @@
                     </div>
                     <label for="cost_amount" string="DAP" invisible="incoterm_selection != 'dap'"/>
                     <div class="o_row" invisible="incoterm_selection != 'dap'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         DAP/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                 </group>
@@ -138,8 +143,8 @@
                         <field name="logistics_service_amount" readonly="incoterm_selection != 'dap'"/>
                         Logistics/MT: <field name="logistics_service_unit" readonly="True"/>
                     </div>
-                    <field name="interest_amount_zar" invisible="not is_internal"/>
-                    <field name="procurement_documentation_amount_zar" invisible="not is_internal"/>
+                    <field name="interest_amount_zar" readonly="True" invisible="not is_internal"/>
+                    <field name="procurement_documentation_amount_zar" readonly="True" invisible="not is_internal"/>
                 </group>
             </group>
             <group string="ZAR" invisible="incoterm_change or not is_currency_zar or not incoterm_id or supplier_delivery_method != 'road'">

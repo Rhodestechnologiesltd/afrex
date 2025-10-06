@@ -39,7 +39,21 @@ class ResPartner(models.Model):
         return res
     
     def write(self, vals):
-        res = super().write(vals)
-        if 'ref' in vals:
-            for partner in self:
-                partner.sequence_id.prefix = vals['ref']
+        res = super(ResPartner, self).write(vals)
+        for partner in self:
+            # If the partner has no sequence, create a new one
+            if not partner.sequence_id:
+                name = vals.get('name', partner.name)
+                seq_vals = {
+                    'name': f"{name} - Trade Sequence",
+                    'code': name.lower().replace(" ", "_") + ".trade.sequence",
+                    'prefix': vals.get('ref') or partner.ref or '',
+                    'padding': 5,
+                }
+                seq = self.env['ir.sequence'].create(seq_vals)
+                partner.sequence_id = seq.id
+            else:
+                # If ref is updated, update the prefix of the existing sequence
+                if 'ref' in vals:
+                    partner.sequence_id.prefix = vals['ref']
+        return res

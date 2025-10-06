@@ -5,6 +5,9 @@ from datetime import date
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import math
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Lead(models.Model):
@@ -18,13 +21,15 @@ class Lead(models.Model):
     afrex_insurance_agent_id = fields.Many2one('res.partner', string="Insurance Agent")
 
     insurance_premium_amount = fields.Float("Insurance Premium")
+    fob_value_sug = fields.Float(compute="validate_cif_amount", store=True)
     insurance_premium_amount_zar = fields.Float("Insurance Premium in ZAR",
                                                 compute="compute_insurance_premium_amount_zar", store=True,
                                                 digits="Prices per Unit")
     insurance_premium_unit = fields.Float("Insurance Premium per MT", compute="compute_insurance_premium_unit",
                                           store=True)
 
-    afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount", inverse="inverse_afrex_freight_amount", store=True)
+    afrex_freight_amount = fields.Float("Freight borne by Afrex", compute="compute_afrex_freight_amount",
+                                        inverse="inverse_afrex_freight_amount", store=True)
     afrex_freight_rate = fields.Float("Freight Rate / MT")
 
     procurement_agent_id = fields.Many2one('res.partner', string="Procurement Agent")
@@ -161,6 +166,7 @@ class Lead(models.Model):
     is_click = fields.Boolean(default=False)
     is_done = fields.Boolean(default=False)
     sale_invoice_id_post = fields.Boolean(compute='compute_invoice_status', store=True, )
+    is_adjusted = fields.Boolean(default=False)
 
     @api.depends('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
                  'afrex_freight_amount', 'purchase_order_freight_amount')
@@ -175,7 +181,8 @@ class Lead(models.Model):
             )
 
     @api.onchange('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
-                  'afrex_freight_amount', 'purchase_order_freight_amount','is_cif_override', 'manual_purchase_order_cif_amount')
+                  'afrex_freight_amount', 'purchase_order_freight_amount', 'is_cif_override',
+                  'manual_purchase_order_cif_amount', 'is_adjusted')
     def _onchange_amounts(self):
         if not self._origin.id:  # record not saved yet
             return
@@ -188,8 +195,80 @@ class Lead(models.Model):
                     or rec.afrex_freight_amount != rec._origin.afrex_freight_amount or
                     rec.is_cif_override or rec.manual_purchase_order_cif_amount != rec._origin.manual_purchase_order_cif_amount):
                 rec.is_change = True
+                rec.is_adjusted = True
+                if rec.purchase_order_incoterm_selection == 'cif':
+                    rec.validate_cif_amount()
+                elif rec.purchase_order_incoterm_selection == 'cfr':
+                    rec.validate_cfr_amount()
+                elif rec.purchase_order_incoterm_selection == 'fob':
+                    rec.validate_fob_amount()
+                else:
+                    pass
+
             else:
                 rec.is_change = False
+
+    def validate_cif_amount(self):
+        for rec in self:
+            fob = rec.purchase_order_fob_amount or 0
+            insurance = rec.purchase_order_insurance_amount or 0
+            freight = rec.purchase_order_freight_amount or 0
+            # calculated_cif = fob + insurance + freight
+            cif_amount = rec.purchase_order_cif_amount or 0
+            entered_count = sum([bool(fob), bool(insurance), bool(freight)])
+            if freight and insurance:
+                rec.is_adjusted = True
+                rec.fob_value_sug = cif_amount - (
+                        rec.purchase_order_insurance_amount + rec.purchase_order_freight_amount)
+            if entered_count > 2:
+                calculated_cif = fob + insurance + freight
+                cif_amount = rec.purchase_order_cif_amount or 0
+                if round(cif_amount, 2) != round(calculated_cif, 2):
+                    raise ValidationError(
+                        f"CIF amount mismatch: Please check the values.\n"
+                        f"Expected: {cif_amount}, Entered: {calculated_cif}"
+                    )
+        return True
+
+    def validate_cfr_amount(self):
+        for rec in self:
+            fob = rec.purchase_order_fob_amount or 0
+            freight = rec.purchase_order_freight_amount or rec.afrex_freight_amount or 0
+            insurance = rec.purchase_order_insurance_amount or rec.insurance_premium_amount or 0
+            cost = rec.purchase_order_cost_amount or 0
+            cif_amount = rec.purchase_order_cost_amount or 0
+            if freight and insurance:
+                rec.is_adjusted = True
+                rec.fob_value_sug = rec.purchase_order_cost_amount - (
+                        rec.purchase_order_insurance_amount + rec.purchase_order_freight_amount)
+            entered_count = sum([bool(fob), bool(freight)])
+            if entered_count > 1:
+
+                calculated_cif = rec.purchase_order_fob_amount + rec.purchase_order_freight_amount
+                if rec.purchase_order_cost_amount != calculated_cif:
+                    raise ValidationError(
+                        f"CFR amount mismatch: "
+                        f"Please Check the Values"
+                    )
+
+        return True
+
+    def validate_fob_amount(self):
+        for rec in self:
+            fob = rec.purchase_order_fob_amount or 0
+            freight = rec.purchase_order_freight_amount
+            insurance = rec.purchase_order_insurance_amount
+            cost = rec.purchase_order_cost_amount or 0
+            cif_amount = rec.purchase_order_cost_amount or 0
+            rec.fob_value_sug = rec.purchase_order_cost_amount
+            entered_count = sum([bool(fob), bool(freight)])
+            if entered_count >= 1:
+                if rec.purchase_order_cost_amount != rec.purchase_order_fob_amount:
+                    raise ValidationError(
+                        f"FOB amount mismatch: "
+                        f"Please Check the Values"
+                    )
+        return True
 
     @api.depends('sale_invoice_id.state')
     def compute_invoice_status(self):
@@ -204,6 +283,7 @@ class Lead(models.Model):
     def action_apply(self):
         self.is_click = True
         self.is_change = False
+        self.is_adjusted = False
         self.ensure_one()
 
         sale_invoice_id = self.sale_invoice_id
@@ -401,6 +481,7 @@ class Lead(models.Model):
             if rec.product_qty and rec.packaging_weight:
                 divisor = rec.product_qty * (1 + (rec.packaging_weight / 1000))
                 rec.afrex_freight_rate = rec.afrex_freight_amount / divisor
+
     @api.depends('purchase_order_fca_amount', 'road_transportation_amount', 'logistics_service_amount')
     def _compute_dap_amount(self):
         for rec in self:
@@ -592,6 +673,7 @@ class Lead(models.Model):
 
     def print_profit_estimate(self):
         return self.env.ref('afrex_supply_chain.action_report_asc_profit_estimate_new').report_action(self)
+
 
     def write(self, vals):
         res = super().write(vals)

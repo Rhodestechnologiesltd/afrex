@@ -142,7 +142,74 @@ class PurchaseOrder(models.Model):
     is_selected = fields.Boolean("Selected for deal")
 
     is_close_readonly = fields.Boolean(default=False)
+    is_adjusted = fields.Boolean(default=False)
 
+    @api.onchange('fob_amount','freight_amount','insurance_amount','is_adjusted','cost_amount')
+    def validate_amount(self):
+        self.validate_cif_amount()
+    def validate_cif_amount(self):
+        for rec in self:
+            if rec.qty_total:
+                insurance_unit = rec.insurance_amount / rec.qty_total
+            else:
+                insurance_unit = rec.insurance_amount / rec.qty_delivered
+            calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
+            entered_values = [
+                1 if rec.fob_unit else 0,
+                1 if rec.freight_unit else 0,
+                1 if insurance_unit else 0
+            ]
+            total_entered = sum(entered_values)
+            if rec.is_adjusted:
+                if rec.incoterm_selection == "cif":
+                    if total_entered == 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                            rec.fob_unit = max(new_fob, 0.0)
+                elif rec.incoterm_selection == "cfr":
+                    if total_entered == 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                            rec.fob_unit = max(new_fob, 0.0)
+                elif rec.incoterm_selection == "fob":
+                    if rec.cost_unit:
+                        rec.fob_unit = rec.cost_unit or 0.0
+                else:
+                    pass
+            else:
+                # pass
+                entered_values = [
+                        1 if rec.fob_unit else 0,
+                        1 if rec.freight_unit else 0,
+                        1 if insurance_unit else 0
+                ]
+                total_entered = sum(entered_values)
+                if rec.incoterm_selection == "cif":
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"CIF validation failed: CIF ({rec.cost_unit}) "
+                                f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
+                            )
+                elif rec.incoterm_selection == "cfr":
+                    if total_entered > 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+                elif rec.incoterm_selection == "fob":
+                    if total_entered == 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+                else:
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+        return True
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
         for rec in self:
@@ -459,16 +526,16 @@ class PurchaseOrder(models.Model):
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
-        if sale_invoice_id.invoice_incoterm_id in ['cfr', 'fob']:
+        if sale_invoice_id.incoterm_selection in ['cfr', 'fob']:
             insurance_amount = 0.0
         else:
-            insurance_amount = self.insurance_amount
+            insurance_amount = self.insurance_amount or self.lead_id.insurance_premium_amount
         interest_amount = lead.credit_cost_total
         # freight_amount = self.freight_amount
-        if sale_invoice_id.invoice_incoterm_id in ['fob']:
+        if sale_invoice_id.incoterm_selection in ['fob']:
             freight_amount = 0
         else:
-            freight_amount = self.freight_amount
+            freight_amount = self.freight_amount or self.lead_id.afrex_freight_amount
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
             pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
@@ -531,15 +598,15 @@ class PurchaseOrder(models.Model):
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
-        if sale_invoice_id.invoice_incoterm_id in ['cfr', 'fob']:
+        if sale_invoice_id.incoterm_selection in ['cfr', 'fob']:
             insurance_amount = 0.0
         else:
-            insurance_amount = self.insurance_amount
+            insurance_amount = self.insurance_amount or self.lead_id.insurance_premium_amount
         interest_amount = lead.credit_cost_total
-        if sale_invoice_id.invoice_incoterm_id in ['fob']:
+        if sale_invoice_id.incoterm_selection in ['fob']:
             freight_amount = 0
         else:
-            freight_amount = self.freight_amount
+            freight_amount = self.freight_amount or self.lead_id.afrex_freight_amount
 
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
@@ -587,8 +654,8 @@ class PurchaseOrder(models.Model):
                 raise UserError("No valid quantity found (received or total).")
             lead.sudo().compute_sales_price()
             self.env.cr.commit()
-            insurance = self.insurance_amount
-            freight = self.freight_amount
+            insurance = self.lead_id.insurance_premium_amount or self.insurance_amount
+            freight = self.freight_amount or self.lead_id.afrex_freight_amount
             fca = self.fca_amount
             interest = lead.credit_cost_total
             procurement = lead.procurement_fee_amount
@@ -991,6 +1058,7 @@ class PurchaseOrder(models.Model):
                         'default_old_cost_amount': self.cost_amount,
                         'default_old_insurance_amount': insurance_amount,
                         'default_currency_id': self.currency_id.id,
+                        'default_is_adjusted': True,
                         }
         }
         return action

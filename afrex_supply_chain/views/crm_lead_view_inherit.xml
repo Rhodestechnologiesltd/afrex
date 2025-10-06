@@ -203,7 +203,8 @@
                     <ul class="dropdown-menu" aria-labelledby="button_print_dropdown" style="min-width: max-content;">
                         <li>
                             <button name="print_profit_estimate" icon="fa-line-chart" string="Profit Estimate"
-                                    type="object" class="btn-mute" invisible="not is_rfq_generated"/>
+                                    type="object" class="btn-mute"
+                                    invisible="not is_rfq_generated or not expected_payment_date"/>
                         </li>
                         <li>
                             <button name="print_quotation" icon="fa-dollar" string="Quote / Offer" type="object"
@@ -864,7 +865,7 @@
                                                         <button name="action_apply" string="Apply" type="object"
                                                                 class="btn-primary mx-2"
                                                                 style="color:white; background:#B04949;"
-                                                                confirm="⚠️ Please check the Values before applying&#10;&#10;NOTE:- If CIF purchase prices are do not tally, Please Use Override CIF purchase price to update CIF Purchase Price&#10;&#10;Do you want to continue?"
+                                                                confirm="⚠️Do you want to continue?"
                                                                 invisible="not is_change"/>
                                                     </h6>
                                                 </th>
@@ -1039,6 +1040,18 @@
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
+                                            <tr class="alert alert-info" invisible="not is_adjusted">
+                                                <th style="width:30%; text-align: right;">
+
+                                                    <field name="is_adjusted" widget="boolean_toggle" invisible="1"/>
+                                                </th>
+                                                <th style="width: 40%; text-align: right;">
+                                                    Suggested fob value <field name="fob_value_sug" widget="float" options="{'precision': 2}"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
                                             <tr>
                                                 <th style="width:30%; text-align: right;">
                                                     Override CIF Purchase Price
@@ -1051,6 +1064,18 @@
                                                     <span/>
                                                 </th>
                                             </tr>
+<!--                                            <tr>-->
+<!--                                                <th style="width:30%; text-align: right;">-->
+<!--                                                    Auto update-->
+<!--                                                    <field name="is_adjusted" widget="boolean_toggle"/>-->
+<!--                                                </th>-->
+<!--                                                <th style="width: 40%; text-align: right;">-->
+<!--                                                    <span/>-->
+<!--                                                </th>-->
+<!--                                                <th style="width:30%; text-align: right;">-->
+<!--                                                    <span/>-->
+<!--                                                </th>-->
+<!--                                            </tr>-->
                                             <!--                                            <t t-if="is_cif_override">-->
                                             <tr invisible="not is_cif_override or supplier_delivery_method != 'sea'">
                                                 <th style="width: 40%; text-align: right;">
@@ -1283,33 +1308,13 @@
                                                 </th>
                                             </tr>
                                             <tr invisible="credit_days == 0">
-                                                <t invisible="credit_days == 120">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                        (Bill of Lading + 90
-                                                        days)
-                                                    </th>
-                                                </t>
-                                                <t invisible="credit_days == 180">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                        (Berthing + 120 days)
-                                                    </th>
-                                                </t>
-                                                <t invisible="credit_days in [180, 120]">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                    </th>
-                                                </t>
+
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    SGT Credit Cost for
+                                                    <field name="credit_days" readonly="True"/>
+                                                    days from Statement
+                                                </th>
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="total_credit_cost"/>
@@ -1790,33 +1795,14 @@
                                                 </th>
                                             </tr>
                                             <tr invisible="credit_days == 0">
-                                                <t invisible="credit_days == 120">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                        (Bill of Lading + 90
-                                                        days)
-                                                    </th>
-                                                </t>
-                                                <t invisible="credit_days == 180">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                        (Berthing + 120 days)
-                                                    </th>
-                                                </t>
-                                                <t invisible="credit_days in [180, 120]">
-                                                    <th valign='middle'
-                                                        style="width: 40%; text-align: left; valign: middle;">
-                                                        SGT Credit Cost for
-                                                        <field name="credit_days" readonly="True"/>
-                                                        days
-                                                    </th>
-                                                </t>
+
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;">
+                                                    SGT Credit Cost for
+                                                    <field name="credit_days" readonly="True"/>
+                                                    days from Statement
+                                                </th>
+
                                                 <th style="width:30%; text-align: right;">
                                                     USD
                                                     <field name="total_credit_cost"/>
@@ -2028,7 +2014,8 @@
                         <button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object"
                                 class="btn-primary mx-2" style="color:white; background:#B04949;"/>
                         <button name="print_profit_estimate" icon="fa-print" string="Print" type="object"
-                                class="btn-primary" style="color:white; background:#B04949;"/>
+                                class="btn-primary" style="color:white; background:#B04949;"
+                                invisible="not expected_payment_date"/>
                     </div>
                     <field name="company_id" invisible="True"/>
                     <field name="is_internal" invisible="True"/>
@@ -2521,33 +2508,14 @@
                                                     </th>
                                                 </tr>
                                                 <tr invisible="credit_days == 0">
-                                                    <t invisible="credit_days == 120">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                            (Bill of Lading + 90
-                                                            days)
-                                                        </th>
-                                                    </t>
-                                                    <t invisible="credit_days == 180">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                            (Berthing + 120 days)
-                                                        </th>
-                                                    </t>
-                                                    <t invisible="credit_days in [180, 120]">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                        </th>
-                                                    </t>
+
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days from Statement
+                                                    </th>
+
                                                     <th style="width:30%; text-align: right;">
                                                         USD
                                                         <field name="total_credit_cost"/>
@@ -3034,33 +3002,14 @@
                                                     </th>
                                                 </tr>
                                                 <tr invisible="credit_days == 0">
-                                                    <t invisible="credit_days == 120">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                            (Bill of Lading + 90
-                                                            days)
-                                                        </th>
-                                                    </t>
-                                                    <t invisible="credit_days == 180">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                            (Berthing + 120 days)
-                                                        </th>
-                                                    </t>
-                                                    <t invisible="credit_days in [180, 120]">
-                                                        <th valign='middle'
-                                                            style="width: 40%; text-align: left; valign: middle;">
-                                                            SGT Credit Cost for
-                                                            <field name="credit_days" readonly="True"/>
-                                                            days
-                                                        </th>
-                                                    </t>
+
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;">
+                                                        SGT Credit Cost for
+                                                        <field name="credit_days" readonly="True"/>
+                                                        days from Statement
+                                                    </th>
+
                                                     <th style="width:30%; text-align: right;">
                                                         USD
                                                         <field name="total_credit_cost"/>

@@ -113,28 +113,32 @@
                     <field name="invoice_incoterm_id" readonly="True"/>
                     <label for="fob_amount" string="FOB"/>
                     <div class="o_row">
-                        <field name="fob_amount" readonly="state != 'draft'"/>
+                        <field name="fob_amount" readonly="True"/>
+<!--                        <field name="fob_amount" readonly="state != 'draft'"/>-->
                         FOB/MT: <field name="fob_unit" readonly="True"/>
                     </div>
-                    <field name="insurance_amount" readonly="state != 'draft'"/>
-                    <label for="freight_amount" string="Freight"/>
+<!--                    <field name="insurance_amount" readonly="state != 'draft'"/>-->
+                    <field name="insurance_amount" readonly="True"/>
+                    <label for="freight_amount" string="Freight" />
                     <div class="o_row">
-                        <field name="freight_amount" readonly="state != 'draft'"/>
+<!--                        <field name="freight_amount" readonly="state != 'draft'"/>-->
+                        <field name="freight_amount" readonly="True"/>
                         Freight/MT: <field name="freight_unit" readonly="True"/>
                     </div>
                     <label for="cost_amount" string="CIF" invisible="incoterm_selection != 'cif'"/>
                     <label for="cost_amount" string="CFR" invisible="incoterm_selection != 'cfr'"/>
                     <label for="cost_amount" string="FOB" invisible="incoterm_selection != 'fob'"/>
                     <div class="o_row" invisible="incoterm_selection != 'cif'">
-                        <field name="cost_amount" readonly="state != 'draft'"/>
+<!--                        <field name="cost_amount" readonly="state != 'draft'"/>-->
+                        <field name="cost_amount" readonly="True"/>
                         CIF/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                     <div class="o_row" invisible="incoterm_selection != 'cfr'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         CFR/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                     <div class="o_row" invisible="incoterm_selection != 'fob'">
-                        <field name="cost_amount"/>
+                        <field name="cost_amount" readonly="True"/>
                         FOB/MT: <field name="cost_unit" readonly="True"/>
                     </div>
                     <field name="is_internal" invisible="True"/>

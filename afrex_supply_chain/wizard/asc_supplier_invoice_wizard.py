@@ -70,7 +70,49 @@ class SupplierInvoiceWizard(models.TransientModel):
     can_confirm = fields.Boolean(compute='_compute_can_confirm')
     is_change = fields.Boolean(compute='_compute_can_change')
     is_click = fields.Boolean(default=False)
+    is_adjusted = fields.Boolean(default=False)
 
+    @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
+    def validate_amount(self):
+        self.validate_cif_amount()
+
+    def validate_cif_amount(self):
+        for rec in self:
+
+            insurance_unit = rec.insurance_amount / rec.quantity
+            calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
+            if rec.is_adjusted:
+                if rec.cost_unit != calculated_cif_unit:
+                    new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                    rec.fob_unit = max(new_fob, 0.0)
+            else:
+                # pass
+                entered_values = [
+                    1 if rec.fob_unit else 0,
+                    1 if rec.freight_unit else 0,
+                    1 if insurance_unit else 0
+                ]
+                total_entered = sum(entered_values)
+                if rec.incoterm_selection == "cif":
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"CIF validation failed: CIF ({rec.cost_unit}) "
+                                f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
+                            )
+                elif rec.incoterm_selection in ["cfr", "fob"]:
+                    if total_entered > 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+                else:
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+        return True
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
         for rec in self:
@@ -141,8 +183,8 @@ class SupplierInvoiceWizard(models.TransientModel):
         if not sale_invoice_id and sale_order_id:
             raise UserError("No Saleorder/invoice found for this sale order.")
 
-        if sale_invoice_id.state != 'draft':
-            raise UserError("Invoice must be in draft state to update values.")
+        if sale_invoice_id.state not in ['draft', 'posted']:
+            raise UserError("Invoice must be in draft or posted state to update values.")
 
         # Get currencies
         currency_usd = self.env.ref('base.USD')
@@ -253,8 +295,10 @@ class SupplierInvoiceWizard(models.TransientModel):
         purchase.set_product_qty()
         purchase.is_close_readonly = True
         purchase.message_post(body=_("Invoice created successfully."))
-        if sale_invoice_id.state != 'draft':
+        if sale_invoice_id.state in ['draft','Posted']:
             self.action_apply()
+        # else:
+        #     self.sction_apply_commercial()
         # afrex_invoices = self.env['account.move'].search([('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')])
         # if len(afrex_invoices) == 1:
         #     return {

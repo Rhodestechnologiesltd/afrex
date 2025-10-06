@@ -127,6 +127,7 @@ class GenerateSaleOrderWizard(models.TransientModel):
                         rec.freight_amount = rec.get_freight_amount()
                         rec.freight_amount_zar = rec.get_freight_amount() * rec.exchange_rate
                         rec.interest_amount = rec.lead_id.credit_cost_total
+                        rec.fob_amount = rec.get_fob_amount()
                         rec._compute_sale_values()
                     elif incoterm == self.env.ref('account.incoterm_CIF'):
                         rec.incoterm_selection = 'cif'

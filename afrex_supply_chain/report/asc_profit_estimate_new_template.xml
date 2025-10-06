@@ -275,7 +275,7 @@
                     </tr>
                     <tr class="text-start">
                         <th class="text-start" style="width: 30%">
-                            <span style="padding-left: 5px;">Nominal Rate (SOFR + 2.75%)
+                            <span style="padding-left: 5px;">SOFR (<span t-esc="'{:.2f}%'.format((o.sofr_rate or 0) * 100)"/> + 2.75%)
                             </span>
                         </th>
                         <th class="text-start">
@@ -684,18 +684,15 @@
                 <tr t-if="not o.is_internal">
                     <th t-if="o.credit_days == 120" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/> Days
-                        (Bill of Lading + 90
-                        days)
+                        <span t-field="o.credit_days"/> Days from Statement
                     </th>
                     <th t-elif="o.credit_days == 180" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/> Days
-                        (Berthing + 120 days)
+                        <span t-field="o.credit_days"/> Days from Statement
                     </th>
                     <th t-else="" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/>
+                        <span t-field="o.credit_days"/> Days from Statement
                         Days
                     </th>
                     <th class="text-start" style="width:30%;">
@@ -1052,18 +1049,15 @@
                 <tr t-if="o.is_internal">
                     <th t-if="o.credit_days == 120" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/> Days
-                        (Bill of Lading + 90
-                        days)
+                        <span t-field="o.credit_days"/> Days from Statement
                     </th>
                     <th t-elif="o.credit_days == 180" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/> Days
-                        (Berthing + 120 days)
+                        <span t-field="o.credit_days"/> Days from Statement
                     </th>
                     <th t-else="" class="text-start" style="width:40%;">
                         <span style="padding-left: 5px;">SGT Credit Cost for</span>
-                        <span t-field="o.credit_days"/>
+                        <span t-field="o.credit_days"/> Days from Statement
                         Days
                     </th>
                     <th class="text-start" style="width:30%;">
