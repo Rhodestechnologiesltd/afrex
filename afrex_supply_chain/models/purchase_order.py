@@ -177,38 +177,38 @@ class PurchaseOrder(models.Model):
                 else:
                     pass
             else:
-                pass
-                # entered_values = [
-                #         1 if rec.fob_unit else 0,
-                #         1 if rec.freight_unit else 0,
-                #         1 if insurance_unit else 0
-                # ]
-                # total_entered = sum(entered_values)
-                # if rec.incoterm_selection == "cif":
-                #     if total_entered > 2:
-                #         if rec.cost_unit != calculated_cif_unit:
-                #             raise UserError(
-                #                 f"CIF validation failed: CIF ({rec.cost_unit}) "
-                #                 f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
-                #             )
-                # elif rec.incoterm_selection == "cfr":
-                #     if total_entered > 1:
-                #         if rec.cost_unit != calculated_cif_unit:
-                #             raise UserError(
-                #                 f"validation Error Please Check the Values"
-                #             )
-                # elif rec.incoterm_selection == "fob":
-                #     if total_entered == 1:
-                #         if rec.cost_unit != calculated_cif_unit:
-                #             raise UserError(
-                #                 f"validation Error Please Check the Values"
-                #             )
-                # else:
-                #     if total_entered > 2:
-                #         if rec.cost_unit != calculated_cif_unit:
-                #             raise UserError(
-                #                 f"validation Error Please Check the Values"
-                #             )
+                # pass
+                entered_values = [
+                    1 if rec.fob_unit else 0,
+                    1 if rec.freight_unit else 0,
+                    1 if insurance_unit else 0
+                ]
+                total_entered = sum(entered_values)
+                if rec.incoterm_selection == "cif":
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"CIF validation failed: CIF ({rec.cost_unit}) "
+                                f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
+                            )
+                elif rec.incoterm_selection == "cfr":
+                    if total_entered > 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+                elif rec.incoterm_selection == "fob":
+                    if total_entered == 1:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
+                else:
+                    if total_entered > 2:
+                        if rec.cost_unit != calculated_cif_unit:
+                            raise UserError(
+                                f"validation Error Please Check the Values"
+                            )
         return True
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):

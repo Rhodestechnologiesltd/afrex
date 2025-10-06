@@ -196,14 +196,14 @@ class Lead(models.Model):
                     rec.is_cif_override or rec.manual_purchase_order_cif_amount != rec._origin.manual_purchase_order_cif_amount):
                 rec.is_change = True
                 rec.is_adjusted = True
-                # if rec.purchase_order_incoterm_selection == 'cif':
-                #     rec.validate_cif_amount()
-                # elif rec.purchase_order_incoterm_selection == 'cfr':
-                #     rec.validate_cfr_amount()
-                # elif rec.purchase_order_incoterm_selection == 'fob':
-                #     rec.validate_fob_amount()
-                # else:
-                #     pass
+                if rec.purchase_order_incoterm_selection == 'cif':
+                    rec.validate_cif_amount()
+                elif rec.purchase_order_incoterm_selection == 'cfr':
+                    rec.validate_cfr_amount()
+                elif rec.purchase_order_incoterm_selection == 'fob':
+                    rec.validate_fob_amount()
+                else:
+                    pass
 
             else:
                 rec.is_change = False
@@ -220,14 +220,14 @@ class Lead(models.Model):
                 rec.is_adjusted = True
                 rec.fob_value_sug = cif_amount - (
                         rec.purchase_order_insurance_amount + rec.purchase_order_freight_amount)
-            # if entered_count > 2:
-            #     calculated_cif = fob + insurance + freight
-            #     cif_amount = rec.purchase_order_cif_amount or 0
-            #     if round(cif_amount, 2) != round(calculated_cif, 2):
-            #         raise ValidationError(
-            #             f"CIF amount mismatch: Please check the values.\n"
-            #             f"Expected: {cif_amount}, Entered: {calculated_cif}"
-            #         )
+            if entered_count > 2:
+                calculated_cif = fob + insurance + freight
+                cif_amount = rec.purchase_order_cif_amount or 0
+                if round(cif_amount, 2) != round(calculated_cif, 2):
+                    raise ValidationError(
+                        f"CIF amount mismatch: Please check the values.\n"
+                        f"Expected: {cif_amount}, Entered: {calculated_cif}"
+                    )
         return True
 
     def validate_cfr_amount(self):
