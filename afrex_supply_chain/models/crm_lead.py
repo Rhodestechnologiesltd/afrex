@@ -287,21 +287,26 @@ class Lead(models.Model):
                 rec.sale_country_id = False
 
     def generate_payment_request_wizard(self):
-        # if self.state not in ['purchase', 'done']:
-        #     raise UserError("PO needs to be confirmed.")
-        if not self.sale_order_terms_id:
-            raise UserError("Please set the payments terms.")
-        action = {
-            'name': 'Generate Payment Request',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'asc.generate.payment.request',
-            'target': 'new',
-            'context': {'default_purchase_order_id': self.id,
-                        'default_currency_id': self.env.company.currency_id.id,}
-        }
-        return action
+        self.ensure_one()
+        if self.purchase_order_id and self.purchase_order_id.exists():
+            return self.purchase_order_id.generate_payment_request_wizard()
+        else:
+            raise UserError("The related Purchase Order no longer exists or has been deleted.")
+
+
+        # if not self.sale_order_terms_id:
+        #     raise UserError("Please set the payments terms.")
+        # action = {
+        #     'name': 'Generate Payment Request',
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'asc.generate.payment.request',
+        #     'target': 'new',
+        #     'context': {'default_purchase_order_id': self.purchase_order_id.id,
+        #                 'default_currency_id': self.env.company.currency_id.id,}
+        # }
+        # return action
 
     def print_quotation(self):
             self.ensure_one()

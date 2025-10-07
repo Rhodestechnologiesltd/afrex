@@ -65,5 +65,6 @@ class GeneratePaymentRequestWizard(models.TransientModel):
             'view_mode': 'tree,form',
             'res_model': 'asc.payment.request',
             'domain': [('purchase_order_id', '=', purchase.id)],
-            'context': "{'create': False}"
+            'context': "{'create': False}",
+            'target': 'current',
         }

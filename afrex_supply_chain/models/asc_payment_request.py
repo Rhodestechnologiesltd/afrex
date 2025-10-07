@@ -115,8 +115,9 @@ class PaymentRequest(models.Model):
                 'payment_request_id': self.id
             }
             approval = self.env['asc.approval'].sudo().create(approval_vals)
-        return self.env.ref('afrex_supply_chain.action_report_asc_payment_request').report_action(self)
-    
+        action = self.env.ref('afrex_supply_chain.action_report_asc_payment_request').report_action(self)
+        action['close_on_report_download'] = True
+        return action
     def action_cancel(self):
         for rec in self:
             rec.state = 'cancel'
