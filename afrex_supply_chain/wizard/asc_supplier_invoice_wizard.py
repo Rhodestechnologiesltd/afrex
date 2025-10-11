@@ -72,47 +72,47 @@ class SupplierInvoiceWizard(models.TransientModel):
     is_click = fields.Boolean(default=False)
     is_adjusted = fields.Boolean(default=False)
 
-    @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
-    def validate_amount(self):
-        self.validate_cif_amount()
-
-    def validate_cif_amount(self):
-        for rec in self:
-
-            insurance_unit = rec.insurance_amount / rec.quantity
-            calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
-            if rec.is_adjusted:
-                if rec.cost_unit != calculated_cif_unit:
-                    new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
-                    rec.fob_unit = max(new_fob, 0.0)
-            else:
-                # pass
-                entered_values = [
-                    1 if rec.fob_unit else 0,
-                    1 if rec.freight_unit else 0,
-                    1 if insurance_unit else 0
-                ]
-                total_entered = sum(entered_values)
-                if rec.incoterm_selection == "cif":
-                    if total_entered > 2:
-                        if rec.cost_unit != calculated_cif_unit:
-                            raise UserError(
-                                f"CIF validation failed: CIF ({rec.cost_unit}) "
-                                f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
-                            )
-                elif rec.incoterm_selection in ["cfr", "fob"]:
-                    if total_entered > 1:
-                        if rec.cost_unit != calculated_cif_unit:
-                            raise UserError(
-                                f"validation Error Please Check the Values"
-                            )
-                else:
-                    if total_entered > 2:
-                        if rec.cost_unit != calculated_cif_unit:
-                            raise UserError(
-                                f"validation Error Please Check the Values"
-                            )
-        return True
+    # @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
+    # def validate_amount(self):
+    #     self.validate_cif_amount()
+    #
+    # def validate_cif_amount(self):
+    #     for rec in self:
+    #
+    #         insurance_unit = rec.insurance_amount / rec.quantity
+    #         calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
+    #         if rec.is_adjusted:
+    #             if rec.cost_unit != calculated_cif_unit:
+    #                 new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+    #                 rec.fob_unit = max(new_fob, 0.0)
+    #         else:
+    #             # pass
+    #             entered_values = [
+    #                 1 if rec.fob_unit else 0,
+    #                 1 if rec.freight_unit else 0,
+    #                 1 if insurance_unit else 0
+    #             ]
+    #             total_entered = sum(entered_values)
+    #             if rec.incoterm_selection == "cif":
+    #                 if total_entered > 2:
+    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
+    #                         raise UserError(
+    #                             f"CIF validation failed: CIF ({rec.cost_unit}) "
+    #                             f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
+    #                         )
+    #             elif rec.incoterm_selection in ["cfr", "fob"]:
+    #                 if total_entered > 1:
+    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
+    #                         raise UserError(
+    #                             f"validation Error Please Check the Values"
+    #                         )
+    #             else:
+    #                 if total_entered > 2:
+    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
+    #                         raise UserError(
+    #                             f"validation Error Please Check the Values"
+    #                         )
+    #     return True
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
         for rec in self:
@@ -275,7 +275,7 @@ class SupplierInvoiceWizard(models.TransientModel):
                 'price_unit': self.cost_unit,
             })
         invoice.message_post(body=_("Supplier Commercial Invoice created successfully."))
-        # invoice.action_post()
+        invoice.action_post()
 
         if purchase.invoice_ids:
             total_fob = 0
@@ -295,8 +295,8 @@ class SupplierInvoiceWizard(models.TransientModel):
         purchase.set_product_qty()
         purchase.is_close_readonly = True
         purchase.message_post(body=_("Invoice created successfully."))
-        if sale_invoice_id.state in ['draft','Posted']:
-            self.action_apply()
+        # if sale_invoice_id.state in ['draft','Posted']:
+        #     self.action_apply()
         # else:
         #     self.sction_apply_commercial()
         # afrex_invoices = self.env['account.move'].search([('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')])

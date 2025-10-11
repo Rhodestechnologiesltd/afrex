@@ -186,26 +186,26 @@ class PurchaseOrder(models.Model):
                 total_entered = sum(entered_values)
                 if rec.incoterm_selection == "cif":
                     if total_entered > 2:
-                        if rec.cost_unit != calculated_cif_unit:
+                        if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
                             raise UserError(
                                 f"CIF validation failed: CIF ({rec.cost_unit}) "
                                 f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
                             )
                 elif rec.incoterm_selection == "cfr":
                     if total_entered > 1:
-                        if rec.cost_unit != calculated_cif_unit:
+                        if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
                             raise UserError(
                                 f"validation Error Please Check the Values"
                             )
                 elif rec.incoterm_selection == "fob":
                     if total_entered == 1:
-                        if rec.cost_unit != calculated_cif_unit:
+                        if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
                             raise UserError(
                                 f"validation Error Please Check the Values"
                             )
                 else:
                     if total_entered > 2:
-                        if rec.cost_unit != calculated_cif_unit:
+                        if round(rec.cost_unit, 4) != round(calculated_cif_unit, 4):
                             raise UserError(
                                 f"validation Error Please Check the Values"
                             )
@@ -1058,7 +1058,7 @@ class PurchaseOrder(models.Model):
                         'default_old_cost_amount': self.cost_amount,
                         'default_old_insurance_amount': insurance_amount,
                         'default_currency_id': self.currency_id.id,
-                        'default_is_adjusted': True,
+                        'default_is_adjusted': self.is_adjusted,
                         }
         }
         return action

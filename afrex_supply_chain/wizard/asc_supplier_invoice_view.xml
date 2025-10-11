@@ -61,7 +61,8 @@
                         <field name="old_insurance_amount" invisible="1"/>
                     </group>
                 </group>
-                <div class="alert alert-info text-center mt-2 mb-2" role="alert" invisible="not is_change">
+                <div class="alert alert-info text-center mt-2 mb-2" role="alert" invisible="1">
+<!--                <div class="alert alert-info text-center mt-2 mb-2" role="alert" invisible="not is_change">-->
                     <div>
                         <h6>
                             You have changed the values. When you confirm it will update the Afrex Proforma.

@@ -486,7 +486,7 @@
                         <field name="is_adjusted" widget="boolean_toggle" string="Auto update"/>
                         <h6 colspan="2" class="alert alert-info text-center" invisible="not is_adjusted"> Auto update enabled. Fob value will auto update based on CIF, Insurance, Freight Values.
                         </h6>
-                        <h6 colspan="2" class="alert alert-info text-center" invisible="is_adjusted"> Auto update disabled. So you need to check values manually.
+                        <h6 colspan="2" class="alert alert-info text-center" invisible="is_adjusted"> Auto update disabled. Enter Values Correctly.
                         </h6>
                         <div class="o_row" colspan="2">
                             <button name="update_sales_order_wizard" type="object" string=" Update Offer"

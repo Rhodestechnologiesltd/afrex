@@ -714,6 +714,68 @@ class Lead(models.Model):
                     lead.purchase_order_id.write(update_vals)
                     lead.purchase_order_id._compute_freight_amount()
                     lead.purchase_order_id._compute_freight_unit()
+
+                # if self.env.context.get('create_invoice_in_progress'):
+                #     continue
+
+                invoices = lead.purchase_order_id.invoice_ids
+                if not invoices:
+                    continue
+
+                invoice_vals = {
+                    'fob_amount': lead.purchase_order_fob_amount,
+                    'freight_amount': lead.purchase_order_freight_amount,
+                    'cost_amount': lead.purchase_order_cost_amount,
+                    'insurance_amount': lead.purchase_order_insurance_amount,
+                }
+                invoices.write(invoice_vals)
+
+                # Recompute total costing
+                total_fob = sum(invoices.mapped('fob_amount'))
+                total_freight = sum(invoices.mapped('freight_amount'))
+                total_cost = sum(invoices.mapped('cost_amount'))
+                qty = lead.purchase_order_qty_delivered
+
+                costing_vals = {
+                    'fob_unit': total_fob / qty,
+                    'freight_unit': total_freight / qty,
+                    'cost_unit': total_cost / qty,
+                    'freight_amount': total_freight,
+                }
+                invoices.write(costing_vals)
+                # invoices._compute_freight_unit()
+                # purchase_order._compute_freight_unit()
+                # if purchase_invoice:
+                #     invoice_vals = {
+                #         # 'fob_unit': self.fob_unit,
+                #         # 'freight_unit': self.freight_unit,
+                #         # 'cost_unit': self.cost_unit,
+                #         'fob_amount': self.purchase_order_fob_amount,
+                #         'freight_amount': self.purchase_order_freight_amount,
+                #         'cost_amount': self.purchase_order_cost_amount,
+                #         'insurance_amount': self.purchase_order_insurance_amount,
+                #     }
+                # purchase_invoice = lead.purchase_order_id.invoice_ids
+                # purchase_invoice.write(invoice_vals)
+                # # for line in purchase_invoice.invoice_line_ids:
+                # #     line.write({
+                # #         'price_unit': self.purchase_order_cost_unit,
+                # #     })
+                # if purchase_invoice:
+                #     total_fob = 0
+                #     total_freight = 0
+                #     total_cost = 0
+                #     for supplier_invoice in lead.purchase_order_id.invoice_ids:
+                #         total_fob += supplier_invoice.fob_amount
+                #         total_freight += supplier_invoice.freight_amount
+                #         total_cost += supplier_invoice.cost_amount
+                #     costing_vals = {
+                #         'fob_unit': total_fob / purchase_invoice.qty_delivered,
+                #         'freight_unit': total_freight / purchase_invoice.qty_delivered,
+                #         'cost_unit': total_cost / purchase_invoice.qty_delivered,
+                #         'freight_amount': total_freight,
+                #     }
+                #     purchase_invoice.write(costing_vals)
         return res
 
     # ********** Need to delete After Testing *************
