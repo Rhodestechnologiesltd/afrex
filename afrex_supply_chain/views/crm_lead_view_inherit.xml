@@ -1040,13 +1040,15 @@
                                                            options="{'precision': 2}"/>
                                                 </th>
                                             </tr>
-                                            <tr class="alert alert-info" invisible="not is_adjusted">
+                                            <tr invisible="not is_adjusted">
                                                 <th style="width:30%; text-align: right;">
-
                                                     <field name="is_adjusted" widget="boolean_toggle" invisible="1"/>
                                                 </th>
-                                                <th style="width: 40%; text-align: right;">
+                                                <th class="alert alert-info" style="width: 40%; text-align: right;" invisible="fob_value_sug &lt;= 0">
                                                     Suggested fob value <field name="fob_value_sug" widget="float" options="{'precision': 2}"/>
+                                                </th>
+                                                <th class="alert alert-danger" style="width: 40%; text-align: right;" invisible="fob_value_sug >= 0">
+                                                     <strong>Warning:</strong> FOB value is in negative — you entered wrong entries. Please check insurance and freight amounts.
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     <span/>
