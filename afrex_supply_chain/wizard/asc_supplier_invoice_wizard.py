@@ -275,7 +275,7 @@ class SupplierInvoiceWizard(models.TransientModel):
                 'price_unit': self.cost_unit,
             })
         invoice.message_post(body=_("Supplier Commercial Invoice created successfully."))
-        invoice.action_post()
+        # invoice.action_post()
 
         if purchase.invoice_ids:
             total_fob = 0

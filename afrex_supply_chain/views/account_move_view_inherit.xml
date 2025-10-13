@@ -14,7 +14,7 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="button_dropdown" style="min-width: max-content;">
                         <li><button name="asc_confirm_invoice" icon="fa-check-square-o" string="Afrex Commercial Invoice" type="object" class="btn-mute" invisible="move_type not in ('out_invoice') or state not in ['draft']"/></li>
-                        <li><button name="action_reverse" icon="fa-undo" string="Raise Credit Note" type="object" class="btn-mute" invisible="reversed_entry_id or move_type not in ('out_invoice', 'in_invoice') or state != 'posted'"/></li>
+                        <li><button name="action_reverse" icon="fa-undo" string="Raise Credit Note" type="object" class="btn-mute" invisible="reversed_entry_id or move_type not in ('out_invoice', 'in_invoice') or state != 'posted' or payment_state == 'reversed'"/></li>
                     </ul>
                 </div>
                 <div class="dropdown" id="print_dropdown" style="margin-right: 5px;">

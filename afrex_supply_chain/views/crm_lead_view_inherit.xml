@@ -577,7 +577,7 @@
                              aria-labelledby="document_heading" data-bs-parent="#document_accordion">
                             <div class="accordion-body" style="background: white;">
                                 <group string="Documents to receive"/>
-                                <field name="incoming_doc_ids" readonly="True" context="{'default_type': 'incoming'}">
+                                <field name="incoming_doc_ids" readonly="True">
                                     <tree default_order="name asc" decoration-success="is_provided"
                                           decoration-danger="not is_provided">
                                         <field name="lead_id" column_invisible="True"/>
@@ -591,7 +591,7 @@
                                     </tree>
                                 </field>
                                 <group string="Documents to submit"/>
-                                <field name="outgoing_doc_ids" readonly="True" context="{'default_type': 'incoming'}">
+                                <field name="outgoing_doc_ids" readonly="True">
                                     <tree default_order="name asc" decoration-success="is_provided"
                                           decoration-danger="not is_provided">
                                         <field name="lead_id" column_invisible="True"/>
