@@ -72,6 +72,16 @@ class SupplierInvoiceWizard(models.TransientModel):
     is_click = fields.Boolean(default=False)
     is_adjusted = fields.Boolean(default=False)
 
+
+    @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
+    def auto_update_fob(self):
+        for rec in self:
+            insurance_unit = rec.insurance_amount / rec.quantity
+            calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
+            if rec.is_adjusted:
+                if rec.cost_unit != calculated_cif_unit:
+                    new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                    rec.fob_unit = max(new_fob, 0.0)
     # @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
     # def validate_amount(self):
     #     self.validate_cif_amount()
@@ -160,7 +170,7 @@ class SupplierInvoiceWizard(models.TransientModel):
         for rec in self:
             rec.fob_amount = rec.fob_unit * rec.quantity
 
-    # @api.onchange('freight_unit','freight_unit','quantity')
+    @api.onchange('freight_unit','freight_unit','quantity')
     def _compute_freight_amount(self):
         for rec in self:
             if rec.breakbulk_container == 'container':
@@ -196,7 +206,11 @@ class SupplierInvoiceWizard(models.TransientModel):
         self.env.cr.commit()
 
         # Common values
-        sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        if self.quantity > 0:
+            sales_price_unit = self.sale_invoice_id.cost_unit
+        else:
+            sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        # sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
         sales_price = sales_price_unit * self.quantity
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
@@ -286,19 +300,26 @@ class SupplierInvoiceWizard(models.TransientModel):
                 total_freight += supplier_invoice.freight_amount
                 total_cost += supplier_invoice.cost_amount
             costing_vals = {
-                'fob_unit': total_fob / purchase.qty_delivered,
-                'freight_unit': total_freight / purchase.qty_delivered,
-                'cost_unit': total_cost / purchase.qty_delivered,
-                'freight_amount': total_freight,
+                'freight_unit': self.freight_unit,
+                'freight_amount': self.freight_amount,
+                'cost_unit': self.cost_unit,
+                'fob_amount': self.fob_amount,
+                'cost_amount': self.cost_amount,
+                'insurance_amount': self.insurance_amount,
+                # 'fob_unit': total_fob / purchase.qty_delivered,
+                # 'freight_unit': total_freight / purchase.qty_delivered,
+                # 'cost_unit': total_cost / purchase.qty_delivered,
+                # 'freight_amount': total_freight,
+                'is_adjusted': self.is_adjusted,
             }
             purchase.write(costing_vals)
         purchase.set_product_qty()
         purchase.is_close_readonly = True
         purchase.message_post(body=_("Invoice created successfully."))
         if sale_invoice_id.state in ['draft','Posted']:
-            self.action_apply()
+            purchase.action_apply_proforma()
         else:
-            self.sction_apply_commercial()
+            purchase.sction_apply_commercial()
         # afrex_invoices = self.env['account.move'].search([('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')])
         # if len(afrex_invoices) == 1:
         #     return {

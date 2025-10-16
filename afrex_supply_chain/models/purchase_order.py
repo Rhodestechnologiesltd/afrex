@@ -530,7 +530,11 @@ class PurchaseOrder(models.Model):
         self.env.cr.commit()
 
         # Common values
-        sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        if self.qty_delivered > 0:
+            sales_price_unit = self.sale_invoice_id.cost_unit
+        else:
+            sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        # sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
@@ -547,7 +551,10 @@ class PurchaseOrder(models.Model):
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
             pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
-            fob = sales_price - (insurance_amount + freight_amount)
+            if self.fob_amount == 0:
+                fob = 0
+            else:
+                fob = sales_price - (insurance_amount + freight_amount)
         else:
             fob = self.fob_amount
             pro_doc_amount = sales_price - (
@@ -577,6 +584,27 @@ class PurchaseOrder(models.Model):
             line.price_unit = sales_price_unit
         sale_invoice_id.message_post(body=_("Insurance, Freight and Fob values are updated."))
 
+    def cancel_offer(self):
+        self.ensure_one()
+
+        # Cancel invoice first
+        if self.sale_invoice_id:
+            self.sale_invoice_id.button_cancel()
+
+        # Cancel sale order
+        if self.sale_order_id:
+            self.sale_order_id.action_cancel()
+    # def cancel_offer(self):
+        # self.ensure_one()
+        #
+        # sale_invoice_id = self.sale_invoice_id
+        # sale_order_id = self.sale_order_id
+        # self.sale_invoice_id.button_cancel()
+        # self.sale_invoice_id.sale_order_id.action_cancel()
+        #
+        # # self.sale_invoice_id.button_cancel()
+        # # self.generate_sale_order_wizard()
+
     def action_apply_commercial(self):
         self.ensure_one()
 
@@ -602,7 +630,11 @@ class PurchaseOrder(models.Model):
         self.env.cr.commit()
 
         # Common values
-        sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+        if self.qty_delivered > 0:
+            sales_price_unit = self.sale_invoice_id.cost_unit
+        else:
+            sales_price_unit = lead.agreed_sales_price_unit if lead.is_sales_price_override else lead.sales_price_unit
+
         sales_price = sales_price_unit * base_qty
         exchange_rate = lead.indicative_exchange_rate or 1.0
 
@@ -619,7 +651,11 @@ class PurchaseOrder(models.Model):
         # Calculate FOB and procurement documentation
         if not lead.is_internal:
             pro_doc_amount = lead.sale_order_id.procurement_documentation_amount
-            fob = sales_price - (insurance_amount + freight_amount)
+            if self.fob_amount == 0:
+                fob = 0
+            else:
+                fob = sales_price - (insurance_amount + freight_amount)
+            # fob = sales_price - (insurance_amount + freight_amount)
         else:
             fob = self.fob_amount
             pro_doc_amount = sales_price - (
@@ -648,7 +684,33 @@ class PurchaseOrder(models.Model):
             line.quantity = base_qty
             line.price_unit = sales_price_unit
         sale_invoice_id.message_post(body=_("Insurance, Freight and Fob values are updated"))
+    def action_apply(self):
+        # self.is_click = True
+        # self.is_change = False
+        # self.is_adjusted = False
+        self.ensure_one()
 
+        sale_invoice_id = self.sale_invoice_id
+        sale_order_id = self.sale_order_id
+
+        if not sale_invoice_id and not sale_order_id:
+            raise UserError("No Sale Invoice or Sale Order found for this lead.")
+
+        if sale_invoice_id:
+            if sale_invoice_id.state == 'draft':
+                self.action_apply_proforma()
+                self.message_post(
+                    body=_("Values updated in the Afrex Proforma."))
+            elif sale_invoice_id.state == 'posted':
+                self.action_apply_commercial()
+                self.message_post(
+                    body=_("Values updated in the Afrex Commercial."))
+            else:
+                raise UserError("Invoice must be in Proforma or commercial state to update values.")
+        elif sale_order_id:
+            self.update_sales_order()
+            self.message_post(
+                body=_("Values updated in the Afrex Offer."))
     def update_sales_order(self):
         self.ensure_one()
         self.action_set_select()
@@ -677,9 +739,17 @@ class PurchaseOrder(models.Model):
                 freight = 0.0
 
             if not lead.is_internal:
-                fob = sales_price - (insurance + freight)
+                if self.fob_amount == 0:
+                    fob = 0
+                else:
+                    fob = sales_price - (insurance_amount + freight_amount)
+                # fob = sales_price - (insurance + freight)
             else:
-                fob = sales_price - (insurance + freight + interest + procurement)
+                if self.fob_amount == 0:
+                    fob = 0
+                else:
+                    # fob = sales_price - (insurance_amount + freight_amount)
+                    fob = sales_price - (insurance + freight + interest + procurement)
             if sale_order.is_currency_zar:
                 exchange_rate = lead.indicative_exchange_rate
                 insurance = insurance * exchange_rate

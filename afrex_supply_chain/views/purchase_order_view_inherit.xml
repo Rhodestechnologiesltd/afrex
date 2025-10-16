@@ -488,12 +488,24 @@
                         </h6>
                         <h6 colspan="2" class="alert alert-info text-center" invisible="is_adjusted"> Auto update disabled. Enter Values Correctly.
                         </h6>
-                        <div class="o_row" colspan="2">
-                            <button name="update_sales_order_wizard" type="object" string=" Update Offer"
-                                    class="btn-link mb-1 px-0" icon="fa-refresh"
-                                    confirm="This will update the costing on the offer."
-                                    invisible="True"/>
-                        </div>
+<!--                        <div class="o_row" colspan="2">-->
+<!--                            <button name="cancel_offer" type="object" string=" Cancel and create new Offer"-->
+<!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
+<!--                                    confirm="This will cancel and create new offer."-->
+<!--                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>-->
+<!--                        </div>-->
+<!--                        <div class="o_row" colspan="2">-->
+<!--                            <button name="action_apply" type="object" string="Update CIF"-->
+<!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
+<!--                                    confirm="This will update Price in the Offer."-->
+<!--                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>-->
+<!--                        </div>-->
+<!--                        <div class="o_row" colspan="2">-->
+<!--                            <button name="update_sales_order_wizard" type="object" string=" Update Offer"-->
+<!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
+<!--                                    confirm="This will update the costing on the offer."-->
+<!--                                    invisible="True"/>-->
+<!--                        </div>-->
                     </group>
                     <group string="Confirmed Supplier Costing">
                         <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
@@ -562,6 +574,12 @@
                         </div>
                         <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
 <!--                        <div class="o_row" colspan="2">-->
+<!--                            <button name="action_apply" type="object" string=" Update Offer"-->
+<!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
+<!--                                    confirm="This will update the costing on the offer."-->
+<!--                                    invisible="not is_selected or not sale_order_id or state in ['cancel', 'done', 'purchase']"/>-->
+<!--                        </div>-->
+<!-- <div class="o_row" colspan="2">&ndash;&gt;-->
 <!--                            <button name="update_sales_order_wizard" type="object" string=" Update Offer"-->
 <!--                                    class="btn-link mb-1 px-0" icon="fa-refresh"-->
 <!--                                    confirm="This will update the costing on the offer."-->
