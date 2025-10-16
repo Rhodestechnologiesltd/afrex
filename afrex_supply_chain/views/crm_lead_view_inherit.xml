@@ -685,6 +685,8 @@
                                                readonly="purchase_order_id"/>
                                         <field name="partial_shipment" widget="selection_badge"
                                                readonly="purchase_order_id"/>
+                                        <field name="gross_weight"/>
+                                        <field name="net_weight"/>
                                         <field name="sale_invoice_packing_list_date"/>
                                         <field name="sale_invoice_origin_certificate_date"/>
                                     </group>
@@ -922,7 +924,19 @@
                                                     Total Metric Ton ordered from supplier
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
-                                                    <field name="product_qty" readonly="purchase_order_id"/>
+                                                    <field name="product_qty" widget="float" options="{'precision': 3}"
+                                                           readonly="purchase_order_id"/>
+                                                    MT
+                                                </th>
+                                                <th style="width:30%; text-align: right;"/>
+                                            </tr>
+                                            <tr invisible="not stock_move_ids">
+                                                <th style="width: 40%">
+                                                    Total Metric Ton Received from supplier
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="purchase_order_qty_delivered" widget="float"
+                                                           options="{'precision': 3}" readonly="purchase_order_id"/>
                                                     MT
                                                 </th>
                                                 <th style="width:30%; text-align: right;"/>
@@ -1044,11 +1058,17 @@
                                                 <th style="width:30%; text-align: right;">
                                                     <field name="is_adjusted" widget="boolean_toggle" invisible="1"/>
                                                 </th>
-                                                <th class="alert alert-info" style="width: 40%; text-align: right;" invisible="fob_value_sug &lt;= 0">
-                                                    Suggested fob value <field name="fob_value_sug" widget="float" options="{'precision': 2}"/>
+                                                <th class="alert alert-info" style="width: 40%; text-align: right;"
+                                                    invisible="fob_value_sug &lt;= 0">
+                                                    Suggested fob value
+                                                    <field name="fob_value_sug" widget="float"
+                                                           options="{'precision': 2}"/>
                                                 </th>
-                                                <th class="alert alert-danger" style="width: 40%; text-align: right;" invisible="fob_value_sug >= 0">
-                                                     <strong>Warning:</strong> FOB value is in negative — you entered wrong entries. Please check insurance and freight amounts.
+                                                <th class="alert alert-danger" style="width: 40%; text-align: right;"
+                                                    invisible="fob_value_sug >= 0">
+                                                    <strong>Warning:</strong>
+                                                    FOB value is in negative — you entered wrong entries. Please check
+                                                    insurance and freight amounts.
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     <span/>
@@ -1066,18 +1086,18 @@
                                                     <span/>
                                                 </th>
                                             </tr>
-<!--                                            <tr>-->
-<!--                                                <th style="width:30%; text-align: right;">-->
-<!--                                                    Auto update-->
-<!--                                                    <field name="is_adjusted" widget="boolean_toggle"/>-->
-<!--                                                </th>-->
-<!--                                                <th style="width: 40%; text-align: right;">-->
-<!--                                                    <span/>-->
-<!--                                                </th>-->
-<!--                                                <th style="width:30%; text-align: right;">-->
-<!--                                                    <span/>-->
-<!--                                                </th>-->
-<!--                                            </tr>-->
+                                            <!--                                            <tr>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    Auto update-->
+                                            <!--                                                    <field name="is_adjusted" widget="boolean_toggle"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width: 40%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                             <!--                                            <t t-if="is_cif_override">-->
                                             <tr invisible="not is_cif_override or supplier_delivery_method != 'sea'">
                                                 <th style="width: 40%; text-align: right;">
@@ -1533,6 +1553,19 @@
                                                     <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
                                                 </th>
                                             </tr>
+                                            <br/>
+                                            <!--                                            <tr>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    Lock Sales Price-->
+                                            <!--                                                    <field name="is_locked" widget="boolean_toggle"/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width: 40%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                                <th style="width:30%; text-align: right;">-->
+                                            <!--                                                    <span/>-->
+                                            <!--                                                </th>-->
+                                            <!--                                            </tr>-->
                                             <br/>
                                             <tr>
                                                 <th style="width:30%; text-align: right;">
@@ -2125,6 +2158,18 @@
                                                     </th>
                                                     <th style="width:30%; text-align: right;">
                                                         <field name="product_qty" readonly="purchase_order_id"/>
+                                                        MT
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;"/>
+                                                      <field name="stock_move_ids" invisible="1"/>
+                                                </tr>
+                                                <tr invisible="not stock_move_ids">
+                                                    <th style="width: 40%">
+                                                        Total Metric Ton Received from supplier
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="purchase_order_qty_delivered" widget="float"
+                                                               options="{'precision': 3}" readonly="purchase_order_id"/>
                                                         MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;"/>
@@ -2738,6 +2783,19 @@
                                                         <!-- (USD <field name="sales_price_unit_unrounded" widget="float" readonly="True"/>) -->
                                                     </th>
                                                 </tr>
+                                                <br/>
+                                                <!--                                                <tr>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        Lock Sales Price-->
+                                                <!--                                                        <field name="is_locked" widget="boolean_toggle"/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width: 40%; text-align: right;">-->
+                                                <!--                                                        <span/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                    <th style="width:30%; text-align: right;">-->
+                                                <!--                                                        <span/>-->
+                                                <!--                                                    </th>-->
+                                                <!--                                                </tr>-->
                                                 <br/>
                                                 <tr>
                                                     <th style="width:30%; text-align: right;">

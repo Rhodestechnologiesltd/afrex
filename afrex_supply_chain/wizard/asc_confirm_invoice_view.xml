@@ -39,12 +39,13 @@
                     <group>
                         <field name="supplier_id" string="Supplier" readonly="True"/>
                         <field name="purchase_incoterm_id" string="Incoterms" widget="badge"/>
-                        <field name="purchase_cost_amount" string="CIF/CFR/FOB" readonly="True"/>
+                        <field name="currency_id" options="{'no_create': True, 'no_edit': True}" invisible="1"/>
+                        <field name="purchase_cost_amount" string="CIF/CFR/FOB" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="True"/>
                     </group>
                     <group>
-                        <field name="purchase_fob_amount" string="FOB" readonly="True"/>
-                        <field name="purchase_freight_amount" string="Freight" readonly="True"/>
-                        <field name="purchase_insurance_amount" string="Insurance" readonly="True"/>
+                        <field name="purchase_fob_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="FOB" readonly="True"/>
+                        <field name="purchase_freight_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="Freight" readonly="True"/>
+                        <field name="purchase_insurance_amount" widget="monetary" options="{'currency_field': 'currency_id'}" string="Insurance" readonly="True"/>
                         <field name="is_click" invisible="True"/>
                     </group>
                 </group>

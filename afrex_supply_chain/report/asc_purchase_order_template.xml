@@ -226,7 +226,7 @@
             </div>
             <table class="table table-sm o_main_table mt-4" name="invoice_line_table"
                    style="font-size: 12px; border:1px solid black; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">
-                <thead>
+                <tbody class="invoice_tbody">
                     <tr>
                         <th valign="middle" name="th_description" class="text-center"
                             style="width:40%; border:1px solid black; vertical-align: middle;">
@@ -259,6 +259,18 @@
                                          style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
                                         DAP / MT
                                     </div>
+                                     <div t-elif="o.incoterm_selection == 'cif'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CIF Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'cfr'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CFR Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'fob'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        FOB Price / MT
+                                    </div>
                                     <div t-else=""
                                          style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
                                         Price / MT
@@ -287,8 +299,7 @@
                             </div>
                         </th>
                     </tr>
-                </thead>
-                <tbody class="invoice_tbody">
+
                     <t t-set="lines"
                        t-value="o.order_line.sorted(key=lambda l: (-l.sequence, l.date_order, l.order_id.id, -l.id), reverse=True)"/>
                     <t t-set="tax_totals" t-value="o.tax_totals"/>
@@ -354,7 +365,7 @@
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 10px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -366,7 +377,7 @@
                                             <span t-if="o.insurance_amount and o.show_breakdown" class="float-end"
                                                   style="padding-right: 10px;" t-field="o.insurance_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -378,7 +389,7 @@
                                             <span t-if="o.freight_amount and o.show_breakdown" class="float-end"
                                                   style="padding-right: 10px;" t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -417,7 +428,7 @@
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 10px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -429,7 +440,7 @@
                                             <span t-if="o.freight_amount and o.show_breakdown" class="float-end"
                                                   style="padding-right: 10px;" t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -477,7 +488,7 @@
 <!--                                            <span t-if="o.fob_amount and o.show_breakdown" class="float-end"-->
 <!--                                                  style="padding-right: 10px;" t-field="o.fob_amount"-->
 <!--                                                  t-options="{'widget': 'float', 'precision': 2}"/>-->
-<!--                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be-->
+<!--                                            <span t-else="" class="text-start" style="padding-left:text-align: right;  10px;">To be-->
 <!--                                                confirmed-->
 <!--                                            </span>-->
 <!--                                        </div>-->
@@ -521,7 +532,7 @@
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 10px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -533,7 +544,7 @@
                                             <span t-if="o.insurance_amount and o.show_breakdown" class="float-end"
                                                   style="padding-right: 10px;" t-field="o.insurance_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -545,7 +556,7 @@
                                             <span t-if="o.freight_amount and o.show_breakdown" class="float-end"
                                                   style="padding-right: 10px;" t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -610,7 +621,7 @@
                                             <span t-if="o.fca_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fca_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -622,7 +633,7 @@
                                             <span t-if="o.road_transportation_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.road_transportation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -636,7 +647,7 @@
                                             <span t-if="o.fca_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fca_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -648,7 +659,7 @@
                                             <span t-if="o.road_transportation_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.road_transportation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -660,7 +671,7 @@
                                             <span t-if="o.interest_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.interest_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -673,7 +684,7 @@
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.procurement_documentation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right: 5px;">To be
                                                 confirmed
                                             </span>
                                         </div>

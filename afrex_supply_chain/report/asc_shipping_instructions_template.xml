@@ -220,6 +220,7 @@
                     <tr>
                         <td>
                             <span t-field="o.first_consignee_id.address_text"/>
+<!--                            <span t-field="o.first_consignee_id.x_shipping_address_text"/>-->
                         </td>
                     </tr>
                     <t t-if="o.company_id.display_partner_child and o.first_consignee_id.child_ids">
@@ -266,6 +267,7 @@
                     <tr>
                         <td>
                             <span t-field="o.second_consignee_id.address_text"/>
+<!--                            <span t-field="o.second_consignee_id.x_shipping_address_text"/>-->
                         </td>
                     </tr>
                     <t t-if="o.company_id.display_partner_child and o.second_consignee_id.child_ids">

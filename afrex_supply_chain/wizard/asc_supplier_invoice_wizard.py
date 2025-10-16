@@ -25,7 +25,7 @@ class SupplierInvoiceWizard(models.TransientModel):
                                            ('exw', 'EXW')], compute="_compute_incoterm_selection")
 
     ref = fields.Char(string='Invoice Number', required=True)
-    quantity = fields.Float(string='Quantity (MT)')
+    quantity = fields.Float(string='Quantity (MT)', digits="Product Unit of Measure")
     date = fields.Date(string='Invoice Date')
 
     vessel = fields.Char("Vessel Name", related="lead_id.vessel", readonly=False)
@@ -295,10 +295,10 @@ class SupplierInvoiceWizard(models.TransientModel):
         purchase.set_product_qty()
         purchase.is_close_readonly = True
         purchase.message_post(body=_("Invoice created successfully."))
-        # if sale_invoice_id.state in ['draft','Posted']:
-        #     self.action_apply()
-        # else:
-        #     self.sction_apply_commercial()
+        if sale_invoice_id.state in ['draft','Posted']:
+            self.action_apply()
+        else:
+            self.sction_apply_commercial()
         # afrex_invoices = self.env['account.move'].search([('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')])
         # if len(afrex_invoices) == 1:
         #     return {

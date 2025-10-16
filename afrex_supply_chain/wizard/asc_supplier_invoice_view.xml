@@ -10,7 +10,7 @@
                     <field name="breakbulk_container" invisible="True"/>
                     <field name="ref" required="True"/>
                     <field name="date" string="Invoice Date"/>
-                    <field name="quantity" readonly="True"/>
+                    <field name="quantity" widget="float" options="{'precision': 3}" readonly="True"/>
                 </group>
                 <group>
                     <group string="Logistics">

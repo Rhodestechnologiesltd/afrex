@@ -14,6 +14,7 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="button_dropdown" style="min-width: max-content;">
                         <li><button name="asc_confirm_invoice" icon="fa-check-square-o" string="Afrex Commercial Invoice" type="object" class="btn-mute" invisible="move_type not in ('out_invoice') or state not in ['draft']"/></li>
+                        <li><button name="action_post" icon="fa-check-square-o" string="Confirm Credit Note" type="object" class="btn-mute" invisible="move_type not in ('out_refund') or state not in ['draft']"/></li>
                         <li><button name="action_reverse" icon="fa-undo" string="Raise Credit Note" type="object" class="btn-mute" invisible="reversed_entry_id or move_type not in ('out_invoice', 'in_invoice') or state != 'posted' or payment_state == 'reversed'"/></li>
                     </ul>
                 </div>
@@ -145,6 +146,7 @@
                     <field name="interest_amount" readonly="True" invisible="not is_internal"/>
                     <field name="procurement_documentation_amount" readonly="True" invisible="not is_internal"/>
                     <field name="tariff_code" readonly="state != 'draft'"/>
+                    <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
                 </group>
                 <group string="Costing" invisible="supplier_delivery_method != 'road' or move_type not in ['out_invoice', 'in_invoice']">
                     <field name="incoterm_selection" invisible="True"/>

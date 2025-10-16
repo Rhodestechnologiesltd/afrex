@@ -247,8 +247,7 @@ class Lead(models.Model):
                 calculated_cif = rec.purchase_order_fob_amount + rec.purchase_order_freight_amount
                 if rec.purchase_order_cost_amount != calculated_cif:
                     raise ValidationError(
-                        f"CFR amount mismatch: "
-                        f"Please Check the Values"
+                        f"CFR amount mismatch: Please Check the Values"
                     )
 
         return True
@@ -261,12 +260,15 @@ class Lead(models.Model):
             cost = rec.purchase_order_cost_amount or 0
             cif_amount = rec.purchase_order_cost_amount or 0
             rec.fob_value_sug = rec.purchase_order_cost_amount
-            entered_count = sum([bool(fob), bool(freight)])
-            if entered_count >= 1:
-                if rec.purchase_order_cost_amount != rec.purchase_order_fob_amount:
+            if freight or insurance:
+                raise ValidationError(
+                    "You can only enter the FOB amount. Freight or Insurance values are not allowed."
+                )
+            if rec.purchase_order_fob_amount == 0:
+                continue
+            elif rec.purchase_order_cost_amount != rec.purchase_order_fob_amount:
                     raise ValidationError(
-                        f"FOB amount mismatch: "
-                        f"Please Check the Values"
+                        "FOB amount mismatch: Please check the values."
                     )
         return True
 

@@ -192,22 +192,30 @@ class PurchaseOrder(models.Model):
                                 f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
                             )
                 elif rec.incoterm_selection == "cfr":
+                    if rec.insurance_amount:
+                        raise UserError(
+                            "For CFR incoterm, Insurance amount is not allowed. Please remove Insurance value.")
+
                     if total_entered > 1:
                         if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
                             raise UserError(
-                                f"validation Error Please Check the Values"
+                                f"CFR validation failed: Please check the values."
                             )
                 elif rec.incoterm_selection == "fob":
+                    if rec.freight_unit or rec.insurance_amount:
+                        raise UserError(
+                            "For FOB incoterm, only FOB amount is allowed. Please remove Freight or Insurance values.")
+
                     if total_entered == 1:
                         if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
                             raise UserError(
-                                f"validation Error Please Check the Values"
+                                f"FOB validation failed: Please check the values."
                             )
                 else:
                     if total_entered > 2:
                         if round(rec.cost_unit, 4) != round(calculated_cif_unit, 4):
                             raise UserError(
-                                f"validation Error Please Check the Values"
+                                f"Please Check the Values"
                             )
         return True
     @api.depends('incoterm_id')

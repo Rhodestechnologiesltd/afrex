@@ -222,20 +222,20 @@
                     </tr>
                 </table>
             </div>
-            <table class="table table-sm o_main_table" name="invoice_line_table"
-                   style="font-size: 12px; border:1px solid black; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">
-                <thead>
+            <table class="table" name="invoice_line_table"
+                   style="font-size: 12px; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; border-bottom:1px solid black; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">
+                <tbody class="invoice_tbody">
                     <tr>
                         <th valign="middle" name="th_description" class="text-center"
-                            style="width:40%; border:1px solid black; vertical-align: middle;">
+                            style="width:40%; border:1pt solid black; vertical-align: middle;">
                             <span>Description</span>
                         </th>
                         <th valign="middle" name="th_packaging" class="text-center"
-                            style="width:15%; border:1px solid black; vertical-align: middle;">
+                            style="width:15%; border:1pt solid black; vertical-align: middle;">
                             <span>Packaging</span>
                         </th>
                         <th name="th_qty" class="text-center"
-                            style="width:12%; border:1px solid black; padding: 0; margin: 0;">
+                            style="width:12%; border:1pt solid black; padding: 0; margin: 0;">
                             <div style="display: table; width: 100%; border-collapse: collapse;">
                                 <div style="display: table-row;">
                                     <div style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
@@ -250,12 +250,24 @@
                             </div>
                         </th>
                         <th name="th_price" class="text-center"
-                            style="width:15%; border:1px solid black; padding: 0; margin: 0;">
+                            style="width:15%; border:1pt solid black; padding: 0; margin: 0;">
                             <div style="display: table; width: 100%; border-collapse: collapse;">
                                 <div style="display: table-row;">
                                     <div t-if="o.incoterm_selection == 'dap'"
                                          style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
                                         DAP / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'cif'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CIF Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'cfr'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CFR Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'fob'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        FOB Price / MT
                                     </div>
                                     <div t-else=""
                                          style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
@@ -270,7 +282,7 @@
                             </div>
                         </th>
                         <th name="th_total" class="text-center"
-                            style="width:18%; border:1px solid black; padding: 0; margin: 0;">
+                            style="width:18%; border:1pt solid black; padding: 0; margin: 0;">
                             <div style="display: table; width: 100%; border-collapse: collapse;">
                                 <div style="display: table-row;">
                                     <div style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
@@ -285,8 +297,7 @@
                             </div>
                         </th>
                     </tr>
-                </thead>
-                <tbody class="invoice_tbody">
+
                     <t t-set="lines" t-value="o.order_line.sorted(key=lambda l: (-l.sequence, -l.id), reverse=True)"/>
                     <t t-foreach="lines" t-as="line">
                         <tr valign="middle">
@@ -295,12 +306,12 @@
                                 <t t-if="o.tariff_code">
                                     <div style="display: table; width: 100%; border-collapse: collapse;">
                                         <div style="display: table-row;">
-                                            <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <div style="display: table-cell; border-bottom: 1px solid black; padding-top: 2px; padding-bottom: 2px; padding-left: 0px; padding-right: 0px; width: 100%;">
                                                 <span t-field="line.name" t-options="{'widget': 'text'}"/>
                                             </div>
                                         </div>
                                         <div style="display: table-row;">
-                                            <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                            <div style="display: table-cell; padding-top: 2px; padding-bottom: 2px; padding-left: 0px; padding-right: 0px; width: 100%;">
                                                 Tariff Code:
                                                 <span t-field="o.tariff_code" t-options="{'widget': 'text'}"/>
                                             </div>
@@ -316,26 +327,26 @@
                                 <span t-field="line.packaging_id.name" t-options="{'widget': 'text'}"/>
                             </td>
                             <td valign="middle" class="text-end"
-                                style="border: 1pt solid black; text-align: center; vertical-align: middle;">
-                                <span class="text-nowrap" t-field="line.product_uom_qty"
+                                style="border: 1pt solid black; text-align: center; vertical-align: middle; padding: 0; margin: 0;">
+                                <span class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;" t-field="line.product_uom_qty"
                                       t-options="{'widget': 'float', 'precision': 3}"/>
                             </td>
                             <td valign="middle" class="o_price_total"
-                                style="border: 1pt solid black; vertical-align: middle;">
-                                <span t-field="line.currency_id.name"/>
-                                <span class="text-nowrap float-end" t-field="line.price_unit"
+                                style="border: 1pt solid black; vertical-align: middle; padding: 0; margin: 0;">
+                                <span style="text-align: left; padding-left: 5px;" t-field="line.currency_id.name"/>
+                                <span class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;" t-field="line.price_unit"
                                       t-options="{'widget': 'float', 'precision': 2}"/>
                             </td>
                             <td valign="middle" class="o_price_total"
-                                style="border: 1pt solid black; vertical-align: middle;">
-                                <span t-field="line.currency_id.name"/>
-                                <span class="text-nowrap float-end" t-field="line.price_total"
+                                style="border: 1pt solid black; vertical-align: middle; padding: 0; margin: 0;">
+                                <span style="text-align: left; padding-left: 5px;" t-field="line.currency_id.name"/>
+                                <span class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;" t-field="line.price_total"
                                       t-options="{'widget': 'float', 'precision': 2}"/>
                             </td>
                         </tr>
                     </t>
                     <tr t-if="o.incoterm_selection != 'dap'">
-                        <td colspan="5" style="border-bottom: 1px solid black; height: 5px;"/>
+                        <td colspan="5" style="border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black; height: 7px;"/>
                     </tr>
                     <t t-if="o.incoterm_selection == 'cif'">
                         <tr>
@@ -348,17 +359,17 @@
                                 style="border:1px solid black; padding: 0; margin: 0;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">FOB</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>FOB</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">Insurance</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>Insurance</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>Freight</span>
                                         </div>
                                     </div>
@@ -367,27 +378,27 @@
                             <th t-else="" colspan="2" style="border:1px solid black; padding: 0; margin: 0;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">FOB</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>FOB</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">Insurance</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>Insurance</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span>Freight</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span>Interest</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>Procurement and Documentation</span>
                                         </div>
                                     </div>
@@ -397,39 +408,39 @@
                                 <div t-if="not o.is_internal"
                                      style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span t-if="o.fob_amount and o.show_breakdown" style="text-align: left; padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.insurance_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.insurance_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.insurance_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -437,65 +448,65 @@
                                 </div>
                                 <div t-else="" style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.insurance_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.insurance_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.insurance_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.interest_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.procurement_documentation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -515,12 +526,12 @@
                                 style="border:1px solid black; padding: 0; margin: 0;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">FOB</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>FOB</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>Freight</span>
                                         </div>
                                     </div>
@@ -529,22 +540,22 @@
                             <th t-else="" colspan="2" style="border:1px solid black; padding: 0; margin: 0;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">FOB</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>FOB</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span>Freight</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span>Interest</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>Procurement and Documentation</span>
                                         </div>
                                     </div>
@@ -554,26 +565,26 @@
                                 <div t-if="not o.is_internal"
                                      style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -581,52 +592,52 @@
                                 </div>
                                 <div t-else="" style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.freight_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.freight_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.interest_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.procurement_documentation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -650,7 +661,7 @@
                                 style="border:1px solid black; padding: 0; margin: 0; vertical-align: middle;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>FOB</span>
                                         </div>
                                     </div>
@@ -659,17 +670,17 @@
                             <th t-else="" colspan="2" style="border:1px solid black; padding: 0; margin: 0;">
                                 <div style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
-                                            <span class="text-start">FOB</span>
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                            <span>FOB</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span>Interest</span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; vertical-align: middle; padding: 2px 0; width: 100%;">
                                             <span>Procurement and Documentation</span>
                                         </div>
                                     </div>
@@ -679,13 +690,13 @@
                                 <div t-if="not o.is_internal"
                                      style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -693,39 +704,39 @@
                                 </div>
                                 <div t-else="" style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fob_amount and o.show_breakdown" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fob_amount and o.show_breakdown" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fob_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.interest_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.interest_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.procurement_documentation_amount and o.show_breakdown"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.procurement_documentation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -784,26 +795,26 @@
                                 <div t-if="not o.is_internal"
                                      style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fca_amount" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fca_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fca_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.road_transportation_amount and o.show_transportation"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.road_transportation_amount and o.show_transportation"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.road_transportation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -811,51 +822,51 @@
                                 </div>
                                 <div t-else="" style="display: table; width: 100%; border-collapse: collapse;">
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.fca_amount" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.fca_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.fca_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.road_transportation_amount and o.show_transportation"
                                                   style="padding-left: 5px;" t-field="o.currency_id.name"/>
                                             <span t-if="o.road_transportation_amount and o.show_transportation"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.road_transportation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; border-bottom: 1px solid black; padding: 2px 0; width: 100%;">
                                             <span t-if="o.interest_amount" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.interest_amount" class="text-nowrap float-end"
                                                   style="padding-right: 5px;" t-field="o.interest_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
                                     </div>
                                     <div style="display: table-row;">
-                                        <div style="text-align: left; display: table-cell; padding: 2px 0; width: 100%;">
+                                        <div style="display: table-cell; padding: 2px 0; width: 100%;">
                                             <span t-if="o.procurement_documentation_amount" style="padding-left: 5px;"
                                                   t-field="o.currency_id.name"/>
                                             <span t-if="o.procurement_documentation_amount"
                                                   class="text-nowrap float-end" style="padding-right: 5px;"
                                                   t-field="o.procurement_documentation_amount"
                                                   t-options="{'widget': 'float', 'precision': 2}"/>
-                                            <span t-else="" class="text-start" style="padding-left: 10px;">To be
+                                            <span t-else="" class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;">To be
                                                 confirmed
                                             </span>
                                         </div>
@@ -880,7 +891,7 @@
                             <span t-field="o.number_to_words" t-options="{'widget': 'text'}"></span>
                         </strong>
                     </th>
-                    <th class="text-nowrap" style="width:10%; text-align: right; word-spacing: 4px;">Total Amount Due
+                    <th class="text-nowrap" style="width:10%; text-align: right; word-spacing: 4px;">Total Amount
                     </th>
                     <th class="text-nowrap text-start"
                         style="width:18%; border-top: 1pt solid black; border-bottom: 3pt double black;">
@@ -1036,7 +1047,7 @@
                 </table>
                 <div style="font-size: 12px; width: 35%; margin-top: 0%; margin-bottom: 0%; margin-right: 5%; padding-bottom: 0px;">
                     <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)"
-                            style="margin-top: 50px; padding-left: 20px; max-height: 110px;" alt="Company Seal"/>
+                            style="margin-top: 50px; padding-left: 50px; max-height: 110px;" alt="Company Seal"/>
                     <br/>
                     <br/>
                     <br/>
