@@ -137,8 +137,8 @@ class Lead(models.Model):
     day_rate = fields.Float(string="Effective Rate", compute="_compute_new_credit_cost", store=True, digits=(16, 6))
     total_sofr = fields.Float(string="Nominal Rate", compute="_compute_total_sofr", store=True, digits=(16, 6))
 
-    bank_charges_amount = fields.Float(string="Bank Charges USD 65 Per Transaction", default=65)
-    no_of_transaction = fields.Integer(string="Transaction", default=1)
+    bank_charges_amount = fields.Float(string="Bank Charges USD 65 Per Transaction")
+    no_of_transaction = fields.Integer(string="Transaction")
     total_bank_charges_amount = fields.Float(string="Total Bank Charges for Credit cost", compute="_compute_total_bc",
                                              store=True)
 

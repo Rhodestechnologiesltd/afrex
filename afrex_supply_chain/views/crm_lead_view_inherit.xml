@@ -2050,7 +2050,7 @@
                                 class="btn-primary mx-2" style="color:white; background:#B04949;"/>
                         <button name="print_profit_estimate" icon="fa-print" string="Print" type="object"
                                 class="btn-primary" style="color:white; background:#B04949;"
-                                invisible="not expected_payment_date"/>
+                        />
                     </div>
                     <field name="company_id" invisible="True"/>
                     <field name="is_internal" invisible="True"/>
@@ -2161,7 +2161,7 @@
                                                         MT
                                                     </th>
                                                     <th style="width:30%; text-align: right;"/>
-                                                      <field name="stock_move_ids" invisible="1"/>
+                                                    <field name="stock_move_ids" invisible="1"/>
                                                 </tr>
                                                 <tr invisible="not stock_move_ids">
                                                     <th style="width: 40%">
