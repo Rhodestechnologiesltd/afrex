@@ -82,10 +82,21 @@ class AccountMove(models.Model):
     cost_unit = fields.Float("Cost/MT", compute='_compute_cost_unit', store=True, digits="Prices per Unit",
                              tracking=True)
 
+
     fob_amount = fields.Float("FOB", readonly=False, tracking=True)
     freight_amount = fields.Float("Freight", readonly=False, tracking=True)
     cost_amount = fields.Float("Cost", readonly=False, tracking=True)
 
+    fob_amount_po = fields.Float("FOB", readonly=False)
+    freight_amount_po = fields.Float("Freight", readonly=False)
+    cost_amount_po = fields.Float("Cost", readonly=False)
+
+    fob_unit_po = fields.Float("FOB", readonly=False)
+    freight_unit_po = fields.Float("Freight", readonly=False)
+    cost_unit_po = fields.Float("Cost", readonly=False)
+
+    insurance_unit_po = fields.Float("Insurance", readonly=False,)
+    insurance_amount_po = fields.Float("Insurance", readonly=False,)
     insurance_amount = fields.Float("Insurance", readonly=False, tracking=True)
 
     interest_amount = fields.Float("Interest", readonly=False, tracking=True)

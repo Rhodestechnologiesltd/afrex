@@ -107,7 +107,7 @@ class GeneratePurchaseOrderWizard(models.TransientModel):
                     'origin': origin,
                     'loading_port_id': self.load_port_id.id,
                     'discharge_port_id': self.discharge_port_id.id,
-                    'origin_country_id': supplier.country_id.id,
+                    # 'origin_country_id': supplier.country_id.id,
                     'currency_id': self.currency_id.id,
                     'incoterm_id': self.incoterm_id.id,
                     'shipment_window_start': self.shipment_window_start,

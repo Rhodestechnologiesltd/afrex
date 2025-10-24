@@ -177,15 +177,15 @@
                     </div>
                 </div>
             </div>
+            <div class="mb-2 text-center"
+                 style="font-size: 10px; margin-top: 0%; margin-bottom: 2%; padding-bottom: 0px;">
+                <span style="text-align:center; color:red;">
+                    AFREX LTD RESERVES THE RIGHT TO CANCEL THE ORDER IF THESE SHIPPING INSTRUCTIONS ARE NOT STRICTLY
+                    FOLLOWED.
+                </span>
+            </div>
             <t t-if="o.lead_id.is_switch">
 
-                <div class="mb-2 text-center"
-                     style="font-size: 10px; margin-top: 0%; margin-bottom: 2%; padding-bottom: 0px;">
-                    <span style="text-align:center; color:red;">
-                        AFREX LTD RESERVES THE RIGHT TO CANCEL THE ORDER IF THESE SHIPPING INSTRUCTIONS ARE NOT STRICTLY
-                        FOLLOWED.
-                    </span>
-                </div>
 
                 <div class="mb-2 text-center"
                      style="font-size: 10px; margin-top: 0%; margin-bottom: 0%; padding-bottom: 0px;">
@@ -220,7 +220,7 @@
                     <tr>
                         <td>
                             <span t-field="o.first_consignee_id.address_text"/>
-<!--                            <span t-field="o.first_consignee_id.x_shipping_address_text"/>-->
+                            <!--                            <span t-field="o.first_consignee_id.x_shipping_address_text"/>-->
                         </td>
                     </tr>
                     <t t-if="o.company_id.display_partner_child and o.first_consignee_id.child_ids">
@@ -267,7 +267,7 @@
                     <tr>
                         <td>
                             <span t-field="o.second_consignee_id.address_text"/>
-<!--                            <span t-field="o.second_consignee_id.x_shipping_address_text"/>-->
+                            <!--                            <span t-field="o.second_consignee_id.x_shipping_address_text"/>-->
                         </td>
                     </tr>
                     <t t-if="o.company_id.display_partner_child and o.second_consignee_id.child_ids">

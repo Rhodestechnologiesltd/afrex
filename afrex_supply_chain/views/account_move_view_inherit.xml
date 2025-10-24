@@ -109,7 +109,7 @@
                     <field name="qty_total"/>
                     <field name="qty_delivered"/>
                 </group>
-                <group string="Costing" invisible="supplier_delivery_method != 'sea' or move_type not in ['out_invoice', 'in_invoice']">
+                <group string="Costing" invisible="supplier_delivery_method != 'sea' or move_type not in ['out_invoice']">
                     <field name="incoterm_selection" invisible="True"/>
                     <field name="invoice_incoterm_id" readonly="True"/>
                     <label for="fob_amount" string="FOB"/>
@@ -141,6 +141,46 @@
                     <div class="o_row" invisible="incoterm_selection != 'fob'">
                         <field name="cost_amount" readonly="True"/>
                         FOB/MT: <field name="cost_unit" readonly="True"/>
+                    </div>
+                    <field name="is_internal" invisible="True"/>
+                    <field name="interest_amount" readonly="True" invisible="not is_internal"/>
+                    <field name="procurement_documentation_amount" readonly="True" invisible="not is_internal"/>
+                    <field name="tariff_code" readonly="state != 'draft'"/>
+                    <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
+                </group>
+                <group string="Costing" invisible="supplier_delivery_method != 'sea' or move_type not in ['in_invoice']">
+                    <field name="incoterm_selection" invisible="True"/>
+                    <field name="invoice_incoterm_id" readonly="True"/>
+                    <label for="fob_amount_po" string="FOB"/>
+                    <div class="o_row">
+                        <field name="fob_amount_po" readonly="True"/>
+<!--                        <field name="fob_amount" readonly="state != 'draft'"/>-->
+                        FOB/MT: <field name="fob_unit_po" readonly="True"/>
+                    </div>
+<!--                    <field name="insurance_amount" readonly="state != 'draft'"/>-->
+                    <field name="insurance_amount_po" readonly="True"/>
+                    <field name="insurance_unit_po" readonly="True" invisible="1"/>
+                    <label for="freight_amount_po" string="Freight" />
+                    <div class="o_row">
+<!--                        <field name="freight_amount" readonly="state != 'draft'"/>-->
+                        <field name="freight_amount_po" readonly="True"/>
+                        Freight/MT: <field name="freight_unit_po" readonly="True"/>
+                    </div>
+                    <label for="cost_amount_po" string="CIF" invisible="incoterm_selection != 'cif'"/>
+                    <label for="cost_amount_po" string="CFR" invisible="incoterm_selection != 'cfr'"/>
+                    <label for="cost_amount_po" string="FOB" invisible="incoterm_selection != 'fob'"/>
+                    <div class="o_row" invisible="incoterm_selection != 'cif'">
+<!--                        <field name="cost_amount" readonly="state != 'draft'"/>-->
+                        <field name="cost_amount_po" readonly="True"/>
+                        CIF/MT: <field name="cost_unit_po" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'cfr'">
+                        <field name="cost_amount_po" readonly="True"/>
+                        CFR/MT: <field name="cost_unit_po" readonly="True"/>
+                    </div>
+                    <div class="o_row" invisible="incoterm_selection != 'fob'">
+                        <field name="cost_amount_po" readonly="True"/>
+                        FOB/MT: <field name="cost_unit_po" readonly="True"/>
                     </div>
                     <field name="is_internal" invisible="True"/>
                     <field name="interest_amount" readonly="True" invisible="not is_internal"/>

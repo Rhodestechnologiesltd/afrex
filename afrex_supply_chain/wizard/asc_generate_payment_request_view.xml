@@ -9,6 +9,7 @@
             <group>
                 <field name="purchase_order_id" invisible="True"/>
                 <field name="lead_id" invisible="True"/>
+                <field name="payment_category" invisible="True"/>
                 <field name="partner_id" string="Beneficiary"/>
                 <field name="bank_account_id" string="Bank Account" domain="[('partner_id', '=', partner_id)]"/>
             </group>

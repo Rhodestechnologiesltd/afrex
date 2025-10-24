@@ -4,6 +4,12 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import groupby
 from odoo.tools.float_utils import float_is_zero
+from odoo.tools.float_utils import float_round
+from decimal import Decimal
+import logging
+import base64
+
+_logger = logging.getLogger(__name__)
 
 IGNORED_BINARY_FIELDS = ['tax_totals']
 
@@ -69,8 +75,8 @@ class PurchaseOrder(models.Model):
     incoterm_implementation_year = fields.Char("Last Incoterm implentation",
                                                related='lead_id.incoterm_implementation_year')
 
-    fob_unit = fields.Float("FOB/MT", digits="Prices per Unit", tracking=True)
-    freight_unit = fields.Float("Freight/MT", digits="Prices per Unit", tracking=True)
+    fob_unit = fields.Float("FOB/MT", tracking=True)
+    freight_unit = fields.Float("Freight/MT", tracking=True)
     cost_unit = fields.Float("Cost/MT", digits="Prices per Unit", tracking=True)
 
     fob_amount = fields.Float("FOB", compute="_compute_fob_amount", inverse="_inverse_fob_amount", store=True, readonly=False,
@@ -144,9 +150,24 @@ class PurchaseOrder(models.Model):
     is_close_readonly = fields.Boolean(default=False)
     is_adjusted = fields.Boolean(default=False)
 
-    @api.onchange('fob_amount','freight_amount','insurance_amount','is_adjusted','cost_amount')
+    # @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'cost_amount')
+    # def _compute_units_from_amounts(self):
+    #     for rec in self:
+    #         qty = rec.qty_total or rec.qty_delivered or 1
+    #         rec.fob_unit = rec.fob_amount / qty if rec.fob_amount else 0.0
+    #         rec.freight_unit = rec.freight_amount / qty if rec.freight_amount else 0.0
+    #         rec.cost_unit = rec.cost_amount / qty if rec.cost_amount else 0.0
+    #         rec.validate_cif_amount()
+
+    @api.onchange('fob_amount','freight_amount','insurance_amount','is_adjusted','cost_amount', 'fob_unit', 'freight_unit', 'cost_unit')
     def validate_amount(self):
-        self.validate_cif_amount()
+        for rec in self:
+            # qty = rec.qty_total or rec.qty_delivered or 1
+            # rec.fob_unit = rec.fob_amount / qty if rec.fob_amount else 0.0
+            # rec.freight_unit = rec.freight_amount / qty if rec.freight_amount else 0.0
+            # rec.cost_unit = rec.cost_amount / qty if rec.cost_amount else 0.0
+            # rec.validate_cif_amount()
+            rec.validate_cif_amount()
     def validate_cif_amount(self):
         for rec in self:
             if rec.qty_total:
@@ -164,16 +185,23 @@ class PurchaseOrder(models.Model):
                 if rec.incoterm_selection == "cif":
                     if total_entered == 2:
                         if rec.cost_unit != calculated_cif_unit:
-                            new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
-                            rec.fob_unit = max(new_fob, 0.0)
+                            new_fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                            rec.fob_amount = max(new_fob, 0.0)
+                            # new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                            # rec.fob_unit = max(new_fob, 0.0)
                 elif rec.incoterm_selection == "cfr":
                     if total_entered == 1:
                         if rec.cost_unit != calculated_cif_unit:
-                            new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
-                            rec.fob_unit = max(new_fob, 0.0)
+                            new_fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                            rec.fob_amount = max(new_fob, 0.0)
+                            # new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
+                            # rec.fob_unit = max(new_fob, 0.0)
                 elif rec.incoterm_selection == "fob":
-                    if rec.cost_unit:
-                        rec.fob_unit = rec.cost_unit or 0.0
+                    if rec.cost_amount:
+                    # if rec.cost_unit:
+                        new_fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                        rec.fob_amount = max(new_fob, 0.0)
+                        # rec.fob_unit = rec.cost_unit or 0.0
                 else:
                     pass
             else:
@@ -282,23 +310,47 @@ class PurchaseOrder(models.Model):
             else:
                 rec.is_sent = False
 
-    @api.depends('fob_unit', 'qty_total', 'qty_delivered')
+    # @api.depends('fob_unit', 'qty_total', 'qty_delivered')
+    # def _compute_fob_amount(self):
+    #     for rec in self:
+    #         if rec.qty_delivered > 0:
+    #             rec.fob_amount = rec.fob_unit * rec.qty_delivered
+    #         else:
+    #             rec.fob_amount = 0.0
+    @api.onchange('fob_unit', 'qty_total', 'qty_delivered', 'fob_amount')
     def _compute_fob_amount(self):
         for rec in self:
-            if rec.qty_delivered > 0:
-                rec.fob_amount = rec.fob_unit * rec.qty_delivered
-            else:
-                rec.fob_amount = rec.fob_unit * rec.qty_total
-
-    @api.depends('fob_unit', 'qty_total', 'qty_delivered')
+            if rec.state not in ['purchase', 'done']:
+                qty = rec.qty_delivered if rec.qty_delivered > 0 else rec.qty_total
+                if qty:
+                    # digits = rec._fields['fob_unit']._digits
+                    # precision = digits[1] if isinstance(digits, tuple) else 6
+                    # rec.fob_unit = float_round(rec.fob_amount / qty, precision_digits=precision)
+                    rec.fob_unit = rec.fob_amount / qty
+                else:
+                    rec.fob_amount = 0.0
+    @api.onchange('fob_amount', 'fob_unit', 'qty_total', 'qty_delivered')
     def _inverse_fob_amount(self):
         for rec in self:
-            if rec.qty_delivered > 0:
-                if rec.qty_delivered:
-                    rec.fob_unit = rec.fob_amount / rec.qty_delivered
-            else:
-                if rec.qty_total:
-                    rec.fob_unit = rec.fob_amount / rec.qty_total
+            if rec.state in ['purchase', 'done']:
+                qty = rec.qty_delivered if rec.qty_delivered > 0 else rec.qty_total
+                if qty:
+                    # digits = rec._fields['fob_unit']._digits
+                    # precision = digits[1] if isinstance(digits, tuple) else 6
+                    # rec.fob_amount = float_round(rec.fob_unit * qty, precision_digits=precision)
+                    rec.fob_amount = rec.fob_unit * qty
+                else:
+                    rec.fob_unit = 0.0
+
+    # @api.onchange('fob_amount', 'fob_unit', 'qty_total', 'qty_delivered')
+    # def _inverse_fob_amount(self):
+    #     for rec in self:
+    #         if rec.qty_delivered > 0:
+    #             if rec.qty_delivered:
+    #                 rec.fob_unit = float_round(rec.fob_amount / qty_delivered, precision_digits=2)
+    #         else:
+    #             if rec.qty_total:
+    #                 rec.fob_unit = rec.fob_amount / rec.qty_total
     @api.depends('fca_unit', 'qty_total', 'qty_delivered')
     def _compute_fca_amount(self):
         for rec in self:
@@ -318,7 +370,7 @@ class PurchaseOrder(models.Model):
     @api.onchange('freight_unit', 'qty_total', 'qty_delivered')
     def _compute_freight_amount(self):
         for rec in self:
-            if rec.breakbulk_container == 'breakbulk':
+            if rec.state in ['purchase', 'done']:  # if rec.breakbulk_container == 'breakbulk':
                 if rec.qty_delivered > 0:
                     rec.freight_amount = rec.freight_unit * rec.qty_delivered
                 else:
@@ -327,7 +379,7 @@ class PurchaseOrder(models.Model):
     @api.onchange('freight_amount', 'qty_total', 'qty_delivered')
     def _compute_freight_unit(self):
         for rec in self:
-            if rec.breakbulk_container == 'container':
+            if rec.state not in ['purchase', 'done']:
                 if rec.qty_delivered > 0:
                     rec.freight_unit = rec.freight_amount / rec.qty_delivered
                 else:
@@ -379,6 +431,20 @@ class PurchaseOrder(models.Model):
             'target': 'current'
         }
 
+    def action_open_costing(self):
+        self.ensure_one()
+        return {
+            'name': 'Costing',
+            'res_id': self.lead_id.id,
+            'res_model': 'crm.lead',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'view_id': self.env.ref('afrex_supply_chain.asc_costing_form_view').id,
+            'context': {},
+            'target': 'new'
+        }
+
     def action_open_profit_estimate(self):
         self.ensure_one()
         return {
@@ -428,6 +494,7 @@ class PurchaseOrder(models.Model):
             rec.fca_amount = rec.fca_unit * rec.qty_delivered
             rec.freight_amount = rec.freight_unit * rec.qty_delivered
             rec.cost_amount = rec.cost_unit * rec.qty_delivered
+            rec.action_apply()
             advance_payments = self.env['asc.payment.request'].search(
                 [('purchase_order_id', '=', rec.id), ('type', '=', 'advance')])
             final_payments = self.env['asc.payment.request'].search(
@@ -920,14 +987,14 @@ class PurchaseOrder(models.Model):
             self.freight_amount = 0.0
             self.insurance_amount = 0.0
 
-        self.initial_fob_unit = self.fob_unit
-        self.initial_fca_unit = self.fca_unit
-        self.initial_freight_unit = self.freight_unit
-        self.initial_cost_unit = self.cost_unit
         self.initial_fob_amount = self.fob_amount
         self.initial_fca_amount = self.fca_amount
         self.initial_freight_amount = self.freight_amount
         self.initial_cost_amount = self.cost_amount
+        self.initial_fob_unit = self.fob_unit
+        self.initial_fca_unit = self.fca_unit
+        self.initial_freight_unit = self.freight_unit
+        self.initial_cost_unit = self.cost_unit
         self.initial_insurance_amount = self.insurance_amount
         self.initial_road_transportation_unit = self.road_transportation_unit
         self.initial_road_transportation_amount = self.road_transportation_amount
@@ -989,8 +1056,6 @@ class PurchaseOrder(models.Model):
             raise UserError("No lead found.")
         else:
             lead = self.lead_id
-        if not self.origin_country_id:
-            raise UserError("Please set the Country of Origin.")
         if self.supplier_delivery_method == 'sea' and self.breakbulk_container == 'container':
             if not self.container_type_id:
                 raise UserError("Please set the container size.")
@@ -1093,12 +1158,20 @@ class PurchaseOrder(models.Model):
     def supplier_invoice_wizard(self):
         qty_invoiced = 0
         qty_received = 0
+        is_adjusted = 0
+        insurance_unit = 0
+        if self.fob_amount == 0:
+            raise UserError("Please update Costing Values in Trade Folder -> Profit Estimate")
+
         for line in self.order_line:
             qty_received = line.qty_received
             qty_invoiced = line.qty_invoiced
         qty_to_invoice = qty_received - qty_invoiced
+        _logger.info("Created Supplier Invoice: %s", qty_to_invoice)
+        # _logger.info("Writing invoice values: %s", invoice_vals)
         if qty_to_invoice <= 0:
             raise UserError("No quantity remaining to invoice.")
+
         initial_insurance = self.initial_insurance_amount
         current_insurance = self.insurance_amount
         if initial_insurance == current_insurance:
@@ -1108,6 +1181,17 @@ class PurchaseOrder(models.Model):
                 insurance_amount = initial_insurance - current_insurance
             else:
                 insurance_amount = current_insurance
+
+
+        # insurance_amount = insurance_amount / self.qty_total * qty_to_invoice
+
+        if self.fob_amount == 0:
+            is_adjusted = False
+        else:
+            is_adjusted = True
+
+
+        _logger.info("Wizard insurance context: %s", insurance_amount)
         action = {
             'name': 'Supplier Invoice',
             'type': 'ir.actions.act_window',
@@ -1120,13 +1204,13 @@ class PurchaseOrder(models.Model):
                         'default_quantity': qty_to_invoice,
                         'default_date': fields.Date.today(),
                         'default_fob_unit': self.fob_unit,
+                        'default_fob_amount': self.fob_amount,
+                        'default_insurance_amount': insurance_amount,
                         'default_fca_unit': self.fca_unit,
                         'default_freight_unit': self.freight_unit,
                         'default_cost_unit': self.cost_unit,
-                        'default_fob_amount': self.fob_amount,
-                        'default_freight_amount': self.freight_amount,
+                        'default_freight_amount': self.freight_unit * qty_to_invoice,
                         'default_cost_amount': self.cost_amount,
-                        'default_insurance_amount': insurance_amount,
                         'default_old_fob_unit': self.fob_unit,
                         'default_old_fca_unit': self.fca_unit,
                         'default_old_freight_unit': self.freight_unit,
@@ -1136,9 +1220,10 @@ class PurchaseOrder(models.Model):
                         'default_old_cost_amount': self.cost_amount,
                         'default_old_insurance_amount': insurance_amount,
                         'default_currency_id': self.currency_id.id,
-                        'default_is_adjusted': self.is_adjusted,
+                        'default_is_adjusted': is_adjusted,
                         }
         }
+        _logger.info("Wizard defaults context: %s", self.env.context)
         return action
 
     def set_incoming_document_wizard(self):
@@ -1173,6 +1258,7 @@ class PurchaseOrder(models.Model):
 
     def action_create_invoice(self):
         res = super().action_create_invoice()
+        # res._compute_fob_unit()
         if self.invoice_ids:
             for invoice in self.invoice_ids:
                 invoice.lead_id = self.lead_id.id

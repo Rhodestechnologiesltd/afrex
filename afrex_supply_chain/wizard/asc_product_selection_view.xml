@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <record id="view_asc_product_selection_form" model="ir.ui.view">
         <field name="name">asc.product.selection.form</field>
         <field name="model">asc.product.selection</field>

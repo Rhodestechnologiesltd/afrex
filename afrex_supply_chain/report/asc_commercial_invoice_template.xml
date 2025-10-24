@@ -327,7 +327,7 @@
                                 style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <span t-field="line.packaging_id.name" t-options="{'widget': 'text'}"/>
                             </td>
-                            <td valign="middle" class="text-end"
+                            <td valign="middle" class="text-center"
                                 style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <span class="text-nowrap" t-field="line.quantity"
                                       t-options="{'widget': 'float', 'precision': 3}"/>

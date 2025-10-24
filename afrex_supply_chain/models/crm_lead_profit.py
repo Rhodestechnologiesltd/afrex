@@ -168,6 +168,11 @@ class Lead(models.Model):
     sale_invoice_id_post = fields.Boolean(compute='compute_invoice_status', store=True, )
     is_adjusted = fields.Boolean(default=False)
 
+    credit_cost_text = fields.Selection([('fob', "FOB Price"), ('cif', "CIF Purchase Price")], string="Credit")
+    freight_text = fields.Char(string="Freight Text", default="Freight Forwarder")
+    ins_text = fields.Char(string="Text", default="Sales Value x 110% x 0.25% + USD 10")
+    SGT_text = fields.Char(string="Freight Text")
+
     @api.depends('insurance_premium_amount', 'purchase_order_fob_amount', 'purchase_order_insurance_amount',
                  'afrex_freight_amount', 'purchase_order_freight_amount')
     def _compute_can_change(self):
@@ -184,7 +189,7 @@ class Lead(models.Model):
                   'afrex_freight_amount', 'purchase_order_freight_amount', 'is_cif_override',
                   'manual_purchase_order_cif_amount', 'is_adjusted')
     def _onchange_amounts(self):
-        if not self._origin.id:  # record not saved yet
+        if not self._origin.id:
             return
         for rec in self:
 
@@ -335,16 +340,18 @@ class Lead(models.Model):
             rec.credit_cost_amount_month_end_zar = rec.credit_cost_to_month_end * roe
 
     # credit cost for Payment date to Month end
-    @api.depends('total_sofr', 'purchase_order_cif_amount', 'manual_purchase_order_cif_amount',
+    @api.depends('total_sofr', 'credit_cost_text', 'purchase_order_fob_amount', 'purchase_order_cif_amount', 'manual_purchase_order_cif_amount',
                  'total_commission_amount', 'total_bank_charges_amount', 'is_cif_override',
                  'expected_payment_date', 'month_end', 'credit_days', 'credit_days_eom')
     def _compute_new_credit_cost(self):
         for rec in self:
-
-            if rec.is_cif_override:
-                base_cost = rec.manual_purchase_order_cif_amount + rec.total_commission_amount + rec.total_bank_charges_amount
+            if rec.credit_cost_text == 'cif':
+                if rec.is_cif_override:
+                    base_cost = rec.manual_purchase_order_cif_amount + rec.total_commission_amount + rec.total_bank_charges_amount
+                else:
+                    base_cost = rec.purchase_order_cif_amount + rec.total_commission_amount + rec.total_bank_charges_amount
             else:
-                base_cost = rec.purchase_order_cif_amount + rec.total_commission_amount + rec.total_bank_charges_amount
+                base_cost = rec.purchase_order_fob_amount + rec.total_commission_amount + rec.total_bank_charges_amount
 
             eff_rate = (1 + rec.total_sofr / 12) ** 12 - 1
             day_rate = eff_rate / 360
@@ -396,14 +403,17 @@ class Lead(models.Model):
                 record.total_sofr = record.sofr_rate + record.sofr_margin
 
     # credit cost commission amount
-    @api.depends('commission_amount', 'purchase_order_cif_amount', 'is_cif_override',
+    @api.depends('commission_amount', 'credit_cost_text', 'purchase_order_fob_amount', 'purchase_order_cif_amount', 'is_cif_override',
                  'manual_purchase_order_cif_amount')
     def _compute_total_commission_amount(self):
         for rec in self:
-            if rec.is_cif_override:
-                rec.total_commission_amount = rec.manual_purchase_order_cif_amount * rec.commission_amount
+            if rec.credit_cost_text == 'cif':
+                if rec.is_cif_override:
+                    rec.total_commission_amount = rec.manual_purchase_order_cif_amount * rec.commission_amount
+                else:
+                    rec.total_commission_amount = rec.purchase_order_cif_amount * rec.commission_amount
             else:
-                rec.total_commission_amount = rec.purchase_order_cif_amount * rec.commission_amount
+                rec.total_commission_amount = rec.purchase_order_fob_amount * rec.commission_amount
 
     @api.depends('purchase_order_freight_amount', 'indicative_exchange_rate', 'exchange_rate')
     def compute_purchase_order_freight_amount_zar(self):
@@ -694,16 +704,8 @@ class Lead(models.Model):
                 # Insurance
                 if 'purchase_order_insurance_amount' in vals:
                     update_vals['insurance_amount'] = vals['purchase_order_insurance_amount']
-                # elif 'insurance_premium_amount' in vals:
-                #     update_vals['insurance_amount'] = vals['insurance_premium_amount']
 
                 # Freight
-                # if 'afrex_freight_rate' in vals:
-                #     update_vals['freight_unit'] = vals['afrex_freight_rate']
-                #     if lead.purchase_order_qty_delivered > 0:
-                #         update_vals['freight_unit'] = vals['afrex_freight_rate'] * lead.purchase_order_qty_delivered
-                #     elif lead.product_qty > 0:
-                #         update_vals['freight_unit'] = vals['afrex_freight_rate'] * lead.product_qty
                 if 'purchase_order_freight_amount' in vals:
                     update_vals['freight_amount'] = vals['purchase_order_freight_amount']
                     if lead.purchase_order_qty_delivered > 0:
@@ -717,67 +719,38 @@ class Lead(models.Model):
                     lead.purchase_order_id._compute_freight_amount()
                     lead.purchase_order_id._compute_freight_unit()
 
-                # if self.env.context.get('create_invoice_in_progress'):
-                #     continue
-
-                invoices = lead.purchase_order_id.invoice_ids
+                invoices = lead.purchase_order_id.invoice_ids.filtered(lambda i: i.state != 'cancel')
                 if not invoices:
                     continue
+                qty_po = 0.0
+                fob_unit_po = 0.00
+                freight_unit_po = 0.00
+                cost_unit_po = 0.00
+                fob_unit_po = lead.purchase_order_fob_amount / lead.purchase_order_qty_delivered
+                freight_unit_po = lead.purchase_order_freight_amount / lead.purchase_order_qty_delivered
+                cost_unit_po = lead.purchase_order_cost_amount / lead.purchase_order_qty_delivered
+                insurance_unit_po = lead.purchase_order_insurance_amount / lead.purchase_order_qty_delivered
+                for inv in invoices:
+                    # Get this invoice’s total quantity (sum of its own line quantities)
+                    qty_po = sum(inv.invoice_line_ids.mapped('quantity')) or 0.0
 
-                invoice_vals = {
-                    'fob_amount': lead.purchase_order_fob_amount,
-                    'freight_amount': lead.purchase_order_freight_amount,
-                    'cost_amount': lead.purchase_order_cost_amount,
-                    'insurance_amount': lead.purchase_order_insurance_amount,
-                }
-                invoices.write(invoice_vals)
+                    # Skip if no quantity
+                    if not qty_po:
+                        continue
 
-                # Recompute total costing
-                total_fob = sum(invoices.mapped('fob_amount'))
-                total_freight = sum(invoices.mapped('freight_amount'))
-                total_cost = sum(invoices.mapped('cost_amount'))
-                qty = lead.purchase_order_qty_delivered
+                    invoice_vals = {
+                        'fob_unit_po': fob_unit_po,
+                        'freight_unit_po': freight_unit_po,
+                        'cost_unit_po': cost_unit_po,
+                        'insurance_unit_po': insurance_unit_po,
+                        'fob_amount_po': fob_unit_po * qty_po,
+                        'freight_amount_po': freight_unit_po * qty_po,
+                        'cost_amount_po': cost_unit_po * qty_po,
+                        'insurance_amount_po': insurance_unit_po * qty_po,
+                    }
 
-                costing_vals = {
-                    'fob_unit': total_fob / qty,
-                    'freight_unit': total_freight / qty,
-                    'cost_unit': total_cost / qty,
-                    'freight_amount': total_freight,
-                }
-                invoices.write(costing_vals)
-                # invoices._compute_freight_unit()
-                # purchase_order._compute_freight_unit()
-                # if purchase_invoice:
-                #     invoice_vals = {
-                #         # 'fob_unit': self.fob_unit,
-                #         # 'freight_unit': self.freight_unit,
-                #         # 'cost_unit': self.cost_unit,
-                #         'fob_amount': self.purchase_order_fob_amount,
-                #         'freight_amount': self.purchase_order_freight_amount,
-                #         'cost_amount': self.purchase_order_cost_amount,
-                #         'insurance_amount': self.purchase_order_insurance_amount,
-                #     }
-                # purchase_invoice = lead.purchase_order_id.invoice_ids
-                # purchase_invoice.write(invoice_vals)
-                # # for line in purchase_invoice.invoice_line_ids:
-                # #     line.write({
-                # #         'price_unit': self.purchase_order_cost_unit,
-                # #     })
-                # if purchase_invoice:
-                #     total_fob = 0
-                #     total_freight = 0
-                #     total_cost = 0
-                #     for supplier_invoice in lead.purchase_order_id.invoice_ids:
-                #         total_fob += supplier_invoice.fob_amount
-                #         total_freight += supplier_invoice.freight_amount
-                #         total_cost += supplier_invoice.cost_amount
-                #     costing_vals = {
-                #         'fob_unit': total_fob / purchase_invoice.qty_delivered,
-                #         'freight_unit': total_freight / purchase_invoice.qty_delivered,
-                #         'cost_unit': total_cost / purchase_invoice.qty_delivered,
-                #         'freight_amount': total_freight,
-                #     }
-                #     purchase_invoice.write(costing_vals)
+                    if inv.state in ['draft','posted']:
+                        inv.write(invoice_vals)
         return res
 
     # ********** Need to delete After Testing *************
@@ -864,35 +837,3 @@ class Lead(models.Model):
                             rec.purchase_order_cif_amount * (rec.credit_cost_rate / 12) * rec.credit_cost_month)
             else:
                 rec.credit_cost_amount = 0
-
-    # @api.depends('sales_price', 'total_cost', 'credit_cost_amount', 'is_sales_price_override', 'agreed_sales_price')
-    # def compute_markup_amount(self):
-    #     for rec in self:
-    #         if rec.is_internal:
-    #             if rec.is_sales_price_override:
-    #                 rec.markup_amount = rec.agreed_sales_price - (rec.total_cost + rec.credit_cost_amount)
-    #             else:
-    #                 rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_cost_amount)
-    #         else:
-    #             if rec.is_sales_price_override:
-    #                 rec.markup_amount = rec.agreed_sales_price - (rec.total_cost + rec.credit_insurance_amount)
-    #             else:
-    #                 rec.markup_amount = rec.sales_price - (rec.total_cost + rec.credit_insurance_amount)
-
-    # @api.depends('credit_insurance_rate', 'initial_sales_price')
-    # def compute_credit_insurance_amount(self):
-    #     for rec in self:
-    #         if rec.is_sales_price_override == 'False':
-    #             rec.credit_insurance_amount = rec.credit_insurance_rate * rec.initial_sales_price
-    #         else:
-    #             rec.credit_insurance_amount = rec.credit_insurance_rate * rec.agreed_sales_price
-
-    # @api.depends('road_transportation_unit', 'product_qty')
-    # def compute_road_transportation_amount(self):
-    #     for rec in self:
-    #         rec.road_transportation_amount = rec.road_transportation_unit * rec.product_qty
-
-    # @api.depends('logistics_service_unit', 'product_qty')
-    # def compute_logistics_service_amount(self):
-    #     for rec in self:
-    #         rec.logistics_service_amount = rec.logistics_service_unit * rec.product_qty

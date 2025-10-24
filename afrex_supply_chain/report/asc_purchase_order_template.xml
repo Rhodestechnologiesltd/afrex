@@ -311,7 +311,7 @@
                             <td style="border: 1pt solid black; text-align: center;">
                                 <span t-field="line.packaging_id.name" t-options="{'widget': 'text'}"/>
                             </td>
-                            <td class="text-end" style="border: 1pt solid black; text-align: center;">
+                            <td  class="text-center" style="border: 1pt solid black; text-align: center;">
                                 <span class="text-nowrap" t-field="line.product_uom_qty"
                                       t-options="{'widget': 'float', 'precision': 3}"/>
                             </td>
@@ -801,14 +801,14 @@
                         </span>
                     </th>
                     <td class="text-start">
-                        <span t-field="o.shipment_window_start"/>
+                        <span t-esc="o.shipment_window_start.strftime('%d/%m/%Y')"/>
                         -
-                        <span t-field="o.shipment_window_end"/>
+                        <span t-esc="o.shipment_window_end.strftime('%d/%m/%Y')"/>
                     </td>
                 </tr>
                 <tr t-if="o.supplier_delivery_method == 'sea'">
                     <th class="text-start" style="width:25%; padding-left: 5px;">
-                        <span style="padding-right:5px; padding-left; 5px;">Trans Shipment :</span>
+                        <span style="padding-right:5px; padding-left; 5px;">Transshipment :</span>
                     </th>
                     <td class="text-start">
                         <t t-if="o.trans_shipment == 'allowed'">

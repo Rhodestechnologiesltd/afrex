@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <template id="asc_quote_request_template">
         <t t-call="web.basic_layout">
             <t t-set="o" t-value="o.with_context(lang=lang)"/>
             <t t-set="company" t-value="o.company_id.sudo()"/>
             <div class="row mb-4">
                 <div class="col-5" style="margin-right: 5px;">
-                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
-                    <table class="table-sm table-borderless" style="font-size: 14px; width:100%; margin-bottom:15px; border: 1px solid;">
+                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                         style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                    <table class="table-sm table-borderless"
+                           style="font-size: 14px; width:100%; margin-bottom:15px; border: 1px solid;">
                         <style>
                             td {
                             padding-left: 5px;
@@ -16,12 +18,16 @@
                         </style>
                         <tr>
                             <td>
-                            <b><span style="display: inline-block; border-bottom: 1pt solid black;">Vendor: </span></b>
+                                <b>
+                                    <span style="display: inline-block; border-bottom: 1pt solid black;">Vendor:</span>
+                                </b>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <strong><span t-field="o.partner_id.name"/></strong>
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                </strong>
                             </td>
                         </tr>
                         <tr>
@@ -30,36 +36,42 @@
                             </td>
                         </tr>
                         <t t-if="o.company_id.display_partner_child and o.partner_id.child_ids">
-                            <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                            <t t-set="partner_children"
+                               t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                             <t t-foreach="partner_children" t-as="partner_child">
                                 <tr t-if="partner_child.name">
                                     <td>
-                                        Contact Person: <span t-field="partner_child.name"/>
+                                        Contact Person:
+                                        <span t-field="partner_child.name"/>
                                     </td>
                                 </tr>
                                 <tr t-if="partner_child.email">
                                     <td>
-                                        Email: <span t-field="partner_child.email"/>
+                                        Email:
+                                        <span t-field="partner_child.email"/>
                                     </td>
                                 </tr>
                                 <tr t-if="partner_child.phone">
                                     <td>
-                                        Phone: <span t-field="partner_child.phone"/>
+                                        Phone:
+                                        <span t-field="partner_child.phone"/>
                                     </td>
                                 </tr>
                             </t>
                         </t>
                     </table>
-                 </div>
-                 <div class="col-7 text-end mb-2">
+                </div>
+                <div class="col-7 text-end mb-2">
                     <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
                         <tr>
-                            <th valign="middle" class="h5" style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                            <th valign="middle" class="h5"
+                                style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
                                 QUOTE REQUEST
                             </th>
                         </tr>
                     </table>
-                    <table class="table table-sm table-borderless" style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                    <table class="table table-sm table-borderless"
+                           style="width: 70%; margin-left: 30%; border: 0px solid white;">
                         <tr>
                             <th style="text-align: start; padding: 0;">
                                 <span t-field="o.company_id.name"/>
@@ -87,7 +99,8 @@
                         </tr>
                         <tr>
                             <td style="text-align: start; padding: 0;">
-                                <span>Tel: +230 271 1176</span><span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                                <span>Tel: +230 271 1176</span>
+                                <span style="padding-left: 10px;">Fax: +230 211 8959</span>
                             </td>
                         </tr>
                         <tr>
@@ -98,54 +111,70 @@
                     </table>
                     <table class="table-sm table-borderless mb-2 mx-0" style="width: 100%; border: 0px solid white;">
                         <tr t-if="o.name">
-                            <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference:</th>
-                            <th style="width:35%; text-align: left;"><span t-field="o.name"/></th>
+                            <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Reference:
+                            </th>
+                            <th style="width:35%; text-align: left;">
+                                <span t-field="o.name"/>
+                            </th>
                         </tr>
                         <tr t-if="o.create_date">
                             <th style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</th>
-                            <th style="width:35%; text-align: left;"><span t-esc="o.create_date.strftime('%d-%B-%Y')"/></th>
+                            <th style="width:35%; text-align: left;">
+                                <span t-esc="o.create_date.strftime('%d-%B-%Y')"/>
+                            </th>
                         </tr>
                     </table>
-                 </div>
+                </div>
             </div>
             <table style="font-size:16px; border: 1px solid black;" class="table table-lg table-bordered">
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Product</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.product_id.name"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.product_id.name"/>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Specifications</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.product_description"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.product_description"/>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Packaging</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.packaging_id.name"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.packaging_id.name"/>
+                    </td>
                 </tr>
                 <tr>
                     <th class="text-start" style="width:30%; padding-left: 5px;">
-                        <span style="padding-right:5px; padding-left; 5px;">Incoterms (<span t-field="o.incoterm_implementation_year"/>) :</span>
+                        <span style="padding-right:5px; padding-left; 5px;">Incoterms (<span
+                                t-field="o.incoterm_implementation_year"/>) :
+                        </span>
                     </th>
                     <td t-if="o.incoterm_selection not in ['fob','fca','exw']" class="text-start" style="width:70%">
-                        <span t-field="o.incoterm_id.code"/> <span t-field="o.discharge_port_id.name"/>
+                        <span t-field="o.incoterm_id.code"/>
+                        <span t-field="o.discharge_port_id.name"/>
                     </td>
                     <td t-if="o.incoterm_selection in ['fob','fca','exw']" class="text-start" style="width:70%">
-                        <span t-field="o.incoterm_id.code"/> <span t-field="o.loading_port_id.name"/>
+                        <span t-field="o.incoterm_id.code"/>
+                        <span t-field="o.loading_port_id.name"/>
                     </td>
                 </tr>
                 <tr t-if="o.supplier_delivery_method == 'sea'">
                     <th t-if="o.incoterm_selection in ['fob']" style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Port of Loading</span>
                     </th>
-                    <th t-if="o.incoterm_selection not in ['fob']" style="width:30%; text-align:left; padding-left: 5px;">
+                    <th t-if="o.incoterm_selection not in ['fob']"
+                        style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Port of Discharge</span>
                     </th>
-                     <td t-if="o.incoterm_selection in ['fob']" class="text-start" style="width:70%">
+                    <td t-if="o.incoterm_selection in ['fob']" class="text-start" style="width:70%">
                         <span t-field="o.loading_port_id.name"/>
                     </td>
                     <td t-if="o.incoterm_selection not in ['fob']" class="text-start" style="width:70%">
@@ -154,29 +183,41 @@
                 </tr>
                 <!--                    <td style="width:70%"><span t-field="o.discharge_port_id.name"/></td>-->
                 <!-- <tr t-if="o.supplier_delivery_method == 'road'"> -->
-                    <!-- <th style="width:30%; text-align:left; padding-left: 5px;"> -->
-                        <!-- <span style="float:left;">Place of Delivery</span> -->
-                    <!-- </th> -->
-                    <!-- <td style="width:70%"><span t-field="o.discharge_port_id.name"/></td> -->
+                <!-- <th style="width:30%; text-align:left; padding-left: 5px;"> -->
+                <!-- <span style="float:left;">Place of Delivery</span> -->
+                <!-- </th> -->
+                <!-- <td style="width:70%"><span t-field="o.discharge_port_id.name"/></td> -->
                 <!-- </tr> -->
                 <tr t-if="o.supplier_delivery_method == 'sea'">
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Shipment Window</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.shipment_window_start"/> <span>  - </span><span t-field="o.shipment_window_end"/></td>
+                    <td style="width:70%">
+                        <span t-esc="o.shipment_window_start.strftime('%d/%m/%Y') + ' - '"/>
+                        <span t-esc="o.shipment_window_end.strftime('%d/%m/%Y')"/>
+                    </td>
                 </tr>
                 <tr t-if="o.supplier_delivery_method == 'road'">
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Delivery Window</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.shipment_window_start"/> <span>  - </span><span t-field="o.shipment_window_end"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.shipment_window_start"/>
+                        <span>-</span>
+                        <span t-field="o.shipment_window_end"/>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Total Quantity</span>
                     </th>
-                    <td t-if="o.qty_total != 0" style="width:70%"><span t-field="o.qty_total" t-options='{"widget": "float", "precision": 2}'/><span>  MT</span></td>
-                    <td t-else="" style="width:70%"><span> </span></td>
+                    <td t-if="o.qty_total != 0" style="width:70%">
+                        <span t-field="o.qty_total" t-options='{"widget": "float", "precision": 2}'/>
+                        <span>MT</span>
+                    </td>
+                    <td t-else="" style="width:70%">
+                        <span></span>
+                    </td>
                 </tr>
                 <t t-if="o.supplier_delivery_method == 'sea'">
                     <t t-if="o.breakbulk_container == 'container'">
@@ -184,29 +225,43 @@
                             <th style="width:30%; text-align:left; padding-left: 5px;">
                                 <span style="float:left;">Container Size</span>
                             </th>
-                            <td style="width:70%"><span t-field="o.container_type_id.name"/></td>
+                            <td style="width:70%">
+                                <span t-field="o.container_type_id.name"/>
+                            </td>
                         </tr>
                         <tr>
                             <th style="width:30%; text-align:left; padding-left: 5px;">
                                 <span style="float:left;">Container Count</span>
                             </th>
-                            <td t-if="o.container_count != 0" style="width:70%"><span t-field="o.container_count"/></td>
-                            <td t-else="" style="width:70%"><span> </span></td>
+                            <td t-if="o.container_count != 0" style="width:70%">
+                                <span t-field="o.container_count"/>
+                            </td>
+                            <td t-else="" style="width:70%">
+                                <span></span>
+                            </td>
                         </tr>
                         <tr>
                             <th style="width:30%; text-align:left; padding-left: 5px;">
                                 <span style="float:left;">Container Stuffing</span>
                             </th>
                             <t t-if="o.packaging_id and o.container_stuffing > 0">
-                                <td style="width:70%"><span t-field="o.container_stuffing"/> <span>  x </span><span t-field="o.packaging_id.name"/></td>
+                                <td style="width:70%">
+                                    <span t-field="o.container_stuffing"/>
+                                    <span>x</span>
+                                    <span t-field="o.packaging_id.name"/>
+                                </td>
                             </t>
-                            <td t-else="" style="width:70%"><span> </span></td>
+                            <td t-else="" style="width:70%">
+                                <span></span>
+                            </td>
                         </tr>
                         <tr>
                             <th style="width:30%; text-align:left; padding-left: 5px;">
                                 <span style="float:left;">Palletised or Loose</span>
                             </th>
-                            <td style="width:70%"><span t-field="o.is_palletised"/></td>
+                            <td style="width:70%">
+                                <span t-field="o.is_palletised"/>
+                            </td>
                         </tr>
                     </t>
                 </t>
@@ -214,68 +269,102 @@
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Origin</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.origin_country_id.name"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.origin_country_id.name"/>
+                    </td>
                 </tr>
                 <t t-if="o.supplier_delivery_method == 'sea'">
                     <tr>
                         <th style="width:30%; text-align:left; padding-left: 5px;">
                             <span style="float:left;">FOB/MT</span>
                         </th>
-                        <td t-if="o.fob_unit != 0" style="width:70%"><span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/> <span t-field="o.fob_unit" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td t-else="" style="width:70%"><span> </span></td>
+                        <td t-if="o.fob_unit != 0" style="width:70%">
+                            <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                            <span t-field="o.fob_unit" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td t-else="" style="width:70%">
+                            <span></span>
+                        </td>
                     </tr>
                     <tr t-if="o.incoterm_selection != 'fob'">
                         <th style="width:30%; text-align:left; padding-left: 5px;">
                             <span style="float:left;">Freight/MT</span>
                         </th>
-                        <td t-if="o.freight_unit != 0" style="width:70%"><span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/> <span t-field="o.freight_unit" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td t-else="" style="width:70%"><span> </span></td>
+                        <td t-if="o.freight_unit != 0" style="width:70%">
+                            <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                            <span t-field="o.freight_unit" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td t-else="" style="width:70%">
+                            <span></span>
+                        </td>
                     </tr>
                     <tr t-if="o.incoterm_selection == 'cif'">
                         <th style="width:30%; text-align:left; padding-left: 5px;">
                             <span style="float:left;">Insurance</span>
                         </th>
-                        <td t-if="o.insurance_amount != 0" style="width:70%"><span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/> <span t-field="o.insurance_amount" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td t-else="" style="width:70%"><span> </span></td>
+                        <td t-if="o.insurance_amount != 0" style="width:70%">
+                            <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                            <span t-field="o.insurance_amount" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td t-else="" style="width:70%">
+                            <span></span>
+                        </td>
                     </tr>
                     <tr t-if="o.incoterm_selection != 'fob'">
                         <th style="width:30%; text-align:left; padding-left: 5px;">
-                            <span style="float:left;"><span t-field="o.incoterm_id.code"/>/MT</span>
+                            <span style="float:left;"><span t-field="o.incoterm_id.code"/>/MT
+                            </span>
                         </th>
-                        <td t-if="o.cost_unit != 0" style="width:70%"><span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/> <span t-field="o.cost_unit" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td t-else="" style="width:70%"><span> </span></td>
+                        <td t-if="o.cost_unit != 0" style="width:70%">
+                            <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                            <span t-field="o.cost_unit" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td t-else="" style="width:70%">
+                            <span></span>
+                        </td>
                     </tr>
                 </t>
                 <t t-if="o.supplier_delivery_method == 'road'">
                     <tr>
                         <th style="width:30%; text-align:left; padding-left: 5px;">
-                            <span style="float:left;"><span t-field="o.incoterm_id.code"/>/MT</span>
+                            <span style="float:left;"><span t-field="o.incoterm_id.code"/>/MT
+                            </span>
                         </th>
-                        <td t-if="o.cost_unit != 0" style="width:70%"><span t-field="o.cost_unit" t-options='{"widget": "float", "precision": 2}'/></td>
-                        <td t-else="" style="width:70%"><span> </span></td>
+                        <td t-if="o.cost_unit != 0" style="width:70%">
+                            <span t-field="o.cost_unit" t-options='{"widget": "float", "precision": 2}'/>
+                        </td>
+                        <td t-else="" style="width:70%">
+                            <span></span>
+                        </td>
                     </tr>
                 </t>
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Payment Terms</span>
                     </th>
-                    <td style="width:70%"><span t-field="o.payment_term_id.name"/></td>
+                    <td style="width:70%">
+                        <span t-field="o.payment_term_id.name"/>
+                    </td>
                 </tr>
                 <tr>
                     <th style="width:30%; text-align:left; padding-left: 5px;">
                         <span style="float:left;">Validity</span>
                     </th>
-                    <td t-if="o.validity" style="width:70%"><span t-esc="o.validity.strftime('%d-%B-%Y')"/></td>
-                    <td t-else="" style="width:70%"><span> </span></td>
+                    <td t-if="o.validity" style="width:70%">
+                        <span t-esc="o.validity.strftime('%d-%B-%Y')"/>
+                    </td>
+                    <td t-else="" style="width:70%">
+                        <span></span>
+                    </td>
                 </tr>
             </table>
         </t>
     </template>
-    
+
     <template id="report_asc_quote_request">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="afrex_supply_chain.asc_quote_request_template" t-lang="o.partner_id.lang" />
+                <t t-call="afrex_supply_chain.asc_quote_request_template" t-lang="o.partner_id.lang"/>
             </t>
         </t>
     </template>

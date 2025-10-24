@@ -21,24 +21,27 @@
                     </group>
                     <group string="Costing">
                         <field name="incoterm_selection" invisible="True"/>
-                        <label for="fob_unit" string="FOB/MT"/>
+                        <label for="fob_amount" string="FOB"/>
                         <div class="o_row">
-                            <field name="fob_unit" widget="float" options="{'precision': 2}"/>
-                            Total:
+                            <field name="fob_unit" invisible="1" widget="float" options="{'precision': 2}"/>
+<!--                            Total:-->
                             <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
-                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'" widget="float"
+<!--                        <field name="insurance_amount" readonly="incoterm_selection != 'cif'" widget="float"-->
+                        <field name="insurance_amount" readonly="True" widget="float"
                                options="{'precision': 2}"/>
                         <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
                         <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
-                            <field name="freight_unit" readonly="incoterm_selection == 'fob'" widget="float"
+<!--                            <field name="freight_unit" readonly="incoterm_selection == 'fob'" widget="float"-->
+                            <field name="freight_unit" readonly="True" widget="float"
                                    options="{'precision': 2}"/>
                             Total:
                             <field name="freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
                         <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
                         <div class="o_row" invisible="breakbulk_container != 'container'">
-                            <field id="freight_amount" name="freight_amount" readonly="incoterm_selection == 'fob'"
+<!--                            <field id="freight_amount" name="freight_amount" readonly="incoterm_selection == 'fob'"-->
+                            <field id="freight_amount" name="freight_amount" readonly="True"
                                    widget="float" options="{'precision': 2}"/>
                             <!-- Freight/MT: <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/> -->
                         </div>
@@ -46,11 +49,11 @@
                         <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
                         <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
                         <div class="o_row">
-                            <field name="cost_unit" widget="float" options="{'precision': 2}"/>
+                            <field name="cost_unit" readonly="True" widget="float" options="{'precision': 2}"/>
                             Total:
                             <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
-                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update"/>
+                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update" invisible="1"/>
                         <field name="old_cost_unit" invisible="1"/>
                         <field name="old_fob_unit" invisible="1"/>
                         <field name="old_freight_unit" invisible="1"/>

@@ -34,8 +34,8 @@ class SupplierInvoiceWizard(models.TransientModel):
                                         readonly=False)
     sob_date = fields.Date("Shipped on Board Date", related="lead_id.sob_date", readonly=False)
 
-    fob_unit = fields.Float("FOB/MT", digits="Prices per Unit", tracking=True)
-    freight_unit = fields.Float("Freight/MT", digits="Prices per Unit", tracking=True)
+    fob_unit = fields.Float("FOB/MT", tracking=True)
+    freight_unit = fields.Float("Freight/MT", tracking=True)
     cost_unit = fields.Float("Cost/MT", digits="Prices per Unit", tracking=True)
 
     fob_amount = fields.Float("FOB", tracking=True)
@@ -72,57 +72,32 @@ class SupplierInvoiceWizard(models.TransientModel):
     is_click = fields.Boolean(default=False)
     is_adjusted = fields.Boolean(default=False)
 
+    # @api.onchange('fob_unit', 'quantity')
+    def _compute_fob_amount(self):
+        for rec in self:
+            if rec.quantity:
+                rec.fob_amount = rec.fob_unit * rec.quantity
 
     @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
     def auto_update_fob(self):
         for rec in self:
-            insurance_unit = rec.insurance_amount / rec.quantity
-            calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
-            if rec.is_adjusted:
-                if rec.cost_unit != calculated_cif_unit:
-                    new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
-                    rec.fob_unit = max(new_fob, 0.0)
-    # @api.onchange('fob_amount', 'freight_amount', 'insurance_amount', 'is_adjusted', 'cost_amount')
-    # def validate_amount(self):
-    #     self.validate_cif_amount()
-    #
-    # def validate_cif_amount(self):
-    #     for rec in self:
-    #
-    #         insurance_unit = rec.insurance_amount / rec.quantity
-    #         calculated_cif_unit = rec.fob_unit + rec.freight_unit + insurance_unit
-    #         if rec.is_adjusted:
-    #             if rec.cost_unit != calculated_cif_unit:
-    #                 new_fob = rec.cost_unit - (rec.freight_unit + insurance_unit)
-    #                 rec.fob_unit = max(new_fob, 0.0)
-    #         else:
-    #             # pass
-    #             entered_values = [
-    #                 1 if rec.fob_unit else 0,
-    #                 1 if rec.freight_unit else 0,
-    #                 1 if insurance_unit else 0
-    #             ]
-    #             total_entered = sum(entered_values)
-    #             if rec.incoterm_selection == "cif":
-    #                 if total_entered > 2:
-    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
-    #                         raise UserError(
-    #                             f"CIF validation failed: CIF ({rec.cost_unit}) "
-    #                             f"≠ FOB + Freight + Insurance ({calculated_cif_unit})"
-    #                         )
-    #             elif rec.incoterm_selection in ["cfr", "fob"]:
-    #                 if total_entered > 1:
-    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
-    #                         raise UserError(
-    #                             f"validation Error Please Check the Values"
-    #                         )
-    #             else:
-    #                 if total_entered > 2:
-    #                     if round(rec.cost_unit, 3) != round(calculated_cif_unit, 3):
-    #                         raise UserError(
-    #                             f"validation Error Please Check the Values"
-    #                         )
-    #     return True
+            # rec.freight_unit = rec.freight_amount / rec.quantity if rec.freight_amount else rec.freight_unit
+            # insurance_unit = rec.insurance_amount / rec.quantity
+            # rec.fob_unit = rec.fob_amount / rec.quantity if rec.fob_amount else rec.fob_unit
+            calculated_cif_amount = rec.fob_amount + rec.freight_amount + rec.insurance_amount
+            if rec.is_adjusted and rec.cost_amount != calculated_cif_amount:
+
+                new_fob = rec.cost_amount - (rec.freight_amount + rec.insurance_amount)
+                if new_fob >= 0:
+                    rec.fob_amount = max(new_fob, 0.0)
+                    rec.freight_amount = rec.freight_amount
+                    rec.insurance_amount = rec.insurance_amount
+                    rec.cost_amount = rec.cost_amount
+                else:
+                    rec.fob_amount = rec.fob_unit * rec.quantity
+                    rec.insurance_amount = rec.insurance_amount
+                    rec.freight_amount = rec.freight_unit * rec.quantity
+                    rec.cost_amount = rec.cost_unit * rec.quantity
     @api.depends('incoterm_id')
     def _compute_incoterm_selection(self):
         for rec in self:
@@ -143,6 +118,7 @@ class SupplierInvoiceWizard(models.TransientModel):
             else:
                 rec.incoterm_selection = False
 
+
     @api.depends('ref', 'quantity', 'date', 'vessel', 'voyage', 'expected_arrival_date', 'sob_date')
     def _compute_can_confirm(self):
         for rec in self:
@@ -156,6 +132,7 @@ class SupplierInvoiceWizard(models.TransientModel):
                 rec.sob_date,
             ])
 
+
     @api.depends('insurance_amount', 'fob_amount', 'freight_amount')
     def _compute_can_change(self):
         for rec in self:
@@ -165,23 +142,17 @@ class SupplierInvoiceWizard(models.TransientModel):
                     or rec.freight_amount != rec.old_freight_amount
             )
 
-    @api.onchange('fob_unit', 'quantity')
-    def _compute_fob_amount(self):
-        for rec in self:
-            rec.fob_amount = rec.fob_unit * rec.quantity
-
-    @api.onchange('freight_unit','freight_unit','quantity')
+    # @api.onchange('freight_unit', 'quantity')
     def _compute_freight_amount(self):
         for rec in self:
-            if rec.breakbulk_container == 'container':
-                rec.freight_unit = rec.freight_amount / rec.quantity
-            elif rec.breakbulk_container == 'breakbulk':
-                rec.freight_amount = rec.freight_unit * rec.quantity
+            rec.freight_amount = rec.freight_unit * rec.quantity
+
 
     @api.onchange('cost_unit', 'quantity')
     def _compute_cost_amount(self):
         for rec in self:
             rec.cost_amount = rec.cost_unit * rec.quantity
+
 
     def action_apply(self):
         self.ensure_one()
@@ -249,7 +220,10 @@ class SupplierInvoiceWizard(models.TransientModel):
         for line in sale_invoice_id.invoice_line_ids:
             line.quantity = self.quantity
             line.price_unit = sales_price_unit
-        sale_invoice_id.message_post(body=_("Insurance, Freight and Fob values are updated from Supplier Commercial invoice."))
+        sale_invoice_id.message_post(
+            body=_("Insurance, Freight and Fob values are updated from Supplier Commercial invoice."))
+
+
     def action_confirm(self):
         sale_invoice_id = self.sale_invoice_id
         if not self.lead_id:
@@ -260,10 +234,21 @@ class SupplierInvoiceWizard(models.TransientModel):
         else:
             purchase = self.purchase_order_id
 
-        self._compute_fob_amount()
+        _logger.info("=== Supplier Invoice Confirm Start ===")
+        _logger.info("PO: %s | Existing Invoices: %s", purchase.name, len(purchase.invoice_ids))
+        _logger.info("Ordered Qty: %s | Delivered Qty: %s", purchase.qty_total, purchase.qty_delivered)
+        _logger.info("PO Units (FOB/MT: %s | Freight/MT: %s | Cost/MT: %s)",
+                     purchase.fob_unit, purchase.freight_unit, purchase.cost_unit)
+        _logger.info("Wizard Input → Qty: %s | FOB Unit: %s | Freight Unit: %s | Cost Unit: %s",
+                     self.quantity, self.fob_unit, self.freight_unit, self.cost_unit)
+        # Compute individual invoice amounts
+        # self._compute_fob_amount()
+        # self._compute_cost_amount()
+        self.auto_update_fob()
         self._compute_freight_amount()
-        self._compute_cost_amount()
-
+        _logger.info("Computed Amounts → FOB: %s | Freight: %s | Cost: %s",
+                     self.fob_amount, self.freight_amount, self.cost_amount)
+        # Prepare invoice values
         invoice_vals = {
             'ref': self.ref,
             'invoice_date': self.date,
@@ -271,69 +256,46 @@ class SupplierInvoiceWizard(models.TransientModel):
             'voyage': self.voyage,
             'expected_arrival_date': self.expected_arrival_date,
             'sob_date': self.sob_date,
-            'fob_unit': self.fob_unit,
-            'freight_unit': self.freight_unit,
-            'cost_unit': self.cost_unit,
-            'fob_amount': self.fob_amount,
-            'freight_amount': self.freight_amount,
-            'cost_amount': self.cost_amount,
-            'insurance_amount': self.insurance_amount,
+            'fob_unit_po': self.fob_unit,
+            'freight_unit_po': self.freight_unit,
+            'cost_unit_po': self.cost_unit,
+            'fob_amount_po': self.fob_unit * self.quantity,
+            'freight_amount_po': self.freight_unit * self.quantity,
+            'cost_amount_po': self.cost_unit * self.quantity,
+            'insurance_amount_po': self.insurance_amount,
+            # 'incoterm_id': purchase.incoterm_id.id,
         }
 
+        # Create supplier invoice
         supplier_invoice = purchase.action_create_invoice()
-
         invoice = purchase.invoice_ids.sorted('create_date')[-1]
+        _logger.info("Created Supplier Invoice: %s", invoice.name)
+        _logger.info("Writing invoice values: %s", invoice_vals)
         invoice.write(invoice_vals)
-        for line in invoice.invoice_line_ids:
-            line.write({
-                'price_unit': self.cost_unit,
-            })
+        invoice.action_post()
+
+        if len(invoice.invoice_line_ids) == 1:
+            invoice.invoice_line_ids.price_unit = self.cost_unit
+        _logger.info("Invoice Lines Updated: Quantity = %s, Unit Price = %s",
+                     self.quantity, self.cost_unit)
+
         invoice.message_post(body=_("Supplier Commercial Invoice created successfully."))
-        # invoice.action_post()
 
         if purchase.invoice_ids:
-            total_fob = 0
-            total_freight = 0
-            total_cost = 0
-            for supplier_invoice in purchase.invoice_ids:
-                total_fob += supplier_invoice.fob_amount
-                total_freight += supplier_invoice.freight_amount
-                total_cost += supplier_invoice.cost_amount
-            costing_vals = {
-                'freight_unit': self.freight_unit,
-                'freight_amount': self.freight_amount,
-                'cost_unit': self.cost_unit,
-                'fob_amount': self.fob_amount,
-                'cost_amount': self.cost_amount,
-                'insurance_amount': self.insurance_amount,
-                # 'fob_unit': total_fob / purchase.qty_delivered,
-                # 'freight_unit': total_freight / purchase.qty_delivered,
-                # 'cost_unit': total_cost / purchase.qty_delivered,
-                # 'freight_amount': total_freight,
-                'is_adjusted': self.is_adjusted,
-            }
-            purchase.write(costing_vals)
+            po_vals = {'fob_amount': self.fob_unit * purchase.qty_delivered,
+                       'freight_amount': self.freight_unit * purchase.qty_delivered,
+                       'cost_amount': self.cost_unit * purchase.qty_delivered,
+                       'insurance_amount': self.insurance_amount,
+                        }
+            purchase.write(po_vals)
+
+        _logger.info(
+            "PO VALues%s",
+            po_vals
+        )
+        # Update quantities and lock the purchase order
         purchase.set_product_qty()
+        purchase._compute_freight_amount()
         purchase.is_close_readonly = True
-        purchase.message_post(body=_("Invoice created successfully."))
-        if sale_invoice_id.state in ['draft','Posted']:
-            purchase.action_apply_proforma()
-        else:
-            purchase.sction_apply_commercial()
-        # afrex_invoices = self.env['account.move'].search([('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')])
-        # if len(afrex_invoices) == 1:
-        #     return {
-        #         'type': 'ir.actions.act_window',
-        #         'res_model': 'account.move',
-        #         'view_mode': 'form',
-        #         'res_id': afrex_invoices.id,
-        #         'target': 'current',
-        #     }
-        # else:
-        #     return {
-        #         'type': 'ir.actions.act_window',
-        #         'res_model': 'account.move',
-        #         'view_mode': 'tree,form',
-        #         'domain': [('lead_id', '=', self.lead_id.id), ('move_type', '=', 'out_invoice')],
-        #         'target': 'current',
-        #     }
+        purchase.message_post(body=_("Supplier Commercial Invoice confirmed and totals updated successfully."))
+

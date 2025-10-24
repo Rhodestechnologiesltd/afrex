@@ -49,6 +49,11 @@
                                     class="btn-mute" invisible="is_invoiced or state not in ['done', 'purchase']"/>
                         </li>
                         <li class="border-top">
+                            <button name="action_open_costing" icon="fa-file-text"
+                                    string="Update Costing" type="object" class="btn-mute"
+                                    invisible="1"/>
+                        </li>
+                        <li class="border-top">
                             <button name="supplier_invoice_wizard" icon="fa-file-text"
                                     string="Supplier Commercial Invoice" type="object" class="btn-mute"
                                     invisible="is_invoiced or state not in ['done', 'purchase']"/>
@@ -311,11 +316,11 @@
                     <group string="Initial Supplier Costing">
                         <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}"
                                readonly="state in ['cancel', 'done', 'purchase']"/>
-                        <label for="initial_fob_unit" string="FOB/MT"/>
+                        <label for="initial_fob_amount" string="FOB"/>
                         <div class="o_row">
-                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 2}"/>
-                            Total:
                             <field name="initial_fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            FOB/MT:
+                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="initial_insurance_amount" readonly="True" widget="float"
                                options="{'precision': 2}"/>
@@ -349,43 +354,49 @@
                     </group>
                     <group string="Confirmed Supplier Costing">
                         <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
-                        <label for="fob_unit" string="FOB/MT"/>
+                        <label for="fob_unit" string="FOB"/>
                         <div class="o_row">
-                            <field name="fob_unit" readonly="state not in ['draft', 'sent']" widget="float"
-                                   options="{'precision': 2}"/>
-                            Total:
                             <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            FOB/MT:
+<!--                            <field name="fob_unit" readonly="state not in ['draft', 'sent']" widget="float"-->
+                            <field name="fob_unit" readonly="True" widget="float"
+                                   options="{'precision': 4}"/>
                         </div>
+<!--                        <field name="insurance_amount"-->
+<!--                               readonly="incoterm_selection not in ['cif', 'fob'] or state not in ['draft', 'sent']" widget="float"-->
                         <field name="insurance_amount"
-                               readonly="incoterm_selection not in ['cif', 'fob'] or state not in ['draft', 'sent']" widget="float"
+                               readonly="True" widget="float"
                                options="{'precision': 2}"/>
-                        <label for="freight_unit" string="Freight/MT" invisible="breakbulk_container != 'breakbulk'"/>
+                        <label for="freight_unit" string="Freight/MT"  invisible="breakbulk_container != 'breakbulk'"/>
                         <div class="o_row" invisible="breakbulk_container != 'breakbulk'">
-                            <field name="freight_unit"
-                                   readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']"
+                            <field name="freight_unit" readonly="True"
                                    widget="float" options="{'precision': 2}"/>
+<!--                            <field name="freight_unit"-->
+<!--                                   readonly="incoterm_selection == 'fob' or state not in ['draft', 'sent']"-->
+<!--                                   widget="float" options="{'precision': 2}"/>-->
                             Total:
-                            <field name="freight_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            <field name="freight_amount" readonly="True"  widget="float" options="{'precision': 4}"/>
                         </div>
                         <label for="freight_amount" string="Freight" invisible="breakbulk_container != 'container'"/>
                         <div class="o_row" invisible="breakbulk_container != 'container'">
-                            <field id="freight_amount" name="freight_amount"
-                                   readonly="state not in ['draft', 'sent']"
+                            <field id="freight_amount" readonly="True" name="freight_amount"
                                    widget="float" options="{'precision': 2}"/>
+<!--                                   readonly="state not in ['draft', 'sent']"-->
                             Freight/MT:
-                            <field name="freight_unit" readonly="True" widget="float" options="{'precision': 2}"/>
+                            <field name="freight_unit"  readonly="True" widget="float" options="{'precision': 4}"/>
                         </div>
                         <label for="cost_unit" string="CIF/MT" invisible="incoterm_selection != 'cif'"/>
                         <label for="cost_unit" string="CFR/MT" invisible="incoterm_selection != 'cfr'"/>
                         <label for="cost_unit" string="FOB/MT" invisible="incoterm_selection != 'fob'"/>
                         <div class="o_row">
-                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float"
+<!--                            <field name="cost_unit" readonly="state not in ['draft', 'sent']" widget="float"-->
+                            <field name="cost_unit" readonly="True" widget="float"
                                    options="{'precision': 2}"/>
                             Total:
-                            <field name="cost_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                            <field name="cost_amount" readonly="True"  widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
-                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update" invisible="1"/>
+                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update"/>
                     </group>
                 </group>
                 <group invisible="state != 'purchase' or supplier_delivery_method != 'road'">
@@ -447,12 +458,12 @@
                 <group invisible="state == 'purchase' or supplier_delivery_method != 'sea'">
                     <group string="Initial Supplier Costing">
                         <field name="qty_total" string="MT Ordered" widget="float" options="{'precision': 2}"/>
-                        <label for="fob_unit" string="FOB/MT"/>
+                        <label for="fob_amount" string="FOB"/>
                         <div class="o_row">
+                            <field name="fob_amount" widget="float" options="{'precision': 2}"/>
+                            FOB/MT:
                             <field name="fob_unit" readonly="state not in ['draft', 'sent']" widget="float"
-                                   options="{'precision': 2}"/>
-                            Total:
-                            <field name="fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+                                   options="{'precision': 4}"/>
                         </div>
                         <field name="insurance_amount"
                                readonly="incoterm_selection not in ['cif' , 'fob'] or state not in ['draft', 'sent']" widget="float"
@@ -509,11 +520,11 @@
                     </group>
                     <group string="Confirmed Supplier Costing">
                         <field name="qty_delivered" string="MT Received" widget="float" options="{'precision': 2}"/>
-                        <label for="initial_fob_unit" string="FOB/MT"/>
+                        <label for="initial_fob_amount" string="FOB"/>
                         <div class="o_row">
-                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 2}"/>
-                            Total:
                             <field name="initial_fob_amount" readonly="True" widget="float" options="{'precision': 2}"/>
+<!--                            FOB/MT:-->
+                            <field name="initial_fob_unit" readonly="True" widget="float" options="{'precision': 4}"/>
                         </div>
                         <field name="initial_insurance_amount" readonly="True" widget="float"
                                options="{'precision': 2}"/>

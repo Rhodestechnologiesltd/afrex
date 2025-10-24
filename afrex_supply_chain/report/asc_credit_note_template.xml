@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <template id="asc_credit_note_template">
         <t t-call="web.basic_layout">
             <t t-set="o" t-value="o.with_context(lang=lang)"/>
             <div style="font-size: 12px; margin-top: 10%; margin-left: 5%; margin-right: 5%; padding-bottom: 0px;">
                 <div class="row mb8">
                     <div class="col-5" style="margin-right: 5px;">
-                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
-                        <table class="table-sm table-borderless" style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                             style="margin-top: 5px; margin-bottom: 20px; max-height: 90px;" alt="Logo"/>
+                        <table class="table-sm table-borderless"
+                               style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
                             <tr>
                                 <td>
-                                <b><span style="border-bottom: 1pt solid black;">To: </span></b>
+                                    <b>
+                                        <span style="border-bottom: 1pt solid black;">To:</span>
+                                    </b>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                    <strong>
+                                        <span t-field="o.partner_id.name"/>
+                                    </strong>
                                 </td>
                             </tr>
                             <tr>
@@ -25,21 +31,25 @@
                                 </td>
                             </tr>
                             <t t-if="o.company_id.display_partner_child and o.partner_id.child_ids">
-                                <t t-set="partner_children" t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
+                                <t t-set="partner_children"
+                                   t-value="o.partner_id.child_ids.sorted(key=lambda l: (l.create_date))"/>
                                 <t t-foreach="partner_children" t-as="partner_child">
                                     <tr t-if="partner_child.name">
                                         <td>
-                                            Contact Person: <span t-field="partner_child.name"/>
+                                            Contact Person:
+                                            <span t-field="partner_child.name"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.email">
                                         <td>
-                                            Email: <span t-field="partner_child.email"/>
+                                            Email:
+                                            <span t-field="partner_child.email"/>
                                         </td>
                                     </tr>
                                     <tr t-if="partner_child.phone">
                                         <td>
-                                            Phone: <span t-field="partner_child.phone"/>
+                                            Phone:
+                                            <span t-field="partner_child.phone"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -49,12 +59,14 @@
                     <div class="col-7 text-end mb-2">
                         <table class="table-lg mb-1" style="width: 70%; margin-left: 30%; border: 1px solid;">
                             <tr>
-                                <th valign="middle" class="h5" style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
+                                <th valign="middle" class="h5"
+                                    style="text-align: center; padding-top: 5px; padding-bottom: 5px;">
                                     CREDIT NOTE
                                 </th>
                             </tr>
                         </table>
-                        <table class="table table-sm table-borderless" style="width: 70%; margin-left: 30%; border: 0px solid white;">
+                        <table class="table table-sm table-borderless"
+                               style="width: 70%; margin-left: 30%; border: 0px solid white;">
                             <tr>
                                 <th style="text-align: start; padding: 0;">
                                     <span t-field="o.company_id.name"/>
@@ -82,7 +94,8 @@
                             </tr>
                             <tr>
                                 <td style="text-align: start; padding: 0;">
-                                    <span>Tel: +230 271 1176</span><span style="padding-left: 10px;">Fax: +230 211 8959</span>
+                                    <span>Tel: +230 271 1176</span>
+                                    <span style="padding-left: 10px;">Fax: +230 211 8959</span>
                                 </td>
                             </tr>
                             <tr>
@@ -91,32 +104,48 @@
                                 </td>
                             </tr>
                         </table>
-                        <table class="table-sm table-borderless mb-2 mx-0" style="font-size: 12px; width: 100%; border: 0px solid white;">
+                        <table class="table-sm table-borderless mb-2 mx-0"
+                               style="font-size: 12px; width: 100%; border: 0px solid white;">
                             <tr t-if="o.name">
-                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Credit Note Number:</td>
-                                <td style="width:35%; text-align: left;"><span t-field="o.name"/></td>
+                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Credit
+                                    Note Number:
+                                </td>
+                                <td style="width:35%; text-align: left;">
+                                    <span t-field="o.name"/>
+                                </td>
                             </tr>
                             <tr t-if="o.invoice_date">
                                 <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Date:</td>
-                                <td style="width:35%; text-align: left;"><span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/></td>
+                                <td style="width:35%; text-align: left;">
+                                    <span t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
+                                </td>
                             </tr>
                             <tr>
-                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Against Invoices:</td>
-                                <td style="width:35%; text-align: left;"><span t-field="o.reversed_entry_id.name"/></td>
+                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Against
+                                    Invoices:
+                                </td>
+                                <td style="width:35%; text-align: left;">
+                                    <span t-field="o.reversed_entry_id.name"/>
+                                </td>
                             </tr>
                             <tr>
-                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Pages:</td>
-                                <td style="width:35%; text-align: left;"><span>1 of 1</span></td>
+                                <td style="width:65%; text-align: right; padding-top:0px; padding-right:5px;">Pages:
+                                </td>
+                                <td style="width:35%; text-align: left;">
+                                    <span>1 of 1</span>
+                                </td>
                             </tr>
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="col-6" style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; padding-bottom: 0px;">
+            <div class="col-6"
+                 style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-left: 5%; padding-bottom: 0px;">
                 <table style="font-size: 12px; width:100%; margin-bottom:15px; margin-top:20px; border: 1px solid;">
                     <tr>
                         <td class="text-start" style="padding-top: 5px; padding-bottom: 5px;">
-                            <span style="padding-left: 10px;" t-field="o.partner_id.name"/> Purchase Order No: 
+                            <span style="padding-left: 10px;" t-field="o.partner_id.name"/>
+                            Purchase Order No:
                             <span t-if="o.reversed_entry_id.ref" t-field="o.reversed_entry_id.ref"/>
                             <span t-else="">To be confirmed</span>
                         </td>
@@ -124,10 +153,13 @@
                 </table>
             </div>
             <div class="col-6 mt-2 mb-4" style="font-size: 12px; margin-left: 5%;">
-                <table class="table-sm table-borderless" style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
+                <table class="table-sm table-borderless"
+                       style="font-size: 12px; width:100%; margin-bottom:15px; border: 1px solid;">
                     <tr>
                         <td>
-                            <b><span>Reason: </span></b>
+                            <b>
+                                <span>Reason:</span>
+                            </b>
                         </td>
                     </tr>
                     <tr>
@@ -137,27 +169,117 @@
                     </tr>
                 </table>
             </div>
-            <table class="table-sm o_main_table mb-2" name="invoice_line_table" style="font-size: 12px; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">
-                <tr>
-                    <th name="th_description" valign="middle" class="text-center" style="width:70%; vertical-align: middle;">
-                        <span>Description</span>
-                    </th>
-                    <th name="th_description" valign="middle" class="text-center" style="width:70%; vertical-align: middle;">
-                        <span>Total </span><span>(<span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>)</span>
-                    </th>
-                </tr>
+            <table class="table o_main_table mb-2" name="invoice_line_table"
+                   style="font-size: 12px; border-left:1px solid black; border-right:1px solid black; border-top:1px solid black; border-bottom:1px solid black; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">
+                <!--                   style="font-size: 12px; width:90%; margin-left:5%; margin-right:5%; page-break-inside: avoid; box-sizing: border-box; border-collapse: collapse;">-->
                 <tbody class="invoice_tbody">
-                    <t t-set="lines" t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, -l.id), reverse=True)"/>
+                    <tr>
+                        <th name="th_description" valign="middle" class="text-center"
+                            style="width:40%; border:1pt solid black; vertical-align: middle;">
+                            <span>Description</span>
+                        </th>
+                        <th valign="middle" name="th_packaging" class="text-center"
+                            style="width:15%; border:1pt solid black; vertical-align: middle;">
+                            <span>Packaging</span>
+                        </th>
+                        <th name="th_qty" class="text-center"
+                            style="width:12%; border:1pt solid black; padding: 0; margin: 0;">
+                            <div style="display: table; width: 100%; border-collapse: collapse;">
+                                <div style="display: table-row;">
+                                    <div style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        Qty
+                                    </div>
+                                </div>
+                                <div style="display: table-row;">
+                                    <div style="display: table-cell; text-align: center; padding: 2px 0; width: 100%;">
+                                        MT
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                        <th name="th_price" class="text-center"
+                            style="width:15%; border:1pt solid black; padding: 0; margin: 0;">
+                            <div style="display: table; width: 100%; border-collapse: collapse;">
+                                <div style="display: table-row;">
+                                    <div t-if="o.incoterm_selection == 'dap'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        DAP / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'cif'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CIF Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'cfr'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        CFR Price / MT
+                                    </div>
+                                    <div t-elif="o.incoterm_selection == 'fob'"
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        FOB Price / MT
+                                    </div>
+                                    <div t-else=""
+                                         style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        Price / MT
+                                    </div>
+                                </div>
+                                <div style="display: table-row;">
+                                    <div style="display: table-cell; text-align: center; padding: 2px 0; width: 100%;">
+                                        <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                        <th name="th_total" class="text-center"
+                            style="width:18%; border:1pt solid black; padding: 0; margin: 0;">
+                            <div style="display: table; width: 100%; border-collapse: collapse;">
+                                <div style="display: table-row;">
+                                    <div style="display: table-cell; border-bottom: 1px solid black; text-align: center; padding: 2px 0; width: 100%;">
+                                        Total
+                                    </div>
+                                </div>
+                                <div style="display: table-row;">
+                                    <div style="display: table-cell; text-align: center; padding: 2px 0; width: 100%;">
+                                        <span t-field="o.currency_id.name" t-options="{'widget': 'text'}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+
+                    </tr>
+
+                    <t t-set="lines"
+                       t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, -l.id), reverse=True)"/>
                     <t t-foreach="lines" t-as="line">
                         <tr valign="middle">
-                            <td valign="middle" class="text-center">
+                            <td valign="middle" class="text-center"
+                                style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <t>
                                     <span t-field="line.name" t-options="{'widget': 'text'}"/>
                                 </t>
                             </td>
-                            <td valign="middle" class="o_price_total" style="vertical-align: middle;">
-                                <span t-field="line.currency_id.name"/>
-                                <span class="text-nowrap float-end">(<span t-field="line.price_total" t-options="{'widget': 'float', 'precision': 2}"/>)</span>
+                            <td valign="middle"
+                                style="border: 1pt solid black; text-align: center; vertical-align: middle;">
+                                <span t-field="line.packaging_id.name" t-options="{'widget': 'text'}"/>
+                            </td>
+                            <td valign="middle" class="text-center"
+                                style="border: 1pt solid black; text-align: center; vertical-align: middle; padding: 0; margin: 0;">
+                                <span class="text-nowrap" style="padding-right:5px; vertical-align: middle;"
+                                      t-field="line.quantity"
+                                      t-options="{'widget': 'float', 'precision': 3}"/>
+                            </td>
+                            <td valign="middle" class="o_price_total"
+                                style="border: 1pt solid black; vertical-align: middle; padding: 0; margin: 0;">
+                                <span style="text-align: left; padding-left: 5px;" t-field="line.currency_id.name"/>
+                                <span class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;"
+                                      t-field="line.price_unit"
+                                      t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                            <td valign="middle" class="o_price_total"
+                                style="border: 1pt solid black; padding: 0; margin: 0; vertical-align: middle;">
+                                <span style="text-align: left; padding-left: 5px;" t-field="line.currency_id.name"/>
+                                <span class="text-nowrap float-end" style="padding-right:5px; vertical-align: middle;"
+                                      t-field="line.price_total"
+                                      t-options="{'widget': 'float', 'precision': 2}"/>
                             </td>
                         </tr>
                     </t>
@@ -176,20 +298,31 @@
                     </tr>
                 </tbody> -->
             </table>
-            <table class="table-sm table-borderless" style="width:90%; margin-left: 5%; margin-right: 5%; font-size: 12px; border: 0px solid white;">
+            <table class="table-sm table-borderless"
+                   style="width:90%; margin-left: 5%; margin-right: 5%; font-size: 12px; border: 0px solid white;">
                 <tr valign="middle" style="padding-bottom: 0;">
                     <td valign="middle" style="text-align:left; padding-bottom: 0;">
-                        <span>Amount in Words (<span t-field="o.currency_id.name"/>):</span>
+                        <span>Amount in Words (<span t-field="o.currency_id.name"/>):
+                        </span>
                     </td>
                 </tr>
                 <tr style="padding-top: 0;">
                     <th class="text-nowrap" style="width:65%; text-align: left;">
-                         <strong><span t-field="o.number_to_words" t-options="{'widget': 'text'}"></span></strong> 
+                        <strong>
+                            <span t-field="o.number_to_words" t-options="{'widget': 'text'}"></span>
+                        </strong>
                     </th>
                     <th class="text-nowrap" style="width:5%; text-align: right; word-spacing: 4px;"></th>
-                    <th class="text-nowrap text-start" style="width:30%; border-top: 1pt solid black; border-bottom: 3pt double black;">
+                    <th class="text-nowrap text-start"
+                        style="width:30%; border-top: 1pt solid black; border-bottom: 3pt double black;">
                         <span t-field="o.currency_id.name"/>
-                        <strong><span class="text-nowrap float-end">(<span t-field="o.amount_total" t-options="{'widget': 'float', 'precision': 2}"/>)</span></strong>
+                        <strong>
+                            <span class="text-nowrap float-end">(
+                                <span t-field="o.amount_total"
+                                      t-options="{'widget': 'float', 'precision': 2}"/>
+                                )
+                            </span>
+                        </strong>
                     </th>
                 </tr>
             </table>
@@ -197,12 +330,15 @@
                 <div class="col-7">
                     <span/>
                 </div>
-                <div class="col-5" style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-right: 5%; padding-bottom: 0px;">
-                    <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)" style="margin-top: 50px; padding-left: 20px; max-height: 110px;" alt="Company Seal"/>
+                <div class="col-5"
+                     style="font-size: 12px; margin-top: 0%; margin-bottom: 0%; margin-right: 5%; padding-bottom: 0px;">
+                    <img t-if="o.company_id.seal" t-att-src="image_data_uri(o.company_id.seal)"
+                         style="margin-top: 50px; padding-left: 20px; max-height: 110px;" alt="Company Seal"/>
                     <br/>
                     <br/>
                     <br/>
-                    <span style="padding-left: 150px;" t-if="o.invoice_date">Date: </span><span t-if="o.invoice_date" t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
+                    <span style="padding-left: 150px;" t-if="o.invoice_date">Date:</span>
+                    <span t-if="o.invoice_date" t-esc="o.invoice_date.strftime('%d-%B-%Y')"/>
                 </div>
             </div>
         </t>
@@ -211,7 +347,7 @@
     <template id="report_asc_credit_note">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="afrex_supply_chain.asc_credit_note_template" t-lang="o.partner_id.lang" />
+                <t t-call="afrex_supply_chain.asc_credit_note_template" t-lang="o.partner_id.lang"/>
             </t>
         </t>
     </template>

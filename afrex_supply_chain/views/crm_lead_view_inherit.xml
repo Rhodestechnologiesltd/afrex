@@ -851,7 +851,7 @@
                                     <div>
                                         <table style="width:100%">
                                             <tr style="margin-bottom:2em;">
-                                                <th colspan="3" class="alert alert-info text-center"
+                                                <th colspan="3" class="alert alert-warning text-center"
                                                     style="padding-top:1em; border-radius:15px;"
                                                     invisible="not is_change">
                                                     <field name="is_change" invisible="True"/>
@@ -991,6 +991,8 @@
                                             <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
                                                 <th style="width: 40%">
                                                     Insurance Estimate
+                                                    <field name="ins_text"
+                                                           default="Sales Value x 110% x 0.25% + USD 10"/>
                                                     <br/>
                                                     <!--                                                    Insurance Premium :<br/>-->
                                                     (USD<field name="insurance_premium_unit"/>/MT)
@@ -1007,7 +1009,8 @@
                                             </tr>
                                             <tr invisible="purchase_order_incoterm_selection != 'fob'">
                                                 <th style="width: 40%">
-                                                    Freight (Freight Forwarder)
+                                                    Freight
+                                                    <field name="freight_text" default="(Freight Forwarder)"/>
                                                     <br/>
                                                     Rate:
                                                     (USD<field name="afrex_freight_rate"/>/MT)
@@ -1194,10 +1197,24 @@
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: left; valign: middle;"
                                                 >
+                                                    Credit Cost Calculation Based on
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="credit_cost_text" widget="selection"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
                                                     Planned Payment Date
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
-                                                    <field name="expected_payment_date"/>
+                                                    <field name="expected_payment_date"
+                                                           placeholder="Select Planned Payment Date"/>
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
                                                     <span/>
@@ -1691,6 +1708,19 @@
                                                 <th valign='middle'
                                                     style="width: 40%; text-align: left; valign: middle;"
                                                 >
+                                                    Credit Cost Calculation Based on
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <field name="credit_cost_text" widget="selection"/>
+                                                </th>
+                                                <th style="width:30%; text-align: right;">
+                                                    <span/>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <th valign='middle'
+                                                    style="width: 40%; text-align: left; valign: middle;"
+                                                >
                                                     Planned Payment Date
                                                 </th>
                                                 <th style="width:30%; text-align: right;">
@@ -2038,6 +2068,34 @@
         </field>
     </record>
 
+    <record id="asc_costing_form_view" model="ir.ui.view">
+        <field name="name">asc.crm.lead.costing.form</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box mb-2" name="button_box_profit_estimate">
+                        <button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object"
+                                class="btn-primary mx-2" style="color:white; background:#B04949;"/>
+                        <button name="action_apply" string="Apply" type="object"
+                                class="btn-primary" style="color:white; background:#B04949;"
+                        />
+                    </div>
+                    <group>
+                        <field name="purchase_order_freight_amount"/>
+                        <field name="purchase_order_insurance_amount"/>
+                        <field name="purchase_order_fob_amount"/>
+                        <field name="purchase_order_cif_amount"/>
+                        <field name="fob_value_sug"/>
+                        <field name="is_change" invisible="True"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
     <record id="asc_profit_estimate_form_view" model="ir.ui.view">
         <field name="name">asc.crm.lead.profit.estimate.form</field>
         <field name="model">crm.lead</field>
@@ -2231,6 +2289,8 @@
                                                 <tr invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']">
                                                     <th style="width: 40%">
                                                         Insurance Estimate
+                                                        <field name="ins_text"
+                                                               default="Sales Value x 110% x 0.25% + USD 10"/>
                                                         <br/>
                                                         <!--                                                        Insurance Premium:<br/> -->
                                                         (USD
@@ -2250,7 +2310,8 @@
                                                 </tr>
                                                 <tr invisible="purchase_order_incoterm_selection != 'fob'">
                                                     <th style="width: 40%">
-                                                        Freight (Freight Forwarder)
+                                                        Freight
+                                                        <field name="freight_text" default="(Freight Forwarder)"/>
                                                         <br/>
                                                         Rate : (USD<field name="afrex_freight_rate"/>/MT)
                                                     </th>
@@ -2414,6 +2475,19 @@
                                         <hr/>
                                         <div>
                                             <table style="width: 100%" invisible="is_internal">
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Credit Cost Calculation Based on
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="credit_cost_text" widget="selection"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
+                                                    </th>
+                                                </tr>
                                                 <tr>
                                                     <th valign='middle'
                                                         style="width: 40%; text-align: left; valign: middle;"
@@ -2918,6 +2992,19 @@
                                                         ZAR
                                                         <field name="procurement_fee_amount_zar" widget="float"
                                                                options="{'precision': 4}"/>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th valign='middle'
+                                                        style="width: 40%; text-align: left; valign: middle;"
+                                                    >
+                                                        Credit Cost Calculation Based on
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <field name="credit_cost_text" widget="selection"/>
+                                                    </th>
+                                                    <th style="width:30%; text-align: right;">
+                                                        <span/>
                                                     </th>
                                                 </tr>
                                                 <tr>
