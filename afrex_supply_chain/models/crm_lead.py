@@ -293,6 +293,13 @@ class Lead(models.Model):
         else:
             raise UserError("The related Purchase Order no longer exists or has been deleted.")
 
+    def action_open_costing(self):
+        self.ensure_one()
+        if self.purchase_order_id and self.purchase_order_id.exists():
+            return self.purchase_order_id.action_open_costing()
+        else:
+            raise UserError("The related Purchase Order no longer exists or has been deleted.")
+
 
         # if not self.sale_order_terms_id:
         #     raise UserError("Please set the payments terms.")

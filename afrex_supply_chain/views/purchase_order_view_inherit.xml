@@ -51,7 +51,7 @@
                         <li class="border-top">
                             <button name="action_open_costing" icon="fa-file-text"
                                     string="Update Costing" type="object" class="btn-mute"
-                                    invisible="1"/>
+                                    invisible="state not in ['done', 'purchase']"/>
                         </li>
                         <li class="border-top">
                             <button name="supplier_invoice_wizard" icon="fa-file-text"
@@ -396,7 +396,8 @@
                             <field name="cost_amount" readonly="True"  widget="float" options="{'precision': 2}"/>
                         </div>
                         <field name="show_breakdown" widget="boolean_toggle" string="Display Breakdown"/>
-                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update"/>
+                        <field name="is_adjusted" widget="boolean_toggle" string="Auto update" invisible="1"/>
+
                     </group>
                 </group>
                 <group invisible="state != 'purchase' or supplier_delivery_method != 'road'">

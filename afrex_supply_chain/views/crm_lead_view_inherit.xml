@@ -177,6 +177,11 @@
                                     string="Generate Payment Request(s)" type="object" class="btn-mute"
                                     invisible="is_payment_request_generated or purchase_order_state not in ['done', 'purchase']"/>
                         </li>
+                        <li class="border-top">
+                            <button name="action_open_costing" icon="fa-file-text"
+                                    string="Update Costing" type="object" class="btn-mute"
+                                    invisible="purchase_order_state not in ['done', 'purchase']"/>
+                        </li>
                         <li>
                             <button name="generate_offer" icon="fa-file-text-o" string="Make an Offer" type="object"
                                     class="btn-mute" invisible="not purchase_order_id or sale_order_id"/>
@@ -2075,20 +2080,66 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <style>
+                        .o_form_button_save,
+                        .o_form_button_cancel {
+                        display: none !important;
+                        }
+                    </style>
                     <div class="oe_button_box mb-2" name="button_box_profit_estimate">
-                        <button name="action_open_lead" string="Trade Folder" icon="fa-folder-open" type="object"
-                                class="btn-primary mx-2" style="color:white; background:#B04949;"/>
-                        <button name="action_apply" string="Apply" type="object"
+                        <button name="action_apply" icon="fa-cloud" string="save &amp; update" type="object"
                                 class="btn-primary" style="color:white; background:#B04949;"
                         />
                     </div>
+                    <field name="supplier_delivery_method" invisible="1"/>
+                    <field name="purchase_order_incoterm_selection" invisible="1"/>
+                    <group invisible="supplier_delivery_method != 'sea'">
+                        <group string="Costing">
+                            <field name="purchase_order_freight_amount" string="Freight"
+                                   invisible="purchase_order_incoterm_selection in ['fob', 'fca', 'dap']"/>
+                            <!--                            <field name="afrex_freight_amount" string="Freight"-->
+                            <!--                                   invisible="purchase_order_incoterm_selection != 'fob'"/>-->
+                            <label for="afrex_freight_rate" string="Afrex Freight/MT" invisible="purchase_order_incoterm_selection != 'fob'"/>
+                            <div class="o_row" invisible="purchase_order_incoterm_selection != 'fob'">
+                                <field name="afrex_freight_rate" widget="float" options="{'precision': 2}"/>
+                                Freight:
+                                <field name="afrex_freight_amount" readonly="True" widget="float"
+                                       options="{'precision': 2}"/>
+                            </div>
+                            <field name="insurance_premium_amount" String="Insurance Estimate"
+                                   invisible="purchase_order_incoterm_selection in ['cif', 'fca', 'dap']"/>
+                            <field name="purchase_order_insurance_amount" string="Insurance"
+                                   invisible="purchase_order_incoterm_selection != 'cif'"/>
+                            <field name="purchase_order_fob_amount" string="FOB"
+                                   invisible="purchase_order_incoterm_selection in ['fca', 'dap']"/>
+                            <field name="purchase_order_cif_amount"/>
+                            <!--                        <field name="fob_value_sug"/>-->
+                            <field name="is_change" invisible="True"/>
+                            <field name="is_adjusted" widget="boolean_toggle" invisible="1"/>
+                        </group>
+                    </group>
                     <group>
-                        <field name="purchase_order_freight_amount"/>
-                        <field name="purchase_order_insurance_amount"/>
-                        <field name="purchase_order_fob_amount"/>
-                        <field name="purchase_order_cif_amount"/>
-                        <field name="fob_value_sug"/>
-                        <field name="is_change" invisible="True"/>
+                        <group>
+                            <div invisible="not is_adjusted" colspan="3">
+                                <div widget="float"
+                                     options="{'precision': 2}" class="alert alert-info"
+                                     style="width: 100%; text-align: right;"
+                                     invisible="fob_value_sug &lt;= 0">
+                                    <label for="fob_value_sug" class="me-2">
+                                        <strong>FOB Suggested Value:</strong>
+                                    </label>
+                                    <field name="fob_value_sug" string="FOB Suggested Value"/>
+                                </div>
+                                <div class="alert alert-danger" invisible="fob_value_sug >= 0">
+                                    <h6 style="width: 100%; text-align: right;"
+                                        invisible="fob_value_sug >= 0">
+                                        <strong>Warning:</strong>
+                                        FOB value is in negative — you entered wrong entries. Please check
+                                        insurance and freight amounts.
+                                    </h6>
+                                </div>
+                            </div>
+                        </group>
                     </group>
                 </sheet>
             </form>

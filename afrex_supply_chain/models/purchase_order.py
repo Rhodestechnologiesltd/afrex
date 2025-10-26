@@ -1161,8 +1161,12 @@ class PurchaseOrder(models.Model):
         is_adjusted = 0
         insurance_unit = 0
         if self.fob_amount == 0:
-            raise UserError("Please update Costing Values in Trade Folder -> Profit Estimate")
-
+            # raise UserError("Please update Costing Values by Click Actions -> Update Costings or Click  Goto -> Trade Folder -> Profit Estimate")
+            raise UserError(
+                "Please update costing values by doing one of the following:\n\n"
+                "1️⃣ Click **Actions → Update Costings**, or\n"
+                "2️⃣ Go to **Goto → Trade Folder → Profit Estimate**."
+            )
         for line in self.order_line:
             qty_received = line.qty_received
             qty_invoiced = line.qty_invoiced
