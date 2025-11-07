@@ -18,6 +18,7 @@ class PaymentRequest(models.Model):
         ('supplier', 'Supplier'),
         ('service', 'Service Provider'),
     ], string="Payment Category", default='supplier', required=True)
+    service_ci_number = fields.Char(string="Supplier CI No")
 
     bank_account_id = fields.Many2one('res.partner.bank', string="Beneficiary Bank Account")
     bank_id = fields.Many2one('res.bank', related='bank_account_id.bank_id', string="Bank")

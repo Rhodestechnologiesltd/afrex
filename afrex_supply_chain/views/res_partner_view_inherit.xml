@@ -38,11 +38,11 @@
                         <field name="address_payment_request"/>
                     </group>
                 </group>
-<!--                <group>-->
-<!--                     <group>-->
-<!--                        <field name="shipping_address_text"/>-->
-<!--                    </group>-->
-<!--                </group>-->
+                <group>
+                     <group>
+                        <field name="address_shipping_instructions"/>
+                    </group>
+                </group>
             </xpath>
         </field>
     </record>

@@ -559,9 +559,11 @@
                                     <tree>
                                         <field name="type"/>
                                         <field name="date"/>
+                                        <field name="payment_category" widget="badge"/>
                                         <field name="currency_id" column_invisible="True"/>
                                         <field name="amount" widget="monetary"/>
                                         <field name="state" widget="badge"/>
+
                                     </tree>
                                 </field>
                             </div>

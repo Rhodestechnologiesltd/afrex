@@ -8,7 +8,7 @@
                     <field name="purchase_order_id" invisible="True"/>
                     <field name="can_confirm" invisible="True"/>
                     <field name="breakbulk_container" invisible="True"/>
-                    <field name="ref" required="True"/>
+                    <field name="ref" string="Vendor CI Number" required="True"/>
                     <field name="date" string="Invoice Date"/>
                     <field name="quantity" widget="float" options="{'precision': 3}" readonly="True"/>
                 </group>

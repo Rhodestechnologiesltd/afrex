@@ -5,7 +5,7 @@
         <field name="name">asc.product.combination.tree</field>
         <field name="model">asc.product.combination</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree edit="1" create="1" editable="bottom">
                 <field name="product_id" optional="hide"/>
                 <field name="name" optional="show"/>
                 <field name="cas_number" optional="hide"/>

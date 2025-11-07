@@ -12,7 +12,8 @@ class ResPartner(models.Model):
     is_internal = fields.Boolean("Internal")
     address_text = fields.Text(string="Address to display")
     address_payment_request = fields.Text(string="Address on Payment Request")
-    
+    address_shipping_instructions = fields.Text(string="Address on Shipping Instructions")
+
     fax = fields.Char(string="Fax")
     
     sequence_id = fields.Many2one('ir.sequence', string="Trade Sequence")

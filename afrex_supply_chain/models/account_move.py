@@ -253,6 +253,20 @@ class AccountMove(models.Model):
             temp = {picking.marks_numbers for picking in invoice.stock_picking_ids if picking.marks_numbers}
             invoice.marks_numbers = ', '.join(sorted(temp))
 
+    # @api.multi
+    # def action_post(self):
+    #     """Override action_post to assign specific sequences for refunds."""
+    #     for move in self:
+    #         # Only assign sequence if name is not already set (i.e., not posted before)
+    #         if move.name in ('/', False):
+    #             if move.move_type == 'out_refund':
+    #                 # Customer Credit Note
+    #                 move.name = self.env['ir.sequence'].next_by_code('asc_crd_seq') or '/'
+    #             elif move.move_type == 'in_refund':
+    #                 # Vendor Debit Note
+    #                 move.name = self.env['ir.sequence'].next_by_code('asc_Deb_seq') or '/'
+    #
+    #     return super(AccountMove, self).action_post()
     @api.depends('invoice_date_due')
     def _compute_is_payment_due_on_weekend(self):
         for record in self:
@@ -571,7 +585,15 @@ class AccountMove(models.Model):
     def print_origin_certificate(self):
         return self.env.ref('afrex_supply_chain.action_report_asc_origin_certificate').report_action(self)
 
+    @api.model
+    def create(self, vals):
+        if vals.get('move_type') == 'out_refund':
+           vals['name'] = self.env['ir.sequence'].next_by_code('asc.cn.seq') or _('New')
+        if vals.get('move_type') == 'in_refund':
+           vals['name'] = self.env['ir.sequence'].next_by_code('asc.db.seq') or _('New')
 
+
+        return super(AccountMove, self).create(vals)
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 

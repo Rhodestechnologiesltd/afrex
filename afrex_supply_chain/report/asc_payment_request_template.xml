@@ -272,7 +272,15 @@
                         <th style="width:35%; text-align:left;">
                             <span style="padding-left: 5px;">Supplier Invoice Number:</span>
                         </th>
-                        <td style="width:65%;">
+                        <td t-if="o.payment_category == 'service'" style="width:65%;" >
+                            <t t-if="o.service_ci_number">
+                                <span style="padding-left: 5px;" t-field="o.service_ci_number"/>
+                            </t>
+                            <t t-else="">
+                                <span style="padding-left: 5px;">NA</span>
+                            </t>
+                        </td>
+                        <td t-else="" style="width:65%;">
                             <t t-if="o.supplier_invoice_ref">
                                 <span style="padding-left: 5px;" t-field="o.supplier_invoice_ref"/>
                             </t>

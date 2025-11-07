@@ -52,11 +52,22 @@
                 <field name="lead_id" string="Trade Folder"/>
             </xpath>
             <!--             <xpath expr="//notebook/page/tree/field[@name='product_id']" position="after">-->
-<!--            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']"-->
-<!--                   position="after">-->
-<!--                <field name="container_num" string="Container No" optional="hide"/>-->
-<!--                <field name="seal_num" string="Seal Number" optional="hide"/>-->
-<!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']"-->
+            <!--                   position="after">-->
+            <!--                <field name="container_num" string="Container No" optional="hide"/>-->
+            <!--                <field name="seal_num" string="Seal Number" optional="hide"/>-->
+            <!--            </xpath>-->
+        </field>
+    </record>
+
+    <record id="view_picking_tree_inherit_rec_qty" model="ir.ui.view">
+        <field name="name">stock.picking.tree.inherit.rec.qty</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>  <!-- or stock.view_picking_tree -->
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='scheduled_date']" position="after">
+                <field name="done_qty_rec" optional="hide"/>
+            </xpath>
         </field>
     </record>
 

@@ -33,11 +33,12 @@
                         </group>
                         <group>
                             <field name="lead_id" string="Trade Folder"/>
-                            <field name="purchase_order_id" string="Afrex PO" readonly="True"/>
-                            <field name="sale_invoice_id" string="Afrex PFI/CI" readonly="True"/>
-                            <field name="supplier_proforma_num" readonly="True"/>
-                            <field name="supplier_invoice_ref" readonly="True"/>
-                            <field name="payment_term_id" string="Payment Terms" readonly="True"/>
+                            <field name="purchase_order_id" string="Afrex PO" readonly="True" invisible="payment_category == 'service'"/>
+                            <field name="sale_invoice_id" string="Afrex PFI/CI" readonly="True" />
+                            <field name="supplier_proforma_num" readonly="True" invisible="payment_category == 'service'"/>
+                            <field name="supplier_invoice_ref" readonly="True" invisible="payment_category == 'service'"/>
+                            <field name="service_ci_number" invisible="payment_category == 'supplier'"/>
+                            <field name="payment_term_id" string="Payment Terms" readonly="True" invisible="payment_category == 'service'"/>
                         </group>
                     </group>
                     <hr/>

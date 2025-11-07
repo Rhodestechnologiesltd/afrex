@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="row mb-2" style="margin-left: 2%; margin-right: 2%;">
-                <table class="table-borderless" style="width: 50%; font-size:9.5px;">
+                <table class="table-borderless" style="width: 50%; font-size:8px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Date:</span>
@@ -44,7 +44,7 @@
                         </td>
                     </tr>
                 </table>
-                <table class="table-borderless" style="width: 50%; font-size:9.5px;">
+                <table class="table-borderless" style="width: 50%; font-size:8px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Goods:</span>
@@ -65,7 +65,7 @@
                 </table>
             </div>
             <div class="row mb-3" style="margin-left: 2%; margin-right: 2%;">
-                <table class="table-borderless" style="width: 50%; font-size:9.5px;">
+                <table class="table-borderless" style="width: 50%; font-size:8px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Supplier:</span>
@@ -125,7 +125,7 @@
                     </tr>
 
                 </table>
-                <table class="table-borderless" style="width: 50%; font-size:9.5px;">
+                <table class="table-borderless" style="width: 50%; font-size:8px;">
                     <tr class="text-start">
                         <th style="width: 35%;">
                             <span style="padding-left: 5px;">Buyer:</span>
@@ -229,7 +229,7 @@
 
 
             <table t-if="o.is_internal and o.indicative_exchange_rate and not o.exchange_rate"
-                   class="table-borderless mb-2" style="width: 96%; font-size:9.5px; margin-left: 2%; margin-right: 2%;">
+                   class="table-borderless mb-2" style="width: 96%; font-size:8px; margin-left: 2%; margin-right: 2%;">
                 <tr class="text-start">
                     <th style="width: 30%;">
                         <span style="padding-left: 5px;">*Indicative Rate of Exchange (ROE) USDZAR:</span>
@@ -247,7 +247,7 @@
                 </tr>
             </table>
             <table t-if="o.is_internal and o.exchange_rate" class="table-borderless mb-2"
-                   style="width: 96%; font-size:9.5px; margin-left: 2%; margin-right: 2%;">
+                   style="width: 96%; font-size:8px; margin-left: 2%; margin-right: 2%;">
                 <tr class="text-start">
                     <th style="width: 30%;">
                         <span style="padding-left: 5px;">*Booked Rate of Exchange (ROE) USDZAR:</span>
@@ -258,19 +258,19 @@
                 </tr>
             </table>
             <table class="table-sm table-bordered mt-4"
-                   style="width: 96%; font-size:9.5px; border: 1px solid black; margin-left: 2%; margin-right: 2%;">
+                   style="width: 96%; font-size:8px; border: 1px solid black; margin-left: 2%; margin-right: 2%;">
                 <t>
 <!--                <t -->
                     <tr class="text-start" style="border-bottom: 1px solid black; border-top: 1px solid black;">
                         <th t-if="not o.is_internal" colspan="2" class="text-start"
-                            style="width: 50%; font-size:9.5px;">
+                            style="width: 50%; font-size:8px;">
                             <span style="padding-left: 0px;">Trade Finance Through SGT - Credit Terms:
                                 <span t-field="o.credit_days"/>
                                 Days from Statement
                             </span>
                         </th>
                         <th t-if="o.is_internal" colspan="3" class="text-start"
-                            style="width: 50%; font-size:9.5px;">
+                            style="width: 50%; font-size:8px;">
                             <span style="padding-left: 0px;">Trade Finance Through SGT - Credit Terms:
                                 <span t-field="o.credit_days"/>
                                 Days from Statement
@@ -338,11 +338,11 @@
 <!--                <div  t-attf-style="font-size:#{ '14px' if not o.credit_days or o.credit_days == 0 else '12px' };">-->
                 <div>
                     <tr style="border-bottom: 1px solid black; border-top: 1px solid black;">
-                        <th t-if="not o.is_internal" colspan="2" class="text-start" style="font-size:9.5px;">
+                        <th t-if="not o.is_internal" colspan="2" class="text-start" style="font-size:8px;">
                             Pricing
                         </th>
                         <th t-if="o.is_internal" colspan="3" class="text-start"
-                            style="font-size:9.5px; font-weight:bold;">
+                            style="font-size:8px; font-weight:bold;">
                             Pricing
                         </th>
                     </tr>
@@ -1216,10 +1216,10 @@
                         </th>
                     </tr>
                     <tr>
-                        <th t-if="not o.is_internal" colspan="2" class="text-start" style="font-size:9.5px;">
+                        <th t-if="not o.is_internal" colspan="2" class="text-start" style="font-size:8px;">
                             Profit Analysis
                         </th>
-                        <th t-if="o.is_internal" colspan="3" class="text-start" style="font-size:9.5px;">
+                        <th t-if="o.is_internal" colspan="3" class="text-start" style="font-size:8px;">
                             Profit Analysis
                         </th>
                     </tr>

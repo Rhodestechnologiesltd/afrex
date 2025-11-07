@@ -39,8 +39,17 @@ class StockPicking(models.Model):
     route = fields.Char("Route", related="lead_id.route", readonly=False)
     expected_arrival_date = fields.Date("Estimated Arrival Date", related="lead_id.expected_arrival_date", readonly=False)
     sob_date = fields.Date("Shipped on Board Date", related="lead_id.sob_date", readonly=False)
-    
-    
+
+    done_qty_rec = fields.Float(
+        string='Received Quantity',
+        compute='_compute_rec_qty',
+        store=True
+    )
+
+    # @api.depends('move_line_ids.qty_done')
+    def _compute_rec_qty(self):
+        for picking in self:
+            picking.done_qty_rec = sum(picking.move_line_ids.mapped('qty_done'))
     @api.depends('product_combination_id')
     def compute_marks_numbers(self):
         for rec in self:
@@ -71,7 +80,8 @@ class StockMoveLine(models.Model):
     loading_date = fields.Date(related='picking_id.loading_date')
     dispatch_date = fields.Date(related='picking_id.dispatch_date')
     offloading_date = fields.Date(related='picking_id.offloading_date')
-    
+    # rec_qty = fields.Float(related='move_line_ids.quantity')
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'

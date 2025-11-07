@@ -305,22 +305,22 @@
                     <t t-set="tax_totals" t-value="o.tax_totals"/>
                     <t t-foreach="lines" t-as="line">
                         <tr>
-                            <td style="border: 1pt solid black; text-align: center;">
+                            <td style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <span t-field="line.name" t-options="{'widget': 'text'}"/>
                             </td>
-                            <td style="border: 1pt solid black; text-align: center;">
+                            <td style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <span t-field="line.packaging_id.name" t-options="{'widget': 'text'}"/>
                             </td>
-                            <td  class="text-center" style="border: 1pt solid black; text-align: center;">
+                            <td  class="text-center" style="border: 1pt solid black; text-align: center; vertical-align: middle;">
                                 <span class="text-nowrap" t-field="line.product_uom_qty"
                                       t-options="{'widget': 'float', 'precision': 3}"/>
                             </td>
-                            <td class="o_price_total" style="border: 1pt solid black;">
+                            <td class="o_price_total" style="border: 1pt solid black; vertical-align: middle;">
                                 <span t-field="line.currency_id.name"/>
                                 <span class="text-nowrap float-end" t-field="line.price_unit"
                                       t-options="{'widget': 'float', 'precision': 2}"/>
                             </td>
-                            <td class="o_price_total" style="border: 1pt solid black;">
+                            <td class="o_price_total" style="border: 1pt solid black; vertical-align: middle;">
                                 <span t-field="line.currency_id.name"/>
                                 <span class="text-nowrap float-end" t-field="line.price_total"
                                       t-options="{'widget': 'float', 'precision': 2}"/>

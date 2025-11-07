@@ -38,6 +38,22 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <record id="asc_crd_seq" model="ir.sequence">
+            <field name="name">ASC Credit note Sequence</field>
+            <field name="code">asc.cn.seq</field>
+            <field name="prefix">CN</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="asc_Deb_seq" model="ir.sequence">
+            <field name="name">ASC Debit note Sequence</field>
+            <field name="code">asc.db.seq</field>
+            <field name="prefix">DN</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
         <record id="asc_seq_payment_request" model="ir.sequence">
             <field name="name">Payment Request Sequence</field>
             <field name="code">asc.payment.request.seq</field>
