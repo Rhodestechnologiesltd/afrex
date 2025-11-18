@@ -65,7 +65,7 @@
             <form class="o_form_project_project">
                 <group>
                     <group string="Lead/Buyer">
-                        <field name="partner_id" domain="[('is_company','=',True)]" string="Customer" required="True"/>
+                        <field name="partner_id" domain="[('is_company', '=', True), ('is_buyer', '=', True)]" string="Customer" required="True"/>
                         <field name="supplier_delivery_method" widget="radio" required="True"/>
                         <!--                        <field name="loading_port_id" string="Port of Loading" context="{'default_type': 'sea'}"-->
                         <!--                               domain="[('type', '=', 'sea')]" invisible="supplier_delivery_method != 'sea'"/>-->
