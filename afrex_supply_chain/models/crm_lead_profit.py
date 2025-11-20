@@ -396,11 +396,10 @@ class Lead(models.Model):
                 )
 
     # sofr amount
-    @api.onchange('sofr_rate', 'sofr_margin')
+    @api.depends('sofr_rate', 'sofr_margin')
     def _compute_total_sofr(self):
         for record in self:
-            if record.sofr_rate:
-                record.total_sofr = record.sofr_rate + record.sofr_margin
+                record.total_sofr = (record.sofr_rate or 0.0) + (record.sofr_margin or 0.0)
 
     # credit cost commission amount
     @api.depends('commission_amount', 'credit_cost_text', 'purchase_order_fob_amount', 'purchase_order_cif_amount', 'is_cif_override',
