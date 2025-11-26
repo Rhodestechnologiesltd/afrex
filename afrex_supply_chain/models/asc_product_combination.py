@@ -4,7 +4,11 @@ from odoo import models, fields, api, _
 class ProductCombination(models.Model):
     _name = 'asc.product.combination'
     _description = 'Product Combination'
-
+    _sql_constraints = [
+        ('unique_product_combination',
+         'UNIQUE(product_id, first_spec_id, second_spec_id, third_spec_id, packaging_id)',
+         'This product combination already exists!'),
+    ]
     name = fields.Char("Product Description", readonly=True)
     product_id = fields.Many2one('product.template', string="Product", ondelete='restrict', required=True)
     product_variant_id = fields.Many2one('product.product', related='product_id.product_variant_id', string="Product Variant")
@@ -35,3 +39,17 @@ class ProductCombination(models.Model):
             temp_name_clean = temp_name.strip()
             rec.description = temp_name_clean
             rec.name = str(rec.product_id.name) + " " + temp_name_clean
+
+    @api.model
+    def create(self, vals):
+        existing = self.search([
+            ('product_id', '=', vals.get('product_id')),
+            ('first_spec_id', '=', vals.get('first_spec_id')),
+            ('second_spec_id', '=', vals.get('second_spec_id')),
+            ('third_spec_id', '=', vals.get('third_spec_id')),
+            ('packaging_id', '=', vals.get('packaging_id')),
+        ])
+        if existing:
+            raise models.ValidationError(
+                _("This product combination already exists. You can add more suppliers to it."))
+        return super(ProductCombination, self).create(vals)
