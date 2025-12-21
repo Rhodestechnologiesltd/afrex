@@ -4,7 +4,7 @@ from odoo import models, fields, api, _
 class Backlog(models.Model):
     _name = 'asc.backlog'
     _description = 'Migrated data'
-
+    _rec_name = 'trade_folder'
 
     trade_folder = fields.Char(string="Trade Folder")
     supplier = fields.Char(string="Supplier / Shipper")
