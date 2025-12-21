@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="asc_backlog_form_view" model="ir.ui.view">
+        <field name="name">backlog</field>
+        <field name="model">asc.backlog</field>
+        <field name="arch" type="xml">
+            <form string="Migrated Data">
+                <sheet>
+                    <group>
+                        <group string="Trade Folder Details">
+                            <field name="trade_folder"/>
+                            <field name="deal_status_logistics" widget="selection_badge"/>
+                            <field name="eazzy_filed" widget="selection_badge"/>
+                            <field name="deal_status_accounting" widget="selection_badge"/>
+                        </group>
+                        <group string="Product and Order Details">
+                            <field name="product"/>
+                            <field name="packaging"/>
+                            <field name="product_specification"/>
+                            <field name="currency_code"/>
+                            <field name="price_per_ton"/>
+                            <field name="mt_ordered"/>
+                            <field name="mt_delivered"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page name="Supplier">
+                            <group>
+                                <group string="Supplier">
+                                    <field name="supplier"/>
+                                    <field name="port_of_loading"/>
+                                    <field name="origin"/>
+                                    <field name="afrex_po_number"/>
+                                    <field name="supplier_pfi_date"/>
+                                    <field name="supplier_pfi_ref"/>
+                                    <field name="supplier_commercial_invoice_no"/>
+                                    <field name="subject_to_switch"/>
+                                    <field name="switch_invoice_no"/>
+                                    <field name="switch_amount"/>
+                                    <field name="tariff_code"/>
+                                </group>
+                                <group string="Supplier Payment details">
+                                    <field name="supplier_payment_terms"/>
+                                    <field name="advance_payment_percent"/>
+                                    <field name="final_payment_percent"/>
+                                    <field name="advance_amount"/>
+                                    <field name="advance_payment_concluded"/>
+                                    <field name="advance_payment_date"/>
+                                    <field name="final_amount_usd"/>
+                                    <field name="final_payment_concluded"/>
+                                    <field name="final_payment_date"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Buyer">
+                            <group string="Buyer" colspan="2">
+                                <group string="Buyer">
+                                    <field name="buyer"/>
+                                    <field name="port_of_discharge"/>
+                                    <field name="consignee_notify"/>
+                                    <field name="buyer_po_number"/>
+                                    <field name="buyer_po_date"/>
+                                </group>
+                                <group string="Buyer Payment details">
+                                    <field name="buyer_payment_terms"/>
+                                    <field name="selling_price_per_ton_usd"/>
+                                    <field name="buyer_incoterms"/>
+                                    <field name="amount_usd"/>
+                                    <field name="amount_zar"/>
+                                    <field name="payment_due_date"/>
+                                    <field name="buyer_paid"/>
+                                    <field name="buyer_actual_payment_date"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Costing">
+                            <group string="Costing" colspan="2">
+                                <group string="Supplier Costing">
+                                    <field name="supplier_invoice_amount"/>
+                                    <field name="no_of_packages"/>
+                                    <field name="gross_weight_kgs"/>
+                                    <field name="supplier_fob_usd"/>
+                                    <field name="supplier_freight_usd"/>
+                                    <field name="supplier_insurance_usd"/>
+                                </group>
+                                <group string="Afrex Costing">
+                                    <field name="afrex_fob_usd"/>
+                                    <field name="proforma_invoice_raised"/>
+                                    <field name="proforma_invoice_date"/>
+                                    <field name="commercial_invoice_raised"/>
+                                    <field name="commercial_invoice_date"/>
+                                    <field name="afrex_invoice_number"/>
+
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Logistics">
+                            <group colspan="2">
+                                <group string="Logistics">
+                                    <field name="carrier_shipping_line"/>
+                                    <field name="forwarder"/>
+                                    <field name="bl_booking_no"/>
+                                    <field name="vessel_voyage"/>
+                                    <field name="container_no"/>
+                                    <field name="container_count"/>
+                                    <field name="container_size_type"/>
+                                    <field name="seal_no"/>
+                                </group>
+                                <group>
+                                    <field name="expected_shipment_date"/>
+                                    <field name="actual_expected_shipment_date"/>
+                                    <field name="eta_arrival_date"/>
+                                    <field name="actual_arrival_pod"/>
+                                    <field name="comment_status"/>
+                                    <field name="shipper_docs"/>
+                                    <field name="shipper_docs_date"/>
+                                    <field name="shipper_incoterms"/>
+                                    <field name="shipment_default"/>
+                                    <field name="bl_release"/>
+                                    <field name="bl_release_date"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="asc_backlog_tree_view" model="ir.ui.view">
+        <field name="name">asc.backlog.tree</field>
+        <field name="model">asc.backlog</field>
+        <field name="arch" type="xml">
+            <tree string="Migrated Data">
+                <field name="trade_folder"/>
+                <field name="supplier"/>
+                <field name="buyer"/>
+                <field name="product"/>
+                <field name="price_per_ton"/>
+                <field name="mt_ordered"/>
+                <field name="mt_delivered"/>
+                <field name="afrex_po_number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_backlog_search" model="ir.ui.view">
+        <field name="name">backlog_search</field>
+        <field name="model">asc.backlog</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="trade_folder" string="Trade Folder"
+                       filter_domain="['|','|','|','|','|',('trade_folder','ilike',self),('buyer','ilike',self),('supplier','ilike',self),('product','ilike',self),('eazzy_filed','ilike',self),('deal_status_logistics','ilike',self)]"/>
+                <field name="eazzy_filed"/>
+                <field name="buyer" string="Buyer"/>
+                <field name="supplier" string="Supplier"/>
+                <field name="product" string="Product"/>
+                <field name="deal_status_logistics" string="Deal Status"/>
+<!--                <field name="eazzy_filed" string="Status"/>-->
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_asc_backlog_data" model="ir.actions.act_window">
+        <field name="name">Migrated Data</field>
+        <field name="res_model">asc.backlog</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add Migrated data
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            id="menu_asc_backlog_data"
+            name="Migrated Data"
+            action="action_asc_backlog_data"
+            parent="afrex_supply_chain.asc_config_menu"
+            sequence="110"/>
+
+</odoo>

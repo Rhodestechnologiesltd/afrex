@@ -23,3 +23,4 @@ access_asc_confirm_invoice_user,access_asc_confirm_invoice_user,model_asc_confir
 access_asc_supplier_invoice_user,access_asc_supplier_invoice_user,model_asc_supplier_invoice,base.group_user,1,1,1,1
 access_asc_update_packaging_user,access_asc_update_packaging_user,model_asc_update_packaging,base.group_user,1,1,1,1
 access_asc_update_sale_order_user,access_asc_update_sale_order_user,model_asc_update_sale_order,base.group_user,1,1,1,1
+access_asc_backlog_user,access_asc_backlog_user,model_asc_backlog,base.group_user,1,1,1,1

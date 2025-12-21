@@ -73,6 +73,7 @@
         "views/asc_document_type_views.xml",
         "views/asc_payment_request_views.xml",
         "views/menu.xml",
+        "views/backlog_deal_data_view.xml",
         "wizard/asc_product_selection_view.xml",
         "wizard/asc_generate_purchase_order_view.xml",
         "wizard/asc_generate_sale_order_view.xml",
